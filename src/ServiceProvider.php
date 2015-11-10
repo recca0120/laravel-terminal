@@ -37,7 +37,7 @@ class ServiceProvider extends BaseServiceProvider
         ], 'views');
 
         $this->publishes([
-            __DIR__.'/../vendor' => public_path('vendor/terminal'),
+            __DIR__.'/../public' => public_path('vendor/terminal'),
         ], 'public');
     }
 

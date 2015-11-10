@@ -1,5 +1,5 @@
 {
-    "publicPath": "../../../vendor/terminal",
+    "publicPath": "../../../../vendor/terminal",
     "font": {
        "outputFolder": "fonts"
     },
