@@ -11,7 +11,10 @@ do ($ = jQuery, window, document) ->
     rpcAction = (endpoint, term, method, args) ->
         success = (response) ->
             term.resume()
-            term.echo response.result
+            if response.result is false
+                term.error response.error
+            else
+                term.echo response.result
 
         error = (xhr, type, message) ->
             term.resume()

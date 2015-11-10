@@ -48,6 +48,7 @@ class TerminalController extends Controller
                 $exitCode = Artisan::call($method, $params);
                 $result = Artisan::output();
             } catch (Exception $e) {
+                $result = false;
                 $error = $e->getMessage();
             }
 
