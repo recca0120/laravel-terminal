@@ -1,0 +1,25 @@
+{
+    "name": "recca0120/terminal",
+    "description": "Laravel Artisan Terminal",
+    "keywords": ["laravel", "artisan", "terminal"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "recca0120",
+            "email": "recca0120@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "laravel/framework": "~5.0|~5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Recca0120\\Terminal\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "dev"
+}

@@ -1,0 +1,9 @@
+{
+    "publicPath": "../../../vendor/terminal",
+    "font": {
+       "outputFolder": "fonts"
+    },
+    "img": {
+       "outputFolder": "img"
+    }
+}

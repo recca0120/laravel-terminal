@@ -1,0 +1,5 @@
+/node_modules
+/resources/assets/vendor
+Homestead.yaml
+Homestead.json
+.env
