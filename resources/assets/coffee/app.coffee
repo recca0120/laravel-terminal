@@ -48,10 +48,12 @@ do ($ = jQuery, window, document) ->
 
     commandParser = (command, term, search) ->
         cmd = $.terminal.parseCommand command.trim()
+        console.log cmd
         if cmd.name is search
             endpoint = Terminal.endpoint[search]
-            method = cmd.args.shift()
             params = cmd.args
+            method = params.shift() || "list"
+
             if (search is "artisan" and Terminal.environment is "production" and $.inArray("--force", params) is -1) and (
                 (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
                 starts_with(method, "db:seed") is true

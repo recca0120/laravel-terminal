@@ -7,6 +7,9 @@ use Artisan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class TerminalController extends Controller
 {
@@ -20,33 +23,35 @@ class TerminalController extends Controller
     public function artisan(Request $request)
     {
         return response()->stream(function () use ($request) {
+
             // set_time_limit(30);
             $result = null;
             $error = null;
 
             $id = $request->input('id');
-            $method = $request->input('method');
+            $command = $request->input('method');
 
-            if (empty($method) === true || starts_with($method, '--')) {
-                $method = 'list';
-            } else {
-                $temp = array_map(function ($item) {
-                    if (starts_with($item, '--') && strpos($item, '=') === false) {
-                        $item .= '=default';
-                    }
-
-                    return $item;
-                }, $request->input('params', []));
-                $params = [];
-                foreach ($temp as $tmp) {
-                    $param = explode('=', $tmp);
-                    $params[array_get($param, 0)] = array_get($param, 1, '');
+            $temp = array_map(function ($item) {
+                if (starts_with($item, '--') && strpos($item, '=') === false) {
+                    $item .= '=default';
                 }
+
+                return $item;
+            }, $request->input('params', []));
+            $parameters = [];
+            foreach ($temp as $tmp) {
+                $explodeTmp = explode('=', $tmp);
+                $parameters[array_get($explodeTmp, 0)] = array_get($explodeTmp, 1, '');
             }
 
             try {
-                $exitCode = Artisan::call($method, $params);
-                $result = Artisan::output();
+                $parameters['command'] = $command;
+                $lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter());
+                $exitCode = Artisan::handle(new ArrayInput($parameters), $lastOutput);
+                $result = $lastOutput->fetch();
+                // exit;
+                // $exitCode = Artisan::call($command, $parameters);
+                // $result = Artisan::output();
             } catch (Exception $e) {
                 $result = false;
                 $error = $e->getMessage();

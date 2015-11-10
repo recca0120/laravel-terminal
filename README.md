@@ -1,1 +1,42 @@
 # Laravel Artisan Terminal
+
+![Terminal](http://3.bp.blogspot.com/-XdxaIZCHCxA/VkI0nHtwUNI/AAAAAAAANrY/NEqYZio-cPQ/s1600/Image%2B3.png)
+
+## Installation
+
+```
+composer require recca0120/terminal
+```
+
+OR
+
+Update composer.json
+```
+{
+    "require": {
+        ...
+        "recca0120/terminal": "~0.1"
+    },
+}
+```
+
+Require this package with composer:
+
+```
+composer update
+```
+### Laravel 5.1:
+
+Update config/app.php
+
+```php
+'providers' => [
+    ...
+    Recca0120\Terminal\ServiceProvider::class,
+];
+```
+
+open url
+http://localhost/path/to/terminal
+
+
