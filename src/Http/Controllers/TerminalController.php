@@ -2,37 +2,53 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
+use Application;
 use Artisan;
+use Exception;
 use Illuminate\Http\Request;
-use InvalidArgumentException;
+use Illuminate\Routing\Controller;
 
 class TerminalController extends Controller
 {
     public function index()
     {
-        return view('terminal::index');
+        $environment = app()->environment();
+
+        return view('terminal::index', compact('environment'));
     }
 
     public function artisan(Request $request)
     {
         return response()->stream(function () use ($request) {
-            set_time_limit(0);
+            // set_time_limit(30);
             $result = null;
             $error = null;
 
             $id = $request->input('id');
             $method = $request->input('method');
-            $params = $request->input('params');
 
-            if (empty($method) === true) {
+            if (empty($method) === true || starts_with($method, '--')) {
                 $method = 'list';
+            } else {
+                $temp = array_map(function ($item) {
+                    if (starts_with($item, '--') && strpos($item, '=') === false) {
+                        $item .= '=default';
+                    }
+
+                    return $item;
+                }, $request->input('params', []));
+                $params = [];
+                foreach ($temp as $tmp) {
+                    $param = explode('=', $tmp);
+                    $params[array_get($param, 0)] = array_get($param, 1, '');
+                }
             }
 
             try {
                 $exitCode = Artisan::call($method, $params);
                 $result = Artisan::output();
-            } catch (InvalidArgumentException $e) {
-                $result = $e->getMessage();
+            } catch (Exception $e) {
+                $error = $e->getMessage();
             }
 
             echo json_encode([
