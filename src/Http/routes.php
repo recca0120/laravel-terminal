@@ -12,16 +12,16 @@
 */
 
 get('/', [
-    'as' => 'index',
+    'as'   => 'index',
     'uses' => 'TerminalController@index',
 ]);
 
 post('/tinker', [
-    'as' => 'tinker',
+    'as'   => 'tinker',
     'uses' => 'TerminalController@tinker',
 ]);
 
 post('/artisan', [
-    'as' => 'artisan',
+    'as'   => 'artisan',
     'uses' => 'TerminalController@artisan',
 ]);

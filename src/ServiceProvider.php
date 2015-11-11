@@ -22,8 +22,8 @@ class ServiceProvider extends BaseServiceProvider
             $prefix = 'terminal';
             $group = $router->group([
                 'namespace' => $this->namespace,
-                'as' => 'terminal::',
-                'prefix' => $prefix,
+                'as'        => 'terminal::',
+                'prefix'    => $prefix,
             ], function () {
                 require __DIR__.'/Http/routes.php';
             });

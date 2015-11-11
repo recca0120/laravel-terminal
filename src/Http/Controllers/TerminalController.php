@@ -43,9 +43,9 @@ class TerminalController extends Controller
 
         return response()->json([
             'jsonrpc' => '2.0',
-            'result' => $result,
+            'result'  => $result,
             // 'result' => $command,
-            'id' => $id,
+            'id'    => $id,
             'error' => $error,
         ]);
     }
@@ -89,9 +89,9 @@ class TerminalController extends Controller
 
             echo json_encode([
                 'jsonrpc' => '2.0',
-                'result' => $result,
-                'id' => $id,
-                'error' => $error,
+                'result'  => $result,
+                'id'      => $id,
+                'error'   => $error,
             ]);
         }, 200, [
             'content-type' => 'application/json',
