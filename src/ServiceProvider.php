@@ -11,26 +11,33 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(Router $router)
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-        $this->map($router);
-        $this->publish();
+        $this->handlePublishes();
+        if (config('app.debug') === true) {
+            $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
+            $this->handleRoutes($router);
+        }
     }
 
-    protected function map($router)
+    protected function handleRoutes($router)
     {
         if ($this->app->routesAreCached() === false) {
+            $middleware = [];
+            if (method_exists(app(), 'bindShared') === false) {
+                $middleware = array_merge(['web'], $middleware);
+            }
             $prefix = 'terminal';
             $group = $router->group([
                 'namespace' => $this->namespace,
                 'as' => 'terminal::',
                 'prefix' => $prefix,
+                'middleware' => $middleware,
             ], function () {
                 require __DIR__.'/Http/routes.php';
             });
         }
     }
 
-    protected function publish()
+    protected function handlePublishes()
     {
         $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),

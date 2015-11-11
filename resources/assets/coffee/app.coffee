@@ -1,12 +1,20 @@
 do ($ = jQuery, window, document) ->
-    greetings =
-        production: """
+    outputFormater = (str, color) ->
+        str = str.replace("[", "&#91").replace("]", "&#93")
+        "[[;#{color};]#{str}]"
 
+    info = (str) ->
+        outputFormater str, "#008400"
+
+    comment = (str) ->
+        outputFormater str, "#a50"
+
+    greetings =
+        production: comment("""
 **************************************
 *     Application In Production!     *
 **************************************
-
-"""
+""")
 
     rpcAction = (endpoint, term, method, args) ->
         success = (response) ->
@@ -21,7 +29,7 @@ do ($ = jQuery, window, document) ->
             term.error message
 
         term.pause()
-        $.jrpc Terminal.endpoint.artisan, method, args, success, error
+        $.jrpc endpoint, method, args, success, error
 
     terminalConfirm = do ->
         parseBoolean = (result) ->
@@ -46,25 +54,35 @@ do ($ = jQuery, window, document) ->
     starts_with = (str, search) ->
         return str.indexOf(search) is 0
 
-    commandParser = (command, term, search) ->
+    interpreter = (command, term, search, callback =(() ->), prompt) ->
+        if command is search
+            unless prompt
+                prompt = search
+            term.push (command) ->
+                callback(prompt, command, term)
+                return
+            ,
+                prompt: "#{prompt}>"
+            return true
+        return false
+
+    execute = (command, term, search) ->
         cmd = $.terminal.parseCommand command.trim()
-        console.log cmd
         if cmd.name is search
             endpoint = Terminal.endpoint[search]
             params = cmd.args
             method = params.shift() || "list"
-
             if (search is "artisan" and Terminal.environment is "production" and $.inArray("--force", params) is -1) and (
                 (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
                 starts_with(method, "db:seed") is true
             )
-                terminalConfirm term, greetings.production, "Do you really wish to run this command? [y/N] (yes/no) [no]:"
+                terminalConfirm term, "\n#{greetings.production}\n", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
                     .done (result) ->
                         if result is true
                             params.push "--force"
                             rpcAction endpoint, term, method, params
                         else
-                            term.echo "\nCommand Cancelled!"
+                            term.echo "\n#{comment('Command Cancelled!')}\n"
             else
                 rpcAction endpoint, term, method, params
             return true
@@ -73,7 +91,14 @@ do ($ = jQuery, window, document) ->
     $(document.body).terminal (command, term) ->
         if command is ""
             return
-        unless commandParser command, term, "artisan"
+
+        if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
+            endpoint = Terminal.endpoint[prompt]
+            rpcAction endpoint, term, command, []
+        , "tinker") is true
+            return
+
+        else unless execute command, term, "artisan"
             term.error "Command '#{command}' Not Found!"
         return
     ,

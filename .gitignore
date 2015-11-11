@@ -2,4 +2,5 @@
 /resources/assets/vendor
 Homestead.yaml
 Homestead.json
+.composer.lock
 .env
