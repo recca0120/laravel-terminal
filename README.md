@@ -39,7 +39,7 @@ Update config/app.php
 ```
 
 ```php
-artisan vendor:publish public
+artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
 ```
 
 open url
