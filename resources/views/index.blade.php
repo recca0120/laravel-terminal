@@ -11,7 +11,8 @@
     <script>
         window.Terminal = {
             endpoint: {
-                artisan: "{{ route('terminal::artisan') }}"
+                artisan: "{{ route('terminal::artisan') }}",
+                tinker: "{{ route('terminal::tinker') }}",
             },
             environment: "{{ $environment }}",
             greetings: ""

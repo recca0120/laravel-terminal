@@ -20,6 +20,36 @@ class TerminalController extends Controller
         return view('terminal::index', compact('environment'));
     }
 
+    public function tinker(Request $request)
+    {
+        $result = null;
+        $error = null;
+
+        $id = $request->input('id');
+        $command = $request->input('method');
+        $parameters = $request->input('params');
+        $command .= ' '.implode(' ', $parameters);
+
+        try {
+            ob_start();
+            @eval('$result = '.$command);
+            var_dump($result);
+            $result = ob_get_contents();
+            ob_end_clean();
+        } catch (Exception $e) {
+            $result = false;
+            $error = $e->getMessage();
+        }
+
+        return response()->json([
+            'jsonrpc' => '2.0',
+            'result' => $result,
+            // 'result' => $command,
+            'id' => $id,
+            'error' => $error,
+        ]);
+    }
+
     public function artisan(Request $request)
     {
         return response()->stream(function () use ($request) {
