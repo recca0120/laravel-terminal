@@ -38,8 +38,10 @@ Update config/app.php
 ];
 ```
 
+### publish asset
+
 ```php
-artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
+artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider" --tag=public
 ```
 
 open url
