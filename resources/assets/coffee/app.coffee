@@ -1,6 +1,6 @@
 do ($ = jQuery, window, document) ->
     outputFormater = (str, color) ->
-        str = str.replace("[", "&#91").replace("]", "&#93")
+        str = str.replace("[", "&#91;").replace("]", "&#93;")
         "[[;#{color};]#{str}]"
 
     info = (str) ->
