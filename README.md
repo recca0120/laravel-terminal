@@ -38,6 +38,10 @@ Update config/app.php
 ];
 ```
 
+```php
+artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
+```
+
 open url
 http://localhost/path/to/terminal
 
