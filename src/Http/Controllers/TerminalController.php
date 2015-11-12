@@ -13,6 +13,12 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class TerminalController extends Controller
 {
+    private $outputFormatter;
+
+    public function __construct()
+    {
+        $this->outputFormatter = new OutputFormatter(true);
+    }
     public function index()
     {
         $environment = app()->environment();
@@ -24,18 +30,26 @@ class TerminalController extends Controller
     {
         $result = null;
         $error = null;
-
         $id = $request->input('id');
         $command = $request->input('method');
-        $parameters = $request->input('params');
-        $command .= ' '.implode(' ', $parameters);
-
+        $command = trim($command, ';').';';
         try {
             ob_start();
-            @eval('$result = '.$command);
-            var_dump($result);
-            $result = ob_get_contents();
-            ob_end_clean();
+            $returnValue = eval('return '.$command);
+            switch (gettype($returnValue)) {
+                case 'object':
+                case 'array':
+                    var_dump($returnValue);
+                    break;
+                case 'string':
+                    echo '<comment>"'.$returnValue.'"</comment>';
+                    break;
+                default:
+                    echo '<info>'.$returnValue.'</info>';
+                    break;
+            }
+            $result = ob_get_clean();
+            $result = '==> '.$this->outputFormatter->format($result);
         } catch (Exception $e) {
             $result = false;
             $error = $e->getMessage();
@@ -76,7 +90,7 @@ class TerminalController extends Controller
 
             try {
                 $parameters['command'] = $command;
-                $lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter());
+                $lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, $this->outputFormatter);
                 $exitCode = Artisan::handle(new ArrayInput($parameters), $lastOutput);
                 $result = $lastOutput->fetch();
                 // exit;

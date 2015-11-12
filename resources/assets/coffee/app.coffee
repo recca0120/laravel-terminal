@@ -1,12 +1,20 @@
 do ($ = jQuery, window, document) ->
-    greetings =
-        production: """
+    outputFormater = (str, color) ->
+        str = str.replace("[", "&#91").replace("]", "&#93")
+        "[[;#{color};]#{str}]"
 
+    info = (str) ->
+        outputFormater str, "#008400"
+
+    comment = (str) ->
+        outputFormater str, "#a50"
+
+    greetings =
+        production: comment("""
 **************************************
 *     Application In Production!     *
 **************************************
-
-"""
+""")
 
     rpcAction = (endpoint, term, method, args) ->
         success = (response) ->
@@ -51,7 +59,7 @@ do ($ = jQuery, window, document) ->
             unless prompt
                 prompt = search
             term.push (command) ->
-                callback("#{prompt} #{command}", term)
+                callback(prompt, command, term)
                 return
             ,
                 prompt: "#{prompt}>"
@@ -68,13 +76,13 @@ do ($ = jQuery, window, document) ->
                 (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
                 starts_with(method, "db:seed") is true
             )
-                terminalConfirm term, greetings.production, "Do you really wish to run this command? [y/N] (yes/no) [no]:"
+                terminalConfirm term, "\n#{greetings.production}\n", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
                     .done (result) ->
                         if result is true
                             params.push "--force"
                             rpcAction endpoint, term, method, params
                         else
-                            term.echo "\nCommand Cancelled!"
+                            term.echo "\n#{comment('Command Cancelled!')}\n"
             else
                 rpcAction endpoint, term, method, params
             return true
@@ -84,8 +92,9 @@ do ($ = jQuery, window, document) ->
         if command is ""
             return
 
-        if interpreter(command, term, "artisan tinker", (command, term) ->
-            execute command, term, "tinker"
+        if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
+            endpoint = Terminal.endpoint[prompt]
+            rpcAction endpoint, term, command, []
         , "tinker") is true
             return
 
