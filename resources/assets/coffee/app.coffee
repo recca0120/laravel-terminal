@@ -10,11 +10,24 @@ do ($ = jQuery, window, document) ->
         outputFormater str, "#a50"
 
     greetings =
-        production: comment("""
-**************************************
-*     Application In Production!     *
-**************************************
-""")
+        copyright: [
+            " __                        _    _____              _         _ "
+            "|  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |"
+            "|  |__| .'|  _| .'| | | -_| |    | || -_|  _|     | |   | .'| |"
+            "|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|"
+            ""
+            "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>"
+            ""
+        ].join "\n"
+
+
+        production: [
+            ""
+            comment("**************************************")
+            comment("*     Application In Production!     *")
+            comment("**************************************")
+            ""
+        ].join "\n"
 
     rpcAction = (endpoint, term, method, args) ->
         success = (response) ->
@@ -76,13 +89,13 @@ do ($ = jQuery, window, document) ->
                 (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
                 starts_with(method, "db:seed") is true
             )
-                terminalConfirm term, "\n#{greetings.production}\n", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
+                terminalConfirm term, "#{greetings.production}", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
                     .done (result) ->
                         if result is true
                             params.push "--force"
                             rpcAction endpoint, term, method, params
                         else
-                            term.echo "\n#{comment('Command Cancelled!')}\n"
+                            term.echo "\n#{comment('Command Cancelled!')}"
             else
                 rpcAction endpoint, term, method, params
             return true
@@ -102,5 +115,6 @@ do ($ = jQuery, window, document) ->
             term.error "Command '#{command}' Not Found!"
         return
     ,
+        greetings: greetings.copyright
         onBlur: ->
             false
