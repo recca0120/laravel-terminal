@@ -29,20 +29,29 @@ do ($ = jQuery, window, document) ->
             ""
         ].join "\n"
 
-    rpcAction = (endpoint, term, method, args) ->
-        success = (response) ->
-            term.resume()
-            if response.result is false
-                term.error response.error
-            else
-                term.echo response.result
-
-        error = (xhr, type, message) ->
-            term.resume()
-            term.error message
-
-        term.pause()
-        $.jrpc endpoint, method, args, success, error
+    request = do ->
+        ids = {}
+        (url, term, method, params) ->
+            ids[url] = ids[url] || 0;
+            term.pause()
+            $.ajax
+                url: url,
+                dataType: 'json'
+                type: 'post'
+                data:
+                    jsonrpc: "2.0"
+                    method: method
+                    params: params
+                    id: ++ids[url]
+            .success (response) ->
+                if response.result is false
+                    term.error response.error
+                else
+                    term.echo response.result
+            .error (xhr, type, message) ->
+                term.error message
+            .complete ->
+                term.resume()
 
     terminalConfirm = do ->
         parseBoolean = (result) ->
@@ -93,11 +102,11 @@ do ($ = jQuery, window, document) ->
                     .done (result) ->
                         if result is true
                             params.push "--force"
-                            rpcAction endpoint, term, method, params
+                            request endpoint, term, method, params
                         else
                             term.echo "\n#{comment('Command Cancelled!')}"
             else
-                rpcAction endpoint, term, method, params
+                request endpoint, term, method, params
             return true
         return false
 
@@ -107,7 +116,7 @@ do ($ = jQuery, window, document) ->
 
         if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
             endpoint = Terminal.endpoint[prompt]
-            rpcAction endpoint, term, command, []
+            request endpoint, term, command, []
         , "tinker") is true
             return
 
