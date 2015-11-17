@@ -13,6 +13,7 @@
             endpoint: {
                 artisan: "{{ route('terminal::artisan') }}",
                 tinker: "{{ route('terminal::tinker') }}",
+                mysql: "{{ route('terminal::mysql') }}"
             },
             environment: "{{ $environment }}",
             greetings: ""

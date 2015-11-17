@@ -16,6 +16,11 @@ get('/', [
     'uses' => 'TerminalController@index',
 ]);
 
+post('/mysql', [
+    'as' => 'mysql',
+    'uses' => 'TerminalController@mysql',
+]);
+
 post('/tinker', [
     'as' => 'tinker',
     'uses' => 'TerminalController@tinker',

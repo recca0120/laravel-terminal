@@ -3,10 +3,13 @@
 namespace Recca0120\Terminal\Http\Controllers;
 
 use Artisan;
+use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use PDO;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -23,6 +26,42 @@ class TerminalController extends Controller
         $environment = app()->environment();
 
         return view('terminal::index', compact('environment'));
+    }
+
+    public function mysql(Request $request)
+    {
+        $result = null;
+        $error = null;
+        $id = $request->input('id');
+        $command = $request->input('method');
+
+        try {
+            DB::setFetchMode(PDO::FETCH_ASSOC);
+            $rows = DB::select($command);
+            $headers = array_keys(array_get($rows, 0, []));
+
+            $lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, $this->outputFormatter);
+            $table = new Table($lastOutput);
+
+            $table
+                ->setHeaders($headers)
+                ->setRows($rows)
+                ->setStyle('default')
+                ->render();
+
+            $result = $lastOutput->fetch();
+        } catch (Exception $e) {
+            $result = false;
+            $error = $e->getMessage();
+        }
+
+        return response()->json([
+            'jsonrpc' => '2.0',
+            'result' => $result,
+            // 'result' => $command,
+            'id' => $id,
+            'error' => $error,
+        ]);
     }
 
     public function tinker(Request $request)

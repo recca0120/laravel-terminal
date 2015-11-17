@@ -114,7 +114,12 @@ do ($ = jQuery, window, document) ->
         if command is ""
             return
 
-        if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
+        if interpreter(command, term, "mysql", (prompt, command, term) ->
+            endpoint = Terminal.endpoint[prompt]
+            request endpoint, term, command, []
+        ) is true
+            return
+        else if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
             endpoint = Terminal.endpoint[prompt]
             request endpoint, term, command, []
         , "tinker") is true
