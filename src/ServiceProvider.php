@@ -11,12 +11,14 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(Router $router)
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-        $this->map($router);
-        $this->publish();
+        $this->publishAssets();
+        if (config('app.debug') === true) {
+            $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
+            $this->bootRoutes($router);
+        }
     }
 
-    protected function map($router)
+    protected function bootRoutes($router)
     {
         if ($this->app->routesAreCached() === false) {
             $prefix = 'terminal';
@@ -30,7 +32,7 @@ class ServiceProvider extends BaseServiceProvider
         }
     }
 
-    protected function publish()
+    protected function publishAssets()
     {
         $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),
