@@ -9,11 +9,13 @@ class ServiceProvider extends BaseServiceProvider
 {
     protected $namespace = 'Recca0120\Terminal\Http\Controllers';
 
-    public function boot(Router $router)
+    public function boot()
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-        $this->map($router);
         $this->publish();
+        if (config('app.debug') === true) {
+            $this->map(app('router'));
+            $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
+        }
     }
 
     protected function map($router)
