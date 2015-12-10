@@ -11,22 +11,22 @@
 |
 */
 
-get('/', [
+Route::get('/', [
     'as' => 'index',
     'uses' => 'TerminalController@index',
 ]);
 
-post('/mysql', [
+Route::post('/mysql', [
     'as' => 'mysql',
     'uses' => 'TerminalController@mysql',
 ]);
 
-post('/tinker', [
+Route::post('/tinker', [
     'as' => 'tinker',
     'uses' => 'TerminalController@tinker',
 ]);
 
-post('/artisan', [
+Route::post('/artisan', [
     'as' => 'artisan',
     'uses' => 'TerminalController@artisan',
 ]);
