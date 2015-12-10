@@ -11,17 +11,13 @@
 |
 */
 
-get('/', [
-    'as' => 'index',
-    'uses' => 'TerminalController@index',
-]);
+$middleware = [];
+if (method_exists(app(), 'bindShared') === false) {
+    $middleware = array_merge(['web'], $middleware);
+}
 
-post('/tinker', [
-    'as' => 'tinker',
-    'uses' => 'TerminalController@tinker',
-]);
-
-post('/artisan', [
-    'as' => 'artisan',
-    'uses' => 'TerminalController@artisan',
-]);
+Route::group(['middleware' => $middleware], function () {
+    // Route::controller('/', 'TerminalController');
+    Route::get('/', 'TerminalController@index');
+    Route::post('/response', 'TerminalController@rpcResponse');
+});

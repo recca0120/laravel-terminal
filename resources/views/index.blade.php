@@ -10,12 +10,8 @@
 <body>
     <script>
         window.Terminal = {
-            endpoint: {
-                artisan: "{{ route('terminal::artisan') }}",
-                tinker: "{{ route('terminal::tinker') }}",
-            },
             environment: "{{ $environment }}",
-            greetings: ""
+            endPoint: "{{ $endPoint }}",
         };
     </script>
     <script src="{{ asset('vendor/terminal/js/plugins.js') }}"></script>

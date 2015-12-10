@@ -24,14 +24,21 @@ elixir(function(mix) {
         .scripts([
             "jquery/dist/jquery.js",
             "jquery-mousewheel/jquery.mousewheel.js",
-            "jquery.terminal/js/jquery.terminal-0.8.8.js",
+            "jquery.terminal/js/jquery.terminal-src.js",
+            "jquery.terminal/js/unix_formatting.js",
+            "jquery.terminal/js/xml_formatting.js",
         ], config.get('public.js.outputFolder') + '/plugins.js', 'resources/assets/vendor')
         .sass([
             'app.scss'
-        ], config.get('public.css.outputFolder') + '/app.css')
+        ], config.get('public.css.outputFolder') + '/app.css', {
+            includePaths: ['resources/assets/vendor']
+        })
         .coffee([
             '**/*.coffee'
         ], config.get('public.js.outputFolder') + '/app.js')
+        .copy([
+            'public'
+        ], '../../../../vendor/terminal')
         .browserSync({
             files: [
                  'src/**/*.php',
