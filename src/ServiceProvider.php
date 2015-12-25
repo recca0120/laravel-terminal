@@ -11,14 +11,14 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(Router $router)
     {
-        $this->publishAssets();
+        $this->handlePublishes();
         if (config('app.debug') === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-            $this->bootRoutes($router);
+            $this->handleRoutes($router);
         }
     }
 
-    protected function bootRoutes($router)
+    protected function handleRoutes($router)
     {
         if ($this->app->routesAreCached() === false) {
             $middleware = [];
@@ -37,7 +37,7 @@ class ServiceProvider extends BaseServiceProvider
         }
     }
 
-    protected function publishAssets()
+    protected function handlePublishes()
     {
         $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),
