@@ -11,22 +11,29 @@
 |
 */
 
-Route::get('/', [
-    'as' => 'index',
-    'uses' => 'TerminalController@index',
-]);
+$middleware = [];
+if (method_exists(app(), 'bindShared') === false) {
+    $middleware = array_merge(['web'], $middleware);
+}
 
-Route::post('/mysql', [
-    'as' => 'mysql',
-    'uses' => 'TerminalController@mysql',
-]);
+Route::group(['middleware' => $middleware], function () {
+    Route::get('/', [
+        'as' => 'index',
+        'uses' => 'TerminalController@index',
+    ]);
 
-Route::post('/tinker', [
-    'as' => 'tinker',
-    'uses' => 'TerminalController@tinker',
-]);
+    Route::post('/mysql', [
+        'as' => 'mysql',
+        'uses' => 'TerminalController@mysql',
+    ]);
 
-Route::post('/artisan', [
-    'as' => 'artisan',
-    'uses' => 'TerminalController@artisan',
-]);
+    Route::post('/tinker', [
+        'as' => 'tinker',
+        'uses' => 'TerminalController@tinker',
+    ]);
+
+    Route::post('/artisan', [
+        'as' => 'artisan',
+        'uses' => 'TerminalController@artisan',
+    ]);
+});

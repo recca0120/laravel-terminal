@@ -21,16 +21,11 @@ class ServiceProvider extends BaseServiceProvider
     protected function handleRoutes($router)
     {
         if ($this->app->routesAreCached() === false) {
-            $middleware = [];
-            if (method_exists(app(), 'bindShared') === false) {
-                $middleware = array_merge(['web'], $middleware);
-            }
             $prefix = 'terminal';
             $group = $router->group([
                 'namespace' => $this->namespace,
                 'as' => 'terminal::',
                 'prefix' => $prefix,
-                'middleware' => $middleware,
             ], function () {
                 require __DIR__.'/Http/routes.php';
             });
