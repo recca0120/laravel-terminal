@@ -95,25 +95,28 @@ do ($ = jQuery, window, document) ->
             return true
         return false
 
-    execute = (command, term, search) ->
+    execute = (command, term, search, defaultMethod = null) ->
         cmd = $.terminal.parseCommand command.trim()
+        cmd.name = cmd.name.replace /^\.\//, ""
         if cmd.name is search
-            endpoint = Terminal.endpoint[search]
+            endPoint = Terminal.endPoints[search]
             params = cmd.args
-            method = params.shift() || "list"
+            method = params.shift()
+            if !method and defaultMethod isnt null
+                method = defaultMethod
             if (search is "artisan" and Terminal.environment is "production" and $.inArray("--force", params) is -1) and (
                 (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
                 starts_with(method, "db:seed") is true
             )
                 terminalConfirm term, "#{greetings.production}", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
                     .done (result) ->
-                        if result is true
+                        if result is false
                             params.push "--force"
-                            request endpoint, term, method, params
+                            request endPoint, term, method, params
                         else
                             term.echo "\n#{comment('Command Cancelled!')}"
             else
-                request endpoint, term, method, params
+                request endPoint, term, method, params
             return true
         return false
 
@@ -122,18 +125,23 @@ do ($ = jQuery, window, document) ->
             return
 
         if interpreter(command, term, "mysql", (prompt, command, term) ->
-            endpoint = Terminal.endpoint[prompt]
+            endPoint = Terminal.endPoints[prompt]
             request endpoint, term, command, []
         ) is true
             return
         else if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
-            endpoint = Terminal.endpoint[prompt]
-            request endpoint, term, command, []
+            endPoint = Terminal.endPoints[prompt]
+            request endPoint, term, command, []
         , "tinker") is true
             return
 
-        else unless execute command, term, "artisan"
-            term.error "Command '#{command}' Not Found!"
+        if execute command, term, "artisan", "list"
+            return
+
+        if execute command, term, "find"
+            return
+
+        term.error "Command '#{command}' Not Found!"
         return
     ,
         greetings: greetings.copyright

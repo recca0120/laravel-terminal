@@ -10,11 +10,7 @@
 <body>
     <script>
         window.Terminal = {
-            endpoint: {
-                artisan: "{{ route('terminal::artisan') }}",
-                tinker: "{{ route('terminal::tinker') }}",
-                mysql: "{{ route('terminal::mysql') }}"
-            },
+            endPoints: {!! $endPoints !!},
             environment: "{{ $environment }}",
             greetings: ""
         };

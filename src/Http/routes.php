@@ -17,23 +17,5 @@ if (method_exists(app(), 'bindShared') === false) {
 }
 
 Route::group(['middleware' => $middleware], function () {
-    Route::get('/', [
-        'as' => 'index',
-        'uses' => 'TerminalController@index',
-    ]);
-
-    Route::post('/mysql', [
-        'as' => 'mysql',
-        'uses' => 'TerminalController@mysql',
-    ]);
-
-    Route::post('/tinker', [
-        'as' => 'tinker',
-        'uses' => 'TerminalController@tinker',
-    ]);
-
-    Route::post('/artisan', [
-        'as' => 'artisan',
-        'uses' => 'TerminalController@artisan',
-    ]);
+    Route::controller('/', 'TerminalController');
 });
