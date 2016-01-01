@@ -3,7 +3,7 @@
 ## ScreenShot
 
 ### Available Commands
-![Available Commands](https://http://2.bp.blogspot.com/-weTE1ATHsCk/VoXQ3w1LBdI/AAAAAAAANtc/aoRrJcLDkPI/s320/Image%2B3.png)
+![Available Commands](http://3.bp.blogspot.com/-weTE1ATHsCk/VoXQ3w1LBdI/AAAAAAAANto/GICTx7uaUU8/s1600/Image%2B3.png)
 
 ### Find Command
 ![Find Command](http://2.bp.blogspot.com/-Cq6ZP7Q9aak/VoXQ3zlvxdI/AAAAAAAANtg/XkrAbxvB54c/s1600/Image%2B2.png)
@@ -58,6 +58,10 @@ Update config/app.php
 artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
 ```
 
+### URL
+
+http://localhost/path/to/terminal
+
 ### Whitelist
 ```php
 return [
@@ -74,7 +78,25 @@ not full support, but you can delete file use this function (please check file p
 find ./vendor -name tests -type d -maxdepth 4 -delete
 ```
 
-open url
-http://localhost/path/to/terminal
+### Add Your Command
 
+```php
+class TerminalController extends Controller {
+    // add command [rm]
+    public function postRm() {
+        $error = false;
+        $result = "";
+        $command = $this->request->get('method');
+        $parameters = $this->request->get('params', []);
 
+        $result = "response";
+
+        return $this->rpcResponse($result, $error);
+    }
+
+    // add command ls
+    public function postLs() {
+
+    }
+}
+```

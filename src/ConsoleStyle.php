@@ -40,33 +40,28 @@ class ConsoleStyle
         return static::$outputFormat;
     }
 
-    public static function applyFormat($text)
+    public static function applyFormat($text, $tagName)
     {
-        return static::getOutputFormat()->format($text);
-    }
-
-    private static function apply($text, $tagName)
-    {
-        return static::applyFormat('<'.$tagName.'>'.$text.'</'.$tagName.'>');
+        return static::getOutputFormat()->format('<'.$tagName.'>'.$text.'</'.$tagName.'>');
     }
 
     public static function error($text)
     {
-        return static::apply($text, __FUNCTION__);
+        return static::applyFormat($text, __FUNCTION__);
     }
 
     public static function info($text)
     {
-        return static::apply($text, __FUNCTION__);
+        return static::applyFormat($text, __FUNCTION__);
     }
 
     public static function comment($text)
     {
-        return static::apply($text, __FUNCTION__);
+        return static::applyFormat($text, __FUNCTION__);
     }
 
     public static function question($text)
     {
-        return static::apply($text, __FUNCTION__);
+        return static::applyFormat($text, __FUNCTION__);
     }
 }

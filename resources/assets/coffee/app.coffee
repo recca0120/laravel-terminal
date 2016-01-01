@@ -34,6 +34,26 @@ do ($ = jQuery, window, document) ->
     comment = (str) ->
         outputFormater str, "#a50"
 
+    Loading = do ->
+        anim = ["/", "|", "\\", "-"]
+        intervalId = null
+        delay = 50
+        defaultPrompt = null
+        show: (term) ->
+            term.disable()
+            defaultPrompt = term.get_prompt()
+            i = 0
+            intervalId = setInterval ->
+                term.set_prompt anim[i++]
+                if i > anim.length-1
+                    i = 0
+            , delay
+        hide: (term) ->
+            clearInterval intervalId
+            term.enable()
+            term.set_prompt defaultPrompt
+
+
     greetings =
         copyright: [
             " __                        _    _____              _         _ "
@@ -51,7 +71,6 @@ do ($ = jQuery, window, document) ->
             ""
         ].join "\n"
 
-
         production: [
             ""
             comment("**************************************")
@@ -63,10 +82,9 @@ do ($ = jQuery, window, document) ->
     request = do ->
         ids = {}
         (url, term, method, params) ->
-
-
             ids[url] = ids[url] || 0;
-            term.pause()
+            # term.pause()
+            Loading.show term
             $.ajax
                 url: url,
                 dataType: 'json'
@@ -84,7 +102,8 @@ do ($ = jQuery, window, document) ->
             .error (xhr, type, message) ->
                 term.error message
             .complete ->
-                term.resume()
+                Loading.hide term
+                # term.resume()
 
     terminalConfirm = do ->
         parseBoolean = (result) ->
@@ -149,6 +168,9 @@ do ($ = jQuery, window, document) ->
                 term.echo " "
                 term.echo showAvailableCommands()
                 term.echo " "
+                return
+            when "test"
+                window.term = term
                 return
             when ""
                 return
