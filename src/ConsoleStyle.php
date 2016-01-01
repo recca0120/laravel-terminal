@@ -41,21 +41,21 @@ class ConsoleStyle
 
     public static function error($text)
     {
-        return $this->apply($text, __FUNCTION__);
+        return static::apply($text, __FUNCTION__);
     }
 
     public static function info($text)
     {
-        return $this->apply($text, __FUNCTION__);
+        return static::apply($text, __FUNCTION__);
     }
 
     public static function comment($text)
     {
-        return $this->apply($text, __FUNCTION__);
+        return static::apply($text, __FUNCTION__);
     }
 
     public static function question($text)
     {
-        return $this->apply($text, __FUNCTION__);
+        return static::apply($text, __FUNCTION__);
     }
 }

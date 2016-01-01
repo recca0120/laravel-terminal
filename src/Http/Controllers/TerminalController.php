@@ -141,9 +141,9 @@ class TerminalController extends Controller
                         }
                     }
                     if ($deleted === true) {
-                        $result[$key] = $this->info($realPath.' deleted');
+                        $result[$key] = ConsoleStyle::info($realPath.' deleted');
                     } else {
-                        $result[$key] = $this->error($realPath.' isnt deleted');
+                        $result[$key] = ConsoleStyle::error($realPath.' isnt deleted');
                     }
                 }
             }
@@ -237,7 +237,7 @@ class TerminalController extends Controller
     protected function rpcResponse($result, $error)
     {
         if ($error === true) {
-            $result = $this->error($result);
+            $result = ConsoleStyle::error($result);
         }
 
         return response()->json([

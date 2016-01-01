@@ -14,6 +14,14 @@ do ($ = jQuery, window, document) ->
 
     executableCommands.sort()
 
+    showAvailableCommands = ->
+        temp = ["help", "clear"].concat executableCommands
+        temp.sort()
+        availableCommands = []
+        $.each temp, (i, command) ->
+            availableCommands.push info(command)
+        "#{comment('Available commands:')} #{availableCommands.join(", ")}"
+
     outputFormater = (str, color) ->
         str = str.replace("[", "&#91;").replace("]", "&#93;")
         "[[;#{color};]#{str}]"
@@ -33,6 +41,13 @@ do ($ = jQuery, window, document) ->
             ""
             "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>"
             ""
+            ""
+            ""
+            "Type a command, or type `#{info('help')}`, for a list of commands."
+            ""
+            "#{showAvailableCommands()}"
+            ""
+
         ].join "\n"
 
 
@@ -80,14 +95,14 @@ do ($ = jQuery, window, document) ->
 
             if message isnt ""
                 term.echo message
-            term.echo prompt
 
+            term.echo "#{prompt}\n>"
             term.push (command) ->
                 defer.resolve parseBoolean(command)
                 term.pop()
                 return
             ,
-                prompt: ">"
+                prompt: ""
             defer.promise()
 
     starts_with = (str, search) ->
@@ -130,7 +145,10 @@ do ($ = jQuery, window, document) ->
     $(document.body).terminal (command, term) ->
         switch command
             when "help"
-                return executableCommands.join "\t"
+                term.echo " "
+                term.echo showAvailableCommands()
+                term.echo " "
+                return
             when ""
                 return
             when "mysql"
