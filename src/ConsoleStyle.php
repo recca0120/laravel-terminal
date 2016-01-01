@@ -9,9 +9,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class ConsoleStyle
 {
+    protected static $outputFormat = null;
+
     public static function bufferedOutput(Closure $handle)
     {
-        $bufferedOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
+        $bufferedOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, static::getOutputFormat());
         $handle($bufferedOutput);
 
         return $bufferedOutput->fetch();
@@ -29,14 +31,23 @@ class ConsoleStyle
         });
     }
 
+    public static function getOutputFormat()
+    {
+        if (static::$outputFormat === null) {
+            static::$outputFormat = new OutputFormatter(true);
+        }
+
+        return static::$outputFormat;
+    }
+
     public static function applyFormat($text)
     {
-        return with(new OutputFormatter(true))->format($text);
+        return static::getOutputFormat()->format($text);
     }
 
     private static function apply($text, $tagName)
     {
-        return '<'.$tagName.'>'.$text.'</'.$tagName.'>';
+        return static::applyFormat('<'.$tagName.'>'.$text.'</'.$tagName.'>');
     }
 
     public static function error($text)

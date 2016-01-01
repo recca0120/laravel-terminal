@@ -11,7 +11,6 @@ do ($ = jQuery, window, document) ->
     $.each Terminal.endPoints, (key, url) ->
         if $.inArray(key, shouldSkipCommands) is -1
             executableCommands.push key
-
     executableCommands.sort()
 
     showAvailableCommands = ->
@@ -23,7 +22,10 @@ do ($ = jQuery, window, document) ->
         "#{comment('Available commands:')} #{availableCommands.join(", ")}"
 
     outputFormater = (str, color) ->
-        str = str.replace("[", "&#91;").replace("]", "&#93;")
+        str = str
+            .replace /&/g, "&amp;"
+            .replace /\[/g, "&#91;"
+            .replace /\]/g, "&#93;"
         "[[;#{color};]#{str}]"
 
     info = (str) ->
@@ -47,7 +49,6 @@ do ($ = jQuery, window, document) ->
             ""
             "#{showAvailableCommands()}"
             ""
-
         ].join "\n"
 
 
@@ -62,6 +63,7 @@ do ($ = jQuery, window, document) ->
     request = do ->
         ids = {}
         (url, term, method, params) ->
+
 
             ids[url] = ids[url] || 0;
             term.pause()
@@ -96,13 +98,14 @@ do ($ = jQuery, window, document) ->
             if message isnt ""
                 term.echo message
 
-            term.echo "#{prompt}\n>"
+            term.echo "#{prompt}"
             term.push (command) ->
                 defer.resolve parseBoolean(command)
                 term.pop()
                 return
             ,
-                prompt: ""
+                prompt: ">"
+
             defer.promise()
 
     starts_with = (str, search) ->
@@ -117,8 +120,6 @@ do ($ = jQuery, window, document) ->
             return false
         ,
             prompt: "#{prompt}>"
-
-
         return false
 
     execute = (cmd, term) ->
@@ -136,7 +137,7 @@ do ($ = jQuery, window, document) ->
                         params.push "--force"
                         request endPoint, term, method, params
                     else
-                        term.echo "\n#{comment('Command Cancelled!')}"
+                        term.echo "\n#{comment('Command Cancelled!')}\n"
             return
         else
             request endPoint, term, method, params

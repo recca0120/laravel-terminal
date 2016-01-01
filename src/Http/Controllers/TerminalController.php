@@ -199,7 +199,7 @@ class TerminalController extends Controller
                     break;
             }
             $result = ob_get_clean();
-            $result = '==> '.ConsoleStyle::applyFormat($result);
+            $result = '==> '.$result;
         } catch (Exception $e) {
             $result = false;
             $error = $e->getMessage();
