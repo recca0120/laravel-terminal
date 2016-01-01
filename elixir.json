@@ -1,8 +1,7 @@
 {
     "production": true,
     "sourcemaps": false,
-    "publicPath": "../../../../vendor/terminal",
-    "_publicPath": "public",
+    "publicPath": "public",
     "font": {
        "outputFolder": "fonts"
     },

@@ -6,6 +6,14 @@ do ($ = jQuery, window, document) ->
         headers:
             'X-CSRF-TOKEN': csrfToken
 
+    shouldSkipCommands = ["artisan tinker", "mysql", "tinker"]
+    executableCommands = ["mysql"]
+    $.each Terminal.endPoints, (key, url) ->
+        if $.inArray(key, shouldSkipCommands) is -1
+            executableCommands.push key
+
+    executableCommands.sort()
+
     outputFormater = (str, color) ->
         str = str.replace("[", "&#91;").replace("]", "&#93;")
         "[[;#{color};]#{str}]"
@@ -39,6 +47,7 @@ do ($ = jQuery, window, document) ->
     request = do ->
         ids = {}
         (url, term, method, params) ->
+
             ids[url] = ids[url] || 0;
             term.pause()
             $.ajax
@@ -71,78 +80,78 @@ do ($ = jQuery, window, document) ->
 
             if message isnt ""
                 term.echo message
+            term.echo prompt
 
             term.push (command) ->
                 defer.resolve parseBoolean(command)
                 term.pop()
                 return
             ,
-                prompt: prompt
+                prompt: ">"
             defer.promise()
 
     starts_with = (str, search) ->
         return str.indexOf(search) is 0
 
-    interpreter = (command, term, search, callback =(() ->), prompt) ->
-        if command is search
-            unless prompt
-                prompt = search
-            term.push (command) ->
-                callback(prompt, command, term)
-                return
-            ,
-                prompt: "#{prompt}>"
-            return true
+    interpreter = (command, term, callback =(() ->), prompt) ->
+        unless prompt
+            prompt = command
+
+        term.push (command) ->
+            callback(prompt, command, term)
+            return false
+        ,
+            prompt: "#{prompt}>"
+
+
         return false
 
-    execute = (command, term, search, defaultMethod = null) ->
-        cmd = $.terminal.parseCommand command.trim()
-        cmd.name = cmd.name.replace /^\.\//, ""
-        if cmd.name is search
-            endPoint = Terminal.endPoints[search]
-            params = cmd.args
-            method = params.shift()
-            if !method and defaultMethod isnt null
-                method = defaultMethod
-            if (search is "artisan" and Terminal.environment is "production" and $.inArray("--force", params) is -1) and (
-                (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
-                starts_with(method, "db:seed") is true
-            )
-                terminalConfirm term, "#{greetings.production}", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
-                    .done (result) ->
-                        if result is false
-                            params.push "--force"
-                            request endPoint, term, method, params
-                        else
-                            term.echo "\n#{comment('Command Cancelled!')}"
-            else
-                request endPoint, term, method, params
-            return true
-        return false
+    execute = (cmd, term) ->
+        endPoint = Terminal.endPoints[cmd.name]
+        params = cmd.args
+        method = params.shift() or []
+
+        if (cmd.name is "artisan" and Terminal.environment is "production" and $.inArray("--force", params) is -1) and (
+            (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
+            starts_with(method, "db:seed") is true
+        )
+            terminalConfirm term, "#{greetings.production}", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} &#91;#{comment('no')}&#93;: "
+                .done (result) ->
+                    if result is true
+                        params.push "--force"
+                        request endPoint, term, method, params
+                    else
+                        term.echo "\n#{comment('Command Cancelled!')}"
+            return
+        else
+            request endPoint, term, method, params
+        return
 
     $(document.body).terminal (command, term) ->
-        if command is ""
-            return
-
-        if interpreter(command, term, "mysql", (prompt, command, term) ->
-            endPoint = Terminal.endPoints[prompt]
-            request endpoint, term, command, []
-        ) is true
-            return
-        else if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
-            endPoint = Terminal.endPoints[prompt]
-            request endPoint, term, command, []
-        , "tinker") is true
-            return
-
-        if execute command, term, "artisan", "list"
-            return
-
-        if execute command, term, "find"
-            return
-
-        term.error "Command '#{command}' Not Found!"
-        return
+        switch command
+            when "help"
+                return executableCommands.join "\t"
+            when ""
+                return
+            when "mysql"
+                interpreter command, term, (prompt, command, term) ->
+                    endPoint = Terminal.endPoints[prompt]
+                    request endPoint, term, command, []
+                return
+            when "artisan tinker"
+                interpreter command, term, (prompt, command, term) ->
+                    endPoint = Terminal.endPoints[prompt]
+                    request endPoint, term, command, []
+                , "tinker"
+                return
+            else
+                cmd = $.terminal.parseCommand command.trim()
+                if $.inArray(cmd.name, executableCommands) isnt -1
+                    execute cmd, term
+                    return
+                else
+                    term.error "Command '#{command}' Not Found!"
+                    return
     ,
         greetings: greetings.copyright
         onBlur: ->
