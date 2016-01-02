@@ -17,5 +17,7 @@ if (method_exists(app(), 'bindShared') === false) {
 }
 
 Route::group(['middleware' => $middleware], function () {
-    Route::controller('/', 'TerminalController');
+    // Route::controller('/', 'TerminalController');
+    Route::get('/', 'TerminalController@index');
+    Route::post('/response', 'TerminalController@rpcResponse');
 });
