@@ -6,7 +6,8 @@
     "authors": [
         {
             "name": "recca0120",
-            "email": "recca0120@gmail.com"
+            "email": "recca0120@gmail.com",
+            "homepage": "http://phpwrite.blogspot.tw/"
         }
     ],
     "require": {
