@@ -1,7 +1,7 @@
 {
     "name": "recca0120/terminal",
     "description": "Laravel Artisan Terminal",
-    "keywords": ["laravel", "artisan", "terminal"],
+    "keywords": ["laravel", "artisan", "terminal", "web terminal", "console", "web console", "tinker", "find", "bash", "command"],
     "license": "MIT",
     "authors": [
         {
