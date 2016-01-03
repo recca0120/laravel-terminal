@@ -30,10 +30,10 @@ class Find extends Command
         $command = array_get($cmd, 'command');
 
         $str = strtr($command, [
-            ' -name' => ' -N',
-            ' -type' => ' -T',
+            ' -name'     => ' -N',
+            ' -type'     => ' -T',
             ' -maxdepth' => ' -M',
-            ' -delete' => ' -D true',
+            ' -delete'   => ' -D true',
         ]);
         $input = new ArgvInput(array_merge(['php'], preg_split('/\s+/', $str)));
 
@@ -50,7 +50,7 @@ class Find extends Command
     public function handle()
     {
         set_time_limit(0);
-        $finder = new Finder;
+        $finder = new Finder();
         // dump($this->argument(), $this->option());
 
         $path = $this->argument('path');
