@@ -78,25 +78,83 @@ not full support, but you can delete file use this function (please check file p
 find ./vendor -name tests -type d -maxdepth 4 -delete
 ```
 
-### Add Your Command
+## Add Your Command
 
+### Add Command Class
 ```php
-class TerminalController extends Controller {
-    // add command [rm]
-    public function postRm() {
-        $error = false;
-        $result = "";
-        $command = $this->request->get('method');
-        $parameters = $this->request->get('params', []);
+// src/Console/Commands/Mysql.php
 
-        $result = "response";
+namespace Recca0120\Terminal\Console\Commands;
 
-        return $this->rpcResponse($result, $error);
-    }
+use DB;
+use Illuminate\Console\Command;
+use PDO;
+use Recca0120\Terminal\Console\CommandOnly;
 
-    // add command ls
-    public function postLs() {
+class MySql extends Command
+{
+    use CommandOnly;
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'mysql';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'mysql';
+
+    public function handle()
+    {
+        $query = $this->rest();
+        DB::setFetchMode(PDO::FETCH_ASSOC);
+        $rows = DB::select($query);
+        $headers = array_keys(array_get($rows, 0, []));
+        $this->table($headers, $rows);
     }
 }
+```
+
+### Add Command
+```php
+// src/Console/Kernel.php
+namespace Recca0120\Terminal\Console;
+
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Recca0120\Terminal\Console\Application as Artisan;
+
+class Kernel extends ConsoleKernel
+{
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        Commands\Artisan::class,
+        Commands\ArtisanTinker::class,
+        Commands\Mysql::class,
+        Commands\Find::class,
+    ];
+
+    /**
+     * Get the Artisan application instance.
+     *
+     * @return \Illuminate\Console\Application
+     */
+    protected function getArtisan()
+    {
+        if (is_null($this->artisan)) {
+            return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
+                                ->resolveCommands($this->commands, true);
+        }
+
+        return $this->artisan;
+    }
+}
+
 ```

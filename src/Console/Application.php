@@ -6,18 +6,12 @@ use Illuminate\Console\Application as ConsoleApplication;
 
 class Application extends ConsoleApplication
 {
-    public function resolveCommands($commands)
+    public function resolveCommands($commands, $customCommand = false)
     {
-        foreach ($commands as $key => $command) {
-            if (strpos($command, __NAMESPACE__) !== 0) {
-                unset($commands[$key]);
-            }
+        if ($customCommand === false) {
+            return $this;
         }
 
-        if (count($commands) > 0) {
-            parent::resolveCommands($commands);
-        }
-
-        return $this;
+        return parent::resolveCommands($commands);
     }
 }

@@ -19,14 +19,13 @@ class TerminalController extends Controller
         $environment = $app->environment();
         $endPoint = action('\\'.static::class.'@rpcResponse');
 
-        return view('terminal::index2', compact('environment', 'endPoint'));
+        return view('terminal::index', compact('environment', 'endPoint'));
     }
 
     public function rpcResponse(Application $app, Request $request)
     {
         $cmd = $request->get('cmd');
         $argv = array_merge(['artisan', array_get($cmd, 'name')], array_get($cmd, 'args', []));
-
         $input = new ArgvInput($argv);
         $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
         $kernel = $app->make(Kernel::class);
@@ -37,7 +36,7 @@ class TerminalController extends Controller
         return response()->json([
             'jsonrpc' => $request->get('jsonrpc'),
             'id' => $request->get('id'),
-            'result' => $result."\n",
+            'result' => $result,
             'error' => $status,
         ]);
     }

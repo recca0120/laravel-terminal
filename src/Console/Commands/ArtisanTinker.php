@@ -1,0 +1,46 @@
+<?php
+
+namespace Recca0120\Terminal\Console\Commands;
+
+use Illuminate\Console\Command;
+use Recca0120\Terminal\Console\CommandOnly;
+
+class ArtisanTinker extends Command
+{
+    use CommandOnly;
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'artisan-tinker';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'artisn tinker';
+
+    public function handle()
+    {
+        $code = trim($this->rest(), ';').';';
+
+        ob_start();
+        $returnValue = eval('return '.$code);
+        switch (gettype($returnValue)) {
+            case 'object':
+            case 'array':
+                $this->line(var_export($returnValue, true));
+                break;
+            case 'string':
+                $this->comment($returnValue);
+                break;
+            default:
+                $this->info($returnValue);
+                break;
+        }
+        $result = ob_get_clean();
+        $this->line($result);
+    }
+}

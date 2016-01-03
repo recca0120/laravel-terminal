@@ -10,9 +10,8 @@
 <body>
     <script>
         window.Terminal = {
-            endPoints: {!! $endPoints !!},
             environment: "{{ $environment }}",
-            greetings: ""
+            endPoint: "{{ $endPoint }}",
         };
     </script>
     <script src="{{ asset('vendor/terminal/js/plugins.js') }}"></script>
