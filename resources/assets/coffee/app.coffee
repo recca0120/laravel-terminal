@@ -62,12 +62,13 @@ do ($ = jQuery, window, document) ->
                 when 'y', 'yes' then true
                 else false
 
-
         interpreter: (commandPrefix, term, prompt) =>
             unless prompt
                 prompt = commandPrefix
             term.push (command) =>
-                @execute term, "#{commandPrefix.replace(/\s+/g, '-')} #{command}"
+                command = command.trim()
+                if command
+                    @execute term, "#{commandPrefix.replace(/\s+/g, '-')} #{command}"
                 return false
             ,
                 prompt: "#{prompt}>"
@@ -84,7 +85,7 @@ do ($ = jQuery, window, document) ->
                     id: ++@ids[cmd.method]
                     cmd: cmd
             .success (response) =>
-                term.echo response.result.replace /Exception\]/, "Exception&#93;"
+                term.echo response.result.replace /(Exception|Error)\]/, "$1&#93;"
             .error (jqXhr, json, errorThrown) ->
                 term.error "#{jqXhr.status}: #{errorThrown}"
             .complete ->
@@ -117,16 +118,25 @@ do ($ = jQuery, window, document) ->
                     return
             @rpcRequest term, cmd
 
+        interpreters:
+            "mysql": "mysql"
+            "artisan tinker": "tinker"
+            "tinker": "tinker"
+
         execute: (term, command) =>
+            command = command.trim()
             switch command
                 when "help"
                     cmd = $.terminal.parseCommand "list"
                     @rpcRequest term, cmd
-                when "artisan tinker"
-                    @interpreter command, term, "tinker"
-                when "mysql"
-                    @interpreter command, term
+                when ""
+                    return
                 else
+                    for interpreter, prompt of @interpreters
+                        if command is interpreter
+                            @interpreter prompt, term
+                            return
+
                     cmd = $.terminal.parseCommand command.trim()
                     if @["command#{capitalize(cmd.name)}"]
                         @["command#{capitalize(cmd.name)}"](term, cmd)
@@ -158,4 +168,5 @@ do ($ = jQuery, window, document) ->
                 greetings: @greetings()
 
     new Term
+
 

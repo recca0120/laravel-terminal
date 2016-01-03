@@ -13,7 +13,7 @@ class ArtisanTinker extends Command
      *
      * @var string
      */
-    protected $signature = 'artisan-tinker';
+    protected $signature = 'tinker';
 
     /**
      * The console command description.
@@ -25,7 +25,7 @@ class ArtisanTinker extends Command
     public function handle()
     {
         $code = trim($this->rest(), ';').';';
-
+        $this->output->write("=> ");
         ob_start();
         $returnValue = eval('return '.$code);
         switch (gettype($returnValue)) {
@@ -34,13 +34,20 @@ class ArtisanTinker extends Command
                 $this->line(var_export($returnValue, true));
                 break;
             case 'string':
+                $this->info($returnValue);
+                break;
+            case 'number':
+            case 'integer':
+            case 'float':
                 $this->comment($returnValue);
                 break;
             default:
-                $this->info($returnValue);
+                $this->line($returnValue);
                 break;
         }
         $result = ob_get_clean();
-        $this->line($result);
+        if (empty($result) === false) {
+            $this->line(preg_replace("/(\n|\n\r)+/", "", $result));
+        }
     }
 }
