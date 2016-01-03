@@ -6,19 +6,6 @@ do ($ = jQuery, window, document) ->
         headers:
             'X-CSRF-TOKEN': csrfToken
 
-    outputFormater = (str, color) ->
-        str = str
-            .replace /&/g, "&amp;"
-            .replace /\[/g, "&#91;"
-            .replace /\]/g, "&#93;"
-        "[[;#{color};]#{str}]"
-
-    info = (str) ->
-        outputFormater str, "#008400"
-
-    comment = (str) ->
-        outputFormater str, "#a50"
-
     environment = window.Terminal.environment
     endPoint = window.Terminal.endPoint
     copyright = [
@@ -28,10 +15,6 @@ do ($ = jQuery, window, document) ->
         "|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|"
         ""
         "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>"
-        ""
-        ""
-        ""
-        "Type a command, or type `#{info('help')}`, for a list of commands."
         ""
         ""
     ].join "\n"
@@ -58,10 +41,19 @@ do ($ = jQuery, window, document) ->
 
     class Term
         ids: {},
-        toBoolean: (result) =>
-            return switch (result.toLowerCase())
-                when 'y', 'yes' then true
-                else false
+        line: (str, color) =>
+            str = str
+                .replace /&/g, "&amp;"
+                .replace /\[/g, "&#91;"
+                .replace /\]/g, "&#93;"
+            "[[;#{color};]#{str}]"
+
+        info: (str) =>
+            @line str, "#008400"
+
+        comment: (str) =>
+            @line str, "#a50"
+
         confirm: (term, message, title) =>
             deferred = $.Deferred()
             term.echo title
@@ -73,6 +65,12 @@ do ($ = jQuery, window, document) ->
             ,
                 prompt: ">"
             deferred.promise()
+
+        toBoolean: (result) =>
+            return switch (result.toLowerCase())
+                when 'y', 'yes' then true
+                else false
+
         interpreter: (commandPrefix, term, prompt) =>
             unless prompt
                 prompt = commandPrefix
@@ -94,7 +92,7 @@ do ($ = jQuery, window, document) ->
                     id: ++@ids[cmd.method]
                     cmd: cmd
             .success (response) =>
-                term.echo response.result
+                term.echo response.result.replace /Exception\]/, "Exception&#93;"
             .error (jqXhr, json, errorThrown) ->
                 term.error "#{jqXhr.status}: #{errorThrown}"
             .complete ->
@@ -107,12 +105,12 @@ do ($ = jQuery, window, document) ->
             cmd2 = $.terminal.parseCommand cmd.rest.trim()
             title = [
                 ""
-                comment("**************************************")
-                comment("*     Application In Production!     *")
-                comment("**************************************")
+                @comment("**************************************")
+                @comment("*     Application In Production!     *")
+                @comment("**************************************")
                 ""
             ].join "\n"
-            message = "#{info('Do you really wish to run this command? [y/N] (yes/no)')} #{comment('[no]')}: "
+            message = "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
 
             if environment is "production" and $.inArray("--force", cmd2.args) is -1
                 if (cmd2.name.indexOf("migrate") is 0 and cmd2.name.indexOf("migrate:status") is -1) or cmd2.name.indexOf("db:seed") is 0
@@ -122,7 +120,7 @@ do ($ = jQuery, window, document) ->
                                 @rpcRequest term, cmd
                             else
                                 term.echo " "
-                                term.echo "#{comment('Command Cancelled!')}"
+                                term.echo "#{@comment('Command Cancelled!')}"
                                 term.echo " "
                     return
             @rpcRequest term, cmd
