@@ -158,3 +158,13 @@ class Kernel extends ConsoleKernel
 }
 
 ```
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- github -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4164400566432410"
+     data-ad-slot="9584820886"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
