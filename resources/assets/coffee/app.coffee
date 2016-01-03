@@ -8,16 +8,6 @@ do ($ = jQuery, window, document) ->
 
     environment = window.Terminal.environment
     endPoint = window.Terminal.endPoint
-    copyright = [
-        " __                        _    _____              _         _ "
-        "|  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |"
-        "|  |__| .'|  _| .'| | | -_| |    | || -_|  _|     | |   | .'| |"
-        "|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|"
-        ""
-        "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>"
-        ""
-        ""
-    ].join "\n"
 
     Loading = do ->
         anim = ["/", "|", "\\", "-"]
@@ -41,6 +31,7 @@ do ($ = jQuery, window, document) ->
 
     class Term
         ids: {},
+
         line: (str, color) =>
             str = str
                 .replace /&/g, "&amp;"
@@ -70,6 +61,7 @@ do ($ = jQuery, window, document) ->
             return switch (result.toLowerCase())
                 when 'y', 'yes' then true
                 else false
+
 
         interpreter: (commandPrefix, term, prompt) =>
             unless prompt
@@ -142,12 +134,28 @@ do ($ = jQuery, window, document) ->
                         @rpcRequest term, cmd
             return
 
-    terminal = new Term
-    $(document.body).terminal (command, term) ->
-        terminal.execute(term, command)
-    ,
-        onInit: (term) ->
-            terminal.execute term, 'list'
-        onBlur: ->
-            false
-        greetings: copyright
+        greetings: =>
+            [
+                " __                        _    _____              _         _ "
+                "|  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |"
+                "|  |__| .'|  _| .'| | | -_| |    | || -_|  _|     | |   | .'| |"
+                "|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|"
+                ""
+                "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>"
+                ""
+                "Type a command, or type `#{@info('help')}`, for a list of commands."
+                ""
+            ].join "\n"
+
+        constructor: ->
+            $(document.body).terminal (command, term) =>
+                @execute(term, command)
+            ,
+                onInit: (term) =>
+                    @execute term, 'list'
+                onBlur: =>
+                    false
+                greetings: @greetings()
+
+    new Term
+

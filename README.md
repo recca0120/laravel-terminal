@@ -33,7 +33,7 @@ Update composer.json
 {
     "require": {
         ...
-        "recca0120/terminal": "~0.1"
+        "recca0120/terminal": "~2.0"
     },
 }
 ```

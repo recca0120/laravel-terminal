@@ -17,11 +17,11 @@ class Find extends Command
      * @var string
      */
     protected $signature = 'find
-        {path}
+        {path?}
         {--N|name= : -name alias -N}
         {--T|type= : -name alias -T}
         {--M|maxdepth= : -name alias -M}
-        {--D|delete=true : -name alias -D}
+        {--D|delete= : -name alias -D}
     ';
 
     public function run(InputInterface $input, OutputInterface $output)
@@ -33,7 +33,7 @@ class Find extends Command
             ' -name' => ' -N',
             ' -type' => ' -T',
             ' -maxdepth' => ' -M',
-            ' -delete' => ' -D',
+            ' -delete' => ' -D true',
         ]);
         $input = new ArgvInput(array_merge(['php'], preg_split('/\s+/', $str)));
 
@@ -49,6 +49,7 @@ class Find extends Command
 
     public function handle()
     {
+        set_time_limit(0);
         $finder = new Finder;
         // dump($this->argument(), $this->option());
 
@@ -58,7 +59,7 @@ class Find extends Command
         $maxDepth = $this->option('maxdepth');
         $delete = $this->option('delete');
 
-        if ($path === false) {
+        if ($path === null) {
             $path = base_path();
         } else {
             $path = base_path($path);
@@ -67,7 +68,7 @@ class Find extends Command
         $finder
             ->in($path);
 
-        if ($name !== false) {
+        if ($name !== null) {
             $finder->name($name);
         }
 
@@ -80,7 +81,7 @@ class Find extends Command
                 break;
         }
 
-        if ($maxDepth !== false) {
+        if ($maxDepth !== null) {
             if ($maxDepth == '0') {
                 $this->line($path);
 
