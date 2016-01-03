@@ -26,7 +26,7 @@ class Artisan extends Command
     protected $description = 'artisan';
 
     protected $notSupport = [
-        'down' => '',
+        'down'   => '',
         'tinker' => '',
     ];
 

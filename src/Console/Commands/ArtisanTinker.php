@@ -25,7 +25,7 @@ class ArtisanTinker extends Command
     public function handle()
     {
         $code = trim($this->rest(), ';').';';
-        $this->output->write("=> ");
+        $this->output->write('=> ');
         ob_start();
         $returnValue = eval('return '.$code);
         switch (gettype($returnValue)) {
@@ -47,7 +47,7 @@ class ArtisanTinker extends Command
         }
         $result = ob_get_clean();
         if (empty($result) === false) {
-            $this->line(preg_replace("/(\n|\n\r)+/", "", $result));
+            $this->line(preg_replace("/(\n|\n\r)+/", '', $result));
         }
     }
 }

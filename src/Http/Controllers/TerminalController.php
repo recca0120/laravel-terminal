@@ -35,9 +35,9 @@ class TerminalController extends Controller
 
         return response()->json([
             'jsonrpc' => $request->get('jsonrpc'),
-            'id' => $request->get('id'),
-            'result' => $result,
-            'error' => $status,
+            'id'      => $request->get('id'),
+            'result'  => $result,
+            'error'   => $status,
         ]);
     }
 }
