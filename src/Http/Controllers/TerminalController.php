@@ -2,107 +2,42 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Artisan;
-use Exception;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Recca0120\Terminal\Console\Kernel;
 use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class TerminalController extends Controller
 {
-    private $outputFormatter;
+    private $request;
 
-    public function __construct()
+    public function index(Application $app)
     {
-        $this->outputFormatter = new OutputFormatter(true);
-    }
-    public function index()
-    {
-        $environment = app()->environment();
+        $environment = $app->environment();
+        $endPoint    = action('\\'.static::class.'@rpcResponse');
 
-        return view('terminal::index', compact('environment'));
+        return view('terminal::index', compact('environment', 'endPoint'));
     }
 
-    public function tinker(Request $request)
+    public function rpcResponse(Application $app, Request $request)
     {
-        $result = null;
-        $error = null;
-        $id = $request->input('id');
-        $command = $request->input('method');
-        $command = trim($command, ';').';';
-        try {
-            ob_start();
-            $returnValue = eval('return '.$command);
-            switch (gettype($returnValue)) {
-                case 'object':
-                case 'array':
-                    var_dump($returnValue);
-                    break;
-                case 'string':
-                    echo '<comment>"'.$returnValue.'"</comment>';
-                    break;
-                default:
-                    echo '<info>'.$returnValue.'</info>';
-                    break;
-            }
-            $result = ob_get_clean();
-            $result = '==> '.$this->outputFormatter->format($result);
-        } catch (Exception $e) {
-            $result = false;
-            $error = $e->getMessage();
-        }
+        $cmd    = $request->get('cmd');
+        $argv   = array_merge(['artisan', array_get($cmd, 'name')], array_get($cmd, 'args', []));
+        $input  = new ArgvInput($argv);
+        $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
+        $kernel = $app->make(Kernel::class);
+        $status = $kernel->handle($input, $output);
+        $kernel->terminate($input, $status);
+        $result = $output->fetch();
 
         return response()->json([
-            'jsonrpc' => '2.0',
-            'result' => $result,
-            // 'result' => $command,
-            'id' => $id,
-            'error' => $error,
-        ]);
-    }
-
-    public function artisan(Request $request)
-    {
-        // set_time_limit(30);
-        $result = null;
-        $error = null;
-
-        $id = $request->input('id');
-        $command = $request->input('method');
-
-        $temp = array_map(function ($item) {
-            if (starts_with($item, '--') && strpos($item, '=') === false) {
-                $item .= '=default';
-            }
-
-            return $item;
-        }, $request->input('params', []));
-        $parameters = [];
-        foreach ($temp as $tmp) {
-            $explodeTmp = explode('=', $tmp);
-            $parameters[array_get($explodeTmp, 0)] = array_get($explodeTmp, 1, '');
-        }
-
-        try {
-            $parameters['command'] = $command;
-            $lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, $this->outputFormatter);
-            $exitCode = Artisan::handle(new ArrayInput($parameters), $lastOutput);
-            $result = $lastOutput->fetch();
-            // exit;
-            // $exitCode = Artisan::call($command, $parameters);
-            // $result = Artisan::output();
-        } catch (Exception $e) {
-            $result = false;
-            $error = $e->getMessage();
-        }
-
-        return response()->json([
-            'jsonrpc' => '2.0',
-            'result' => $result,
-            'id' => $id,
-            'error' => $error,
+            'jsonrpc' => $request->get('jsonrpc'),
+            'id'      => $request->get('id'),
+            'result'  => $result,
+            'error'   => $status,
         ]);
     }
 }

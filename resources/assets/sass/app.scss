@@ -1,5 +1,6 @@
-@import "resources/assets/vendor/jquery.terminal/css/jquery.terminal";
+@import "jquery.terminal/css/jquery.terminal";
 
 html, body {
     background: #000;
+    min-width: 480px;
 }

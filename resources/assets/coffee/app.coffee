@@ -1,106 +1,172 @@
 do ($ = jQuery, window, document) ->
-    outputFormater = (str, color) ->
-        str = str.replace("[", "&#91").replace("]", "&#93")
-        "[[;#{color};]#{str}]"
+    csrfToken = $ "meta[name='csrf-token']"
+        .attr "content"
 
-    info = (str) ->
-        outputFormater str, "#008400"
+    $.ajaxSetup
+        headers:
+            'X-CSRF-TOKEN': csrfToken
 
-    comment = (str) ->
-        outputFormater str, "#a50"
+    environment = window.Terminal.environment
+    endPoint = window.Terminal.endPoint
 
-    greetings =
-        production: comment("""
-**************************************
-*     Application In Production!     *
-**************************************
-""")
+    Loading = do ->
+        anim = ["/", "|", "\\", "-"]
+        intervalId = null
+        delay = 50
+        defaultPrompt = null
+        show: (term) ->
+            term.disable()
+            defaultPrompt = term.get_prompt()
+            i = 0
+            intervalId = setInterval ->
+                term.set_prompt anim[i++]
+                if i > anim.length-1
+                    i = 0
+            , delay
+        hide: (term) ->
+            clearInterval intervalId
+            term.enable()
+            term.set_prompt defaultPrompt
 
-    rpcAction = (endpoint, term, method, args) ->
-        success = (response) ->
-            term.resume()
-            if response.result is false
-                term.error response.error
-            else
-                term.echo response.result
 
-        error = (xhr, type, message) ->
-            term.resume()
-            term.error message
+    class Term
+        ids: {},
 
-        term.pause()
-        $.jrpc endpoint, method, args, success, error
+        line: (str, color) =>
+            str = str
+                .replace /&/g, "&amp;"
+                .replace /\[/g, "&#91;"
+                .replace /\]/g, "&#93;"
+            "[[;#{color};]#{str}]"
 
-    terminalConfirm = do ->
-        parseBoolean = (result) ->
+        info: (str) =>
+            @line str, "#008400"
+
+        comment: (str) =>
+            @line str, "#a50"
+
+        confirm: (term, message, title) =>
+            deferred = $.Deferred()
+            term.echo title
+            term.echo message
+            term.push (result) =>
+                deferred.resolve @toBoolean result
+                term.pop()
+                return
+            ,
+                prompt: ">"
+            deferred.promise()
+
+        toBoolean: (result) =>
             return switch (result.toLowerCase())
                 when 'y', 'yes' then true
                 else false
 
-        (term, message = "", prompt = ">") ->
-            defer = $.Deferred()
-
-            if message isnt ""
-                term.echo message
-
-            term.push (command) ->
-                defer.resolve parseBoolean(command)
-                term.pop()
-                return
-            ,
-                prompt: prompt
-            defer.promise()
-
-    starts_with = (str, search) ->
-        return str.indexOf(search) is 0
-
-    interpreter = (command, term, search, callback =(() ->), prompt) ->
-        if command is search
+        interpreter: (commandPrefix, term, prompt) =>
             unless prompt
-                prompt = search
-            term.push (command) ->
-                callback(prompt, command, term)
-                return
+                prompt = commandPrefix
+            term.push (command) =>
+                command = command.trim()
+                if command
+                    @execute term, "#{commandPrefix.replace(/\s+/g, '-')} #{command}"
+                return false
             ,
                 prompt: "#{prompt}>"
-            return true
-        return false
+            return false
+        rpcRequest: (term, cmd) =>
+            @ids[cmd.method] = @ids[cmd.method] || 0;
+            Loading.show term
+            $.ajax
+                url: endPoint,
+                dataType: 'json'
+                type: 'post'
+                data:
+                    jsonrpc: "2.0"
+                    id: ++@ids[cmd.method]
+                    cmd: cmd
+            .success (response) =>
+                term.echo response.result.replace /(Exception|Error)\]/, "$1&#93;"
+            .error (jqXhr, json, errorThrown) ->
+                term.error "#{jqXhr.status}: #{errorThrown}"
+            .complete ->
+                Loading.hide term
 
-    execute = (command, term, search) ->
-        cmd = $.terminal.parseCommand command.trim()
-        if cmd.name is search
-            endpoint = Terminal.endpoint[search]
-            params = cmd.args
-            method = params.shift() || "list"
-            if (search is "artisan" and Terminal.environment is "production" and $.inArray("--force", params) is -1) and (
-                (starts_with(method, "migrate") is true and starts_with(method, "migrate:status") is false) or
-                starts_with(method, "db:seed") is true
-            )
-                terminalConfirm term, "\n#{greetings.production}\n", "#{info('Do you really wish to run this command? [y/N] (yes/no)')} [#{comment('no')}]: "
-                    .done (result) ->
-                        if result is true
-                            params.push "--force"
-                            rpcAction endpoint, term, method, params
-                        else
-                            term.echo "\n#{comment('Command Cancelled!')}\n"
-            else
-                rpcAction endpoint, term, method, params
-            return true
-        return false
+        capitalize = (str) =>
+            "#{str.charAt(0).toUpperCase()}#{str.slice(1)}"
 
-    $(document.body).terminal (command, term) ->
-        if command is ""
+        commandArtisan: (term, cmd) =>
+            cmd2 = $.terminal.parseCommand cmd.rest.trim()
+            title = [
+                ""
+                @comment("**************************************")
+                @comment("*     Application In Production!     *")
+                @comment("**************************************")
+                ""
+            ].join "\n"
+            message = "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
+
+            if environment is "production" and $.inArray("--force", cmd2.args) is -1
+                if (cmd2.name.indexOf("migrate") is 0 and cmd2.name.indexOf("migrate:status") is -1) or cmd2.name.indexOf("db:seed") is 0
+                    @confirm term, message, title
+                        .done (result) =>
+                            if result is true
+                                @rpcRequest term, cmd
+                            else
+                                term.echo " "
+                                term.echo "#{@comment('Command Cancelled!')}"
+                                term.echo " "
+                    return
+            @rpcRequest term, cmd
+
+        interpreters:
+            "mysql": "mysql"
+            "artisan tinker": "tinker"
+            "tinker": "tinker"
+
+        execute: (term, command) =>
+            command = command.trim()
+            switch command
+                when "help"
+                    cmd = $.terminal.parseCommand "list"
+                    @rpcRequest term, cmd
+                when ""
+                    return
+                else
+                    for interpreter, prompt of @interpreters
+                        if command is interpreter
+                            @interpreter prompt, term
+                            return
+
+                    cmd = $.terminal.parseCommand command.trim()
+                    if @["command#{capitalize(cmd.name)}"]
+                        @["command#{capitalize(cmd.name)}"](term, cmd)
+                    else
+                        @rpcRequest term, cmd
             return
 
-        if interpreter(command, term, "artisan tinker", (prompt, command, term) ->
-            endpoint = Terminal.endpoint[prompt]
-            rpcAction endpoint, term, command, []
-        , "tinker") is true
-            return
+        greetings: =>
+            [
+                " __                        _    _____              _         _ "
+                "|  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |"
+                "|  |__| .'|  _| .'| | | -_| |    | || -_|  _|     | |   | .'| |"
+                "|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|"
+                ""
+                "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>"
+                ""
+                "Type a command, or type `#{@info('help')}`, for a list of commands."
+                ""
+            ].join "\n"
 
-        else unless execute command, term, "artisan"
-            term.error "Command '#{command}' Not Found!"
-        return
-    ,
-        onBlur: ->
-            false
+        constructor: ->
+            $(document.body).terminal (command, term) =>
+                @execute(term, command)
+            ,
+                onInit: (term) =>
+                    @execute term, 'list'
+                onBlur: =>
+                    false
+                greetings: @greetings()
+
+    new Term
+
+
