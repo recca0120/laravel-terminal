@@ -3,11 +3,10 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
-use Recca0120\Terminal\Console\CommandOnly;
 
 class ArtisanTinker extends Command
 {
-    use CommandOnly;
+    use Traits\CommandOnly;
     /**
      * The name and signature of the console command.
      *
@@ -24,7 +23,8 @@ class ArtisanTinker extends Command
 
     public function handle()
     {
-        $code = trim($this->rest(), ';').';';
+        $command = $this->argument('command');
+        $code = trim($command, ';').';';
         $this->output->write('=> ');
         ob_start();
         $returnValue = eval('return '.$code);

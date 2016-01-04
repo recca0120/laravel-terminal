@@ -24,7 +24,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         if ($this->app->routesAreCached() === false) {
             $prefix = 'terminal';
-            $group  = $router->group([
+            $group = $router->group([
                 'namespace' => $this->namespace,
                 'as'        => 'terminal::',
                 'prefix'    => $prefix,

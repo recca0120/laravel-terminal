@@ -4,13 +4,12 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ArtisanContract;
-use Recca0120\Terminal\Console\CommandOnly;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\StringInput;
 
 class Artisan extends Command
 {
-    use CommandOnly;
+    use Traits\CommandOnly;
     /**
      * The name and signature of the console command.
      *
@@ -38,25 +37,25 @@ class Artisan extends Command
 
     public function handle()
     {
-        $argv    = $this->argv();
-        $command = $this->command();
-        if (isset($this->notSupport[$command]) === true) {
+        $command = $this->argument('command');
+        if ($this->needForce($command) === true) {
+            $command .= ' --force';
+        }
+        $input = new StringInput($command);
+
+        if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
             throw new InvalidArgumentException('Command "'.$command.'" is not supported');
         }
-
-        if ($this->needForce($command, $argv) === true) {
-            array_push($argv, '--force');
-        }
-        $this->artisan->handle(new ArgvInput($argv), $this->getOutput());
+        $this->artisan->handle($input, $this->getOutput());
     }
 
-    protected function needForce($command, $argv)
+    protected function needForce($command)
     {
         return (
             (
                 starts_with($command, 'migrate') === true && starts_with($command, 'migrate:status') === false
             ) ||
             starts_with($command, 'db:seed') === true
-        ) && in_array('--force', $argv) === false;
+        ) && strpos('command', '--force') === false;
     }
 }

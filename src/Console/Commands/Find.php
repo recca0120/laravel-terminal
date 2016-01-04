@@ -26,7 +26,7 @@ class Find extends Command
 
     public function run(InputInterface $input, OutputInterface $output)
     {
-        $cmd     = app('request')->get('cmd');
+        $cmd = app('request')->get('cmd');
         $command = array_get($cmd, 'command');
 
         $str = strtr($command, [
@@ -85,14 +85,14 @@ class Find extends Command
     public function handle()
     {
         set_time_limit(0);
-        $finder = new Finder;
+        $finder = new Finder();
         // dump($this->argument(), $this->option());
 
-        $path     = $this->argument('path');
-        $name     = $this->option('name');
-        $type     = $this->option('type');
+        $path = $this->argument('path');
+        $name = $this->option('name');
+        $type = $this->option('type');
         $maxDepth = $this->option('maxdepth');
-        $delete   = $this->option('delete');
+        $delete = $this->option('delete');
 
         if ($path === null) {
             $path = base_path();
