@@ -6,7 +6,7 @@ use DB;
 use Illuminate\Console\Command;
 use PDO;
 
-class MySql extends Command
+class Mysql extends Command
 {
     use Traits\CommandOnly;
     /**
