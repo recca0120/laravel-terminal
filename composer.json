@@ -13,6 +13,11 @@
         "php": ">=5.4.0",
         "laravel/framework": "~5.0"
     },
+    "require-dev": {
+        "nesbot/carbon": "~1.20",
+        "mockery/mockery": "~0.9.2",
+        "phpunit/phpunit": "~4.1"
+    },
     "autoload": {
         "psr-4": {
             "Recca0120\\Terminal\\": "src/"

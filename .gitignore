@@ -1,6 +1,8 @@
-/node_modules
+/vendor
 /resources/assets/vendor
-Homestead.yaml
-Homestead.json
-.composer.lock
-.env
+/node_modules
+composer.phar
+composer.lock
+.php_cs.cache
+.DS_Store
+Thumbs.db

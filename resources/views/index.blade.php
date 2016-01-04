@@ -8,13 +8,14 @@
     <link href="{{ asset('vendor/terminal/css/app.css') }}" rel="stylesheet"/>
 </head>
 <body>
-    <script>
-        window.Terminal = {
-            environment: "{{ $environment }}",
-            endPoint: "{{ $endPoint }}",
-        };
-    </script>
     <script src="{{ asset('vendor/terminal/js/plugins.js') }}"></script>
     <script src="{{ asset('vendor/terminal/js/app.js') }}"></script>
-</body>
+    <script>
+    (function($) {
+        new Term(document.body, {
+            environment: "{{ $environment }}",
+            endPoint: "{{ $endPoint }}",
+        });
+    })(jQuery);
+    </script>
 </html>

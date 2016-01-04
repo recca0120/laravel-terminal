@@ -1,42 +1,46 @@
 # Laravel Terminal (Web Console)
 
+[![Latest Stable Version](https://poser.pugx.org/recca0120/terminal/v/stable)](https://packagist.org/packages/recca0120/terminal)
+[![Total Downloads](https://poser.pugx.org/recca0120/terminal/downloads)](https://packagist.org/packages/recca0120/terminal)
+[![Latest Unstable Version](https://poser.pugx.org/recca0120/terminal/v/unstable)](https://packagist.org/packages/recca0120/terminal)
+[![License](https://poser.pugx.org/recca0120/terminal/license)](https://packagist.org/packages/recca0120/terminal)
+
+[![Monthly Downloads](https://poser.pugx.org/recca0120/terminal/d/monthly)](https://packagist.org/packages/recca0120/terminal)
+[![Daily Downloads](https://poser.pugx.org/recca0120/terminal/d/daily)](https://packagist.org/packages/recca0120/terminal)
+
 ## Installation
 
-```
-composer require recca0120/terminal
-```
+Add Presenter to your composer.json file:
 
-OR
-
-Update composer.json
-```
-{
-    "require": {
-        ...
-        "recca0120/terminal": "~2.0"
-    },
+```js
+"require": {
+    "recca0120/terminal": "~2.0.5"
 }
 ```
-
-Require this package with composer:
+Now, run a composer update on the command line from the root of your project:
 
 ```
 composer update
 ```
-### Laravel 5.1:
 
-Update config/app.php
+### Registering the Package
+
+Include the service provider within `app/config/app.php`. The service povider is needed for the generator artisan command.
 
 ```php
 'providers' => [
     ...
     Recca0120\Terminal\ServiceProvider::class,
+    ...
 ];
 ```
+
+publish
 
 ```php
 artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
 ```
+
 
 ### URL
 

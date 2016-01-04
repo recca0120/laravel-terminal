@@ -4,8 +4,8 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use File;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -18,33 +18,30 @@ class Find extends Command
      */
     protected $signature = 'find
         {path?}
-        {--N|name= : -name alias -N}
-        {--T|type= : -type alias -T}
+        {--T|type= : File is of type c: [f, d]}
+        {--N|name= : Base of file name (the path with the leading directories removed) matches shell pattern pattern.  The metacharacters (`*\', `?\', and `[]\') match a `.\' at  the  start of  the  base name (this is a change in findutils-4.2.2; see section STANDARDS CONFORMANCE below).  To ignore a directory and the files under it, use -prune; see an example in the description of -path.  Braces are not recognised as being special, despite the fact that some shells including Bash imbue braces with a special meaning in shell patterns.  The filename matching is performed with the use of the fnmatch(3) library function.   Don\'t forget to enclose the pattern in quotes in order to protect it from expansion by the shell.}
         {--M|maxdepth= : -maxdepth alias -M}
-        {--D|delete= : -delete alias -D}
+        {--d|delete= : Delete files; true if removal succeeded.  If the removal failed, an error message is issued.  If -delete fails, find\'s exit status will be nonzervagranto (when it  eventually exits).  Use of -delete automatically turns on the -depth option.}
     ';
 
     public function run(InputInterface $input, OutputInterface $output)
     {
         $cmd = app('request')->get('cmd');
         $command = array_get($cmd, 'command');
-
-        $str = strtr($command, [
+        $command = strtr($command, [
             ' -name'     => ' -N',
             ' -type'     => ' -T',
             ' -maxdepth' => ' -M',
-            ' -delete'   => ' -D true',
+            ' -delete'   => ' -d true',
         ]);
-        $input = new ArgvInput(array_merge(['php'], preg_split('/\s+/', $str)));
+        $input = new StringInput($command);
 
         return parent::run($input, $output);
     }
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    // {--P|P : Never follow symbolic links.  This is the default behaviour.  When find examines or prints information a file, and the file is a symbolic link, the information used shall be taken from the properties of the symbolic link itself.}
+    // {--L|L : Follow  symbolic links.  When find examines or prints information about files, the information used shall be taken from the properties of the file to which the link points, not from the link itself (unless it is a broken symbolic link or find is unable to examine the file to which the link points).  Use of this  option  impliesnoleaf.   If  you  later  use  the  -P option, -noleaf will still be in effect.  If -L is in effect and find discovers a symbolic link to a subdirectory during its search, the subdirectory pointed to by the symbolic link will be searched. (unless the symbolic link is broken).  Using -L causes the -lname and -ilname predicates always to return false.}
+    // {--H|H : Do  not follow symbolic links, except while processing the command line arguments.  When find examines or prints information about files, the information used shall be taken from the properties of the symbolic link itself.   The only exception to this behaviour is when a file specified on the command line is  a  symbolic  link, and  the link can be resolved.  For that situation, the information used is taken from whatever the link points to (that is, the link is followed).  The information about the link itself is used as a fallback if the file pointed to by the symbolic link cannot be examined.  If -H is in effect and one of the  paths  specified  on the command line is a symbolic link to a directory, the contents of that directory will be examined (though of course -maxdepth 0 would prevent this).}
 
     // Usage: find [-H] [-L] [-P] [-Olevel] [-D help|tree|search|stat|rates|opt|exec] [path...] [expression]
 
@@ -80,6 +77,11 @@ class Find extends Command
     // page at http://savannah.gnu.org/ or, if you have no web access, by sending
     // email to <bug-findutils@gnu.org>.
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'search for files in a directory hierarchy';
 
     public function handle()

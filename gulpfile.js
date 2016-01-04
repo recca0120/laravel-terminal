@@ -47,5 +47,9 @@ elixir(function(mix) {
                  config.get('public.js.outputFolder')+'/**/*.js',
             ],
             proxy: 'http://127.0.0.1/laravel/'
-        });
+        }).phpUnit([
+            'src/**/*.php',
+            'resources/views/**/*.php',
+            'tests/**/*'
+        ]);
 });

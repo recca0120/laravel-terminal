@@ -6,9 +6,6 @@ do ($ = jQuery, window, document) ->
         headers:
             'X-CSRF-TOKEN': csrfToken
 
-    environment = window.Terminal.environment
-    endPoint = window.Terminal.endPoint
-
     Loading = do ->
         anim = ["/", "|", "\\", "-"]
         intervalId = null
@@ -123,7 +120,7 @@ do ($ = jQuery, window, document) ->
 
     formatter = new OutputFormatter;
 
-    class Term
+    class @Term
         ids: {},
         colors: $.terminal.ansi_colors
         color: (color, background, type = "bold") =>
@@ -176,7 +173,7 @@ do ($ = jQuery, window, document) ->
             @ids[cmd.method] = @ids[cmd.method] || 0;
             Loading.show term
             $.ajax
-                url: endPoint,
+                url: @options.endPoint,
                 dataType: 'json'
                 type: 'post'
                 data:
@@ -204,7 +201,7 @@ do ($ = jQuery, window, document) ->
             ].join "\n"
             message = "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
 
-            if environment is "production" and $.inArray("--force", cmd2.args) is -1
+            if @options.environment is "production" and $.inArray("--force", cmd2.args) is -1
                 if (cmd2.name.indexOf("migrate") is 0 and cmd2.name.indexOf("migrate:status") is -1) or cmd2.name.indexOf("db:seed") is 0
                     @confirm term, message, title
                         .done (result) =>
@@ -256,8 +253,8 @@ do ($ = jQuery, window, document) ->
                 ""
             ].join "\n"
 
-        constructor: ->
-            $(document.body).terminal (command, term) =>
+        constructor: (element, @options)->
+            $(element).terminal (command, term) =>
                 @execute(term, command)
             ,
                 onInit: (term) =>
@@ -265,7 +262,4 @@ do ($ = jQuery, window, document) ->
                 onBlur: =>
                     false
                 greetings: @greetings()
-
-    new Term
-
 

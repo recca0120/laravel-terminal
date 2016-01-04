@@ -22,7 +22,7 @@ class Artisan extends Command
      *
      * @var string
      */
-    protected $description = 'It provides a number of helpful commands for your use while developing your application.';
+    protected $description = 'artisan';
 
     protected $notSupport = [
         'down'   => '',
