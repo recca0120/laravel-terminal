@@ -4,7 +4,6 @@
 [![Total Downloads](https://poser.pugx.org/recca0120/terminal/downloads)](https://packagist.org/packages/recca0120/terminal)
 [![Latest Unstable Version](https://poser.pugx.org/recca0120/terminal/v/unstable)](https://packagist.org/packages/recca0120/terminal)
 [![License](https://poser.pugx.org/recca0120/terminal/license)](https://packagist.org/packages/recca0120/terminal)
-
 [![Monthly Downloads](https://poser.pugx.org/recca0120/terminal/d/monthly)](https://packagist.org/packages/recca0120/terminal)
 [![Daily Downloads](https://poser.pugx.org/recca0120/terminal/d/daily)](https://packagist.org/packages/recca0120/terminal)
 

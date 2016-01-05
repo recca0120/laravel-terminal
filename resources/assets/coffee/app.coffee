@@ -95,7 +95,6 @@ do ($ = jQuery, window, document) ->
             text = text
                 .replace re, =>
                     m = arguments
-                    console.log m
                     return switch
                         when $.inArray(m[0], ["[", "]"]) isnt -1
                             $.terminal.escape_brackets m[0]
@@ -107,7 +106,6 @@ do ($ = jQuery, window, document) ->
                                 when m[2] is "33"
                                     @comment content
                                 when m[2] is "37"
-                                    console.log 123
                                     @error content
                                 else
                                     m[0]
