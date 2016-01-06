@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
+use Exception;
 use File;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -130,15 +131,18 @@ class Find extends Command
         foreach ($finder as $file) {
             $realPath = $file->getRealpath();
             if ($delete === 'true' && File::exists($realPath) === true) {
-                if (File::isDirectory($realPath) === true) {
-                    $deleted = File::deleteDirectory($realPath);
-                } else {
-                    $deleted = File::delete($realPath);
+                try {
+                    if (File::isDirectory($realPath) === true) {
+                        $deleted = File::deleteDirectory($realPath, true);
+                    } else {
+                        $deleted = File::delete($realPath);
+                    }
+                } catch (Exception $e) {
                 }
                 if ($deleted === true) {
-                    $this->info($realPath.' deleted');
+                    $this->info('removed '.$realPath);
                 } else {
-                    $this->error($realPath.' isn\'t deleted');
+                    $this->error('removed '.$realPath.' fail');
                 }
             } else {
                 $this->line($file->getRealpath());

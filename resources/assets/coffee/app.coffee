@@ -260,4 +260,3 @@ do ($ = jQuery, window, document) ->
                 onBlur: =>
                     false
                 greetings: @greetings()
-
