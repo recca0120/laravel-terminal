@@ -2,8 +2,8 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use DB;
 use Illuminate\Console\Command;
+use Illuminate\Database\Connection;
 use PDO;
 
 class Mysql extends Command
@@ -23,11 +23,11 @@ class Mysql extends Command
      */
     protected $description = 'mysql';
 
-    public function handle()
+    public function handle(Connection $connection)
     {
-        DB::setFetchMode(PDO::FETCH_ASSOC);
+        $connection->setFetchMode(PDO::FETCH_ASSOC);
         $query = $this->argument('command');
-        $rows = DB::select($query);
+        $rows = $connection->select($query);
         $headers = array_keys(array_get($rows, 0, []));
         $this->table($headers, $rows);
     }
