@@ -22,13 +22,12 @@ class TerminalController extends Controller
         return view('terminal::index', compact('environment', 'endPoint'));
     }
 
-    public function rpcResponse(Application $app, Request $request)
+    public function rpcResponse(Kernel $kernel, Request $request)
     {
         $cmd = $request->get('cmd');
         $argv = array_merge(['artisan', array_get($cmd, 'name')], array_get($cmd, 'args', []));
         $input = new ArgvInput($argv);
         $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
-        $kernel = $app->make(Kernel::class);
         $status = $kernel->handle($input, $output);
         $kernel->terminate($input, $status);
 
