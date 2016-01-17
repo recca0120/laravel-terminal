@@ -25,6 +25,12 @@ class Find extends Command
         {--d|delete= : Delete files; true if removal succeeded.  If the removal failed, an error message is issued.  If -delete fails, find\'s exit status will be nonzervagranto (when it  eventually exits).  Use of -delete automatically turns on the -depth option.}
     ';
 
+    /**
+     * [run description].
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return \Symfony\Component\Console\Input\StringInput
+     */
     public function run(InputInterface $input, OutputInterface $output)
     {
         $cmd = app('request')->get('cmd');
@@ -47,6 +53,12 @@ class Find extends Command
      */
     protected $description = 'search for files in a directory hierarchy';
 
+    /**
+     * handle.
+     *
+     * @param  \Illuminate\Database\Connection $connection
+     * @return void
+     */
     public function handle(Filesystem $filesystem)
     {
         // set_time_limit(30);

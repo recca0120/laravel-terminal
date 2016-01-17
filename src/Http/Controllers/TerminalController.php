@@ -12,8 +12,12 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class TerminalController extends Controller
 {
-    private $request;
-
+    /**
+     * index.
+     *
+     * @param  \Illuminate\Foundation\Application $app
+     * @return mixed
+     */
     public function index(Application $app)
     {
         $environment = $app->environment();
@@ -22,6 +26,13 @@ class TerminalController extends Controller
         return view('terminal::index', compact('environment', 'endPoint'));
     }
 
+    /**
+     * rpc response.
+     *
+     * @param  \Recca0120\Terminal\Console\Kernel $kernel
+     * @param  \Illuminate\Http\Request $request [description]
+     * @return mixed
+     */
     public function rpcResponse(Kernel $kernel, Request $request)
     {
         $cmd = $request->get('cmd');

@@ -10,11 +10,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 trait CommandOnly
 {
+    /**
+     * get command.
+     *
+     * @return string
+     */
     protected function command()
     {
         return $this->argument('command');
     }
 
+    /**
+     * change to array input.
+     * @param  \Symfony\Component\Console\Input\InputInterface $input
+     * @param  \Symfony\Component\Console\Output\OutputInterface $output
+     * @return [\Symfony\Component\Console\Input\InputInterface
+     */
     public function run(InputInterface $input, OutputInterface $output)
     {
         $input = new ArrayInput([

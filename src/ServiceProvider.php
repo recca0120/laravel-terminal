@@ -8,19 +8,37 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
+    /**
+     * namespace.
+     *
+     * @var string
+     */
     protected $namespace = 'Recca0120\Terminal\Http\Controllers';
 
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
     public function boot(Router $router, Request $request)
     {
         $this->handlePublishes();
 
-        if (in_array($request->getClientIp(), config('terminal.whitelists', [])) === true || config('app.debug') === true) {
+        if (in_array($request->getClientIp(), config('terminal.whitelists', [])) === true ||
+            config('app.debug') === true
+        ) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router);
         }
     }
 
-    protected function handleRoutes($router)
+    /**
+     * handle routes.
+     *
+     * @param  \Illuminate\Routing\Router $router
+     * @return void
+     */
+    protected function handleRoutes(Router $router)
     {
         if ($this->app->routesAreCached() === false) {
             $prefix = 'terminal';
@@ -34,6 +52,11 @@ class ServiceProvider extends BaseServiceProvider
         }
     }
 
+    /**
+     * handle publishes.
+     *
+     * @return void
+     */
     protected function handlePublishes()
     {
         $this->publishes([
@@ -51,6 +74,11 @@ class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
     }
 
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
     public function register()
     {
     }

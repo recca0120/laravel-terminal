@@ -24,17 +24,33 @@ class Artisan extends Command
      */
     protected $description = 'artisan';
 
+    /**
+     * no support array.
+     *
+     * @var array
+     */
     protected $notSupport = [
         'down'   => '',
         'tinker' => '',
     ];
 
+    /**
+     * construct.
+     *
+     * @param \Illuminate\Contracts\Console\Kernel $artisan
+     */
     public function __construct(ArtisanContract $artisan)
     {
         parent::__construct();
         $this->artisan = $artisan;
     }
 
+    /**
+     * handle.
+     *
+     * @param  \Illuminate\Database\Connection $connection
+     * @return void
+     */
     public function handle()
     {
         $command = $this->argument('command');
@@ -49,6 +65,12 @@ class Artisan extends Command
         $this->artisan->handle($input, $this->getOutput());
     }
 
+    /**
+     * need focre option.
+     *
+     * @param  string $command
+     * @return bool
+     */
     protected function needForce($command)
     {
         return (

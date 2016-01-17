@@ -23,6 +23,12 @@ class Mysql extends Command
      */
     protected $description = 'mysql';
 
+    /**
+     * handle.
+     *
+     * @param  \Illuminate\Database\Connection $connection
+     * @return void
+     */
     public function handle(Connection $connection)
     {
         $connection->setFetchMode(PDO::FETCH_ASSOC);
