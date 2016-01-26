@@ -39,6 +39,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
         $this->app->call([$this, 'registerRoutes']);
     }
 
@@ -80,7 +81,5 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             __DIR__.'/../public' => public_path('vendor/terminal'),
         ], 'public');
-
-        $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
     }
 }
