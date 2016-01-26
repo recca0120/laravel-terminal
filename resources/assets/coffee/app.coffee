@@ -116,10 +116,9 @@ do ($ = jQuery, window, document) ->
                     term.echo line
             text
 
-    formatter = new OutputFormatter;
-
     class @Term
         ids: {},
+        formatter: new OutputFormatter
         colors: $.terminal.ansi_colors
         color: (color, background, type = "bold") =>
             if @colors[type] and @colors[type][color]
@@ -128,16 +127,16 @@ do ($ = jQuery, window, document) ->
                 return color
 
         error: (text) =>
-            formatter.error text
+            @formatter.error text
 
         info: (text) =>
-            formatter.info text
+            @formatter.info text
 
         comment: (text) =>
-            formatter.comment text
+            @formatter.comment text
 
         question: (text) =>
-            formatter.question text
+            @formatter.question text
 
         confirm: (term, message, title) =>
             deferred = $.Deferred()
@@ -179,9 +178,9 @@ do ($ = jQuery, window, document) ->
                     id: ++@ids[cmd.method]
                     cmd: cmd
             .success (response) =>
-                formatter.apply(response.result, term)
+                @formatter.apply(response.result, term)
             .error (jqXhr, json, errorThrown) ->
-                formatter.error("#{jqXhr.status}: #{errorThrown}", term)
+                @formatter.error("#{jqXhr.status}: #{errorThrown}", term)
             .complete ->
                 Loading.hide term
 
@@ -220,9 +219,8 @@ do ($ = jQuery, window, document) ->
         execute: (term, command) =>
             command = command.trim()
             switch command
-                when "help"
-                    cmd = $.terminal.parseCommand "list"
-                    @rpcRequest term, cmd
+                when "help", "list"
+                    @formatter.apply @options.defaultResponse.result, term
                 when ""
                     return
                 else

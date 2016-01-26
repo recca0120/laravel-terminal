@@ -18,12 +18,14 @@ class TerminalController extends Controller
      * @param  \Illuminate\Foundation\Application $app
      * @return mixed
      */
-    public function index(Application $app)
+    public function index(Application $app, Kernel $kernel, Request $request)
     {
         $environment = $app->environment();
         $endPoint = action('\\'.static::class.'@rpcResponse');
 
-        return view('terminal::index', compact('environment', 'endPoint'));
+        $defaultResponse = $this->rpcResponse($kernel, $request)->content();
+
+        return view('terminal::index', compact('environment', 'endPoint', 'defaultResponse'));
     }
 
     /**
