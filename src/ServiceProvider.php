@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal;
 
+use Illuminate\Contracts\Config\Repository as RepositoryContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -20,25 +21,34 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @return void
      */
-    public function boot(Router $router, Request $request)
+    public function boot(Request $request, RepositoryContract $config)
     {
         $this->handlePublishes();
 
-        if (in_array($request->getClientIp(), config('terminal.whitelists', [])) === true ||
+        if (in_array($request->getClientIp(), $config->get('terminal.whitelists', [])) === true ||
             config('app.debug') === true
         ) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-            $this->handleRoutes($router);
         }
     }
 
     /**
-     * handle routes.
+     * Register any application services.
      *
-     * @param  \Illuminate\Routing\Router $router
      * @return void
      */
-    protected function handleRoutes(Router $router)
+    public function register()
+    {
+        $this->app->call([$this, 'registerRoutes']);
+    }
+
+    /**
+     * register routes.
+     *
+     * @param  Illuminate\Routing\Router $router
+     * @return void
+     */
+    public function registerRoutes(Router $router)
     {
         if ($this->app->routesAreCached() === false) {
             $prefix = 'terminal';
@@ -72,14 +82,5 @@ class ServiceProvider extends BaseServiceProvider
         ], 'public');
 
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
     }
 }
