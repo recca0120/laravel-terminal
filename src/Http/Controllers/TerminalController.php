@@ -15,7 +15,8 @@ class TerminalController extends Controller
     /**
      * index.
      *
-     * @param  \Illuminate\Foundation\Application $app
+     * @param \Illuminate\Foundation\Application $app
+     *
      * @return mixed
      */
     public function index(Application $app, Kernel $kernel, Request $request)
@@ -31,8 +32,9 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param  \Recca0120\Terminal\Console\Kernel $kernel
-     * @param  \Illuminate\Http\Request $request [description]
+     * @param \Recca0120\Terminal\Console\Kernel $kernel
+     * @param \Illuminate\Http\Request           $request [description]
+     *
      * @return mixed
      */
     public function rpcResponse(Kernel $kernel, Request $request)
