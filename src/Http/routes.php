@@ -11,12 +11,7 @@
 |
 */
 
-$middleware = [];
-if (method_exists(app(), 'bindShared') === false) {
-    $middleware = array_merge(['web'], $middleware);
-}
-
-Route::group(['middleware' => $middleware], function () {
+Route::group([], function () {
     // Route::controller('/', 'TerminalController');
     Route::get('/', 'TerminalController@index');
     Route::post('/response', 'TerminalController@rpcResponse');
