@@ -48,7 +48,8 @@ class Artisan extends Command
     /**
      * handle.
      *
-     * @param  \Illuminate\Database\Connection $connection
+     * @param \Illuminate\Database\Connection $connection
+     *
      * @return void
      */
     public function handle()
@@ -68,7 +69,8 @@ class Artisan extends Command
     /**
      * need focre option.
      *
-     * @param  string $command
+     * @param string $command
+     *
      * @return bool
      */
     protected function needForce($command)
