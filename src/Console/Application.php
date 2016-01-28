@@ -9,8 +9,9 @@ class Application extends ConsoleApplication
     /**
      * only register custom command.
      *
-     * @param  string $commands
-     * @param  bool $customCommand
+     * @param string $commands
+     * @param bool   $customCommand
+     *
      * @return $this
      */
     public function resolveCommands($commands, $customCommand = false)

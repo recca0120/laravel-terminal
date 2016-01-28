@@ -27,8 +27,10 @@ class Find extends Command
 
     /**
      * [run description].
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return \Symfony\Component\Console\Input\StringInput
      */
     public function run(InputInterface $input, OutputInterface $output)
@@ -56,7 +58,8 @@ class Find extends Command
     /**
      * handle.
      *
-     * @param  \Illuminate\Database\Connection $connection
+     * @param \Illuminate\Database\Connection $connection
+     *
      * @return void
      */
     public function handle(Filesystem $filesystem)

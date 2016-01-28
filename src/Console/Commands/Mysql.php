@@ -26,7 +26,8 @@ class Mysql extends Command
     /**
      * handle.
      *
-     * @param  \Illuminate\Database\Connection $connection
+     * @param \Illuminate\Database\Connection $connection
+     *
      * @return void
      */
     public function handle(Connection $connection)
