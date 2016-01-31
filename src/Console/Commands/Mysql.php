@@ -5,10 +5,11 @@ namespace Recca0120\Terminal\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Connection;
 use PDO;
+use Recca0120\Terminal\Console\Commands\Traits\CommandOnly;
 
 class Mysql extends Command
 {
-    use Traits\CommandOnly;
+    use CommandOnly;
     /**
      * The name and signature of the console command.
      *

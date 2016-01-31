@@ -1,6 +1,6 @@
 <?php
 
-namespace Recca0120\Terminal\Console;
+namespace Recca0120\Terminal;
 
 use Illuminate\Console\Application as ConsoleApplication;
 
@@ -14,9 +14,9 @@ class Application extends ConsoleApplication
      *
      * @return $this
      */
-    public function resolveCommands($commands, $customCommand = false)
+    public function resolveCommands($commands, $loadCommand = false)
     {
-        if ($customCommand === false) {
+        if ($loadCommand === false) {
             return $this;
         }
 

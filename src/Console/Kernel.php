@@ -2,8 +2,8 @@
 
 namespace Recca0120\Terminal\Console;
 
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Recca0120\Terminal\Console\Application as Artisan;
+use Recca0120\Terminal\Application as Artisan;
+use Recca0120\Terminal\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
@@ -18,19 +18,4 @@ class Kernel extends ConsoleKernel
         Commands\Mysql::class,
         Commands\Find::class,
     ];
-
-    /**
-     * Get the Artisan application instance.
-     *
-     * @return \Illuminate\Console\Application
-     */
-    protected function getArtisan()
-    {
-        if (is_null($this->artisan)) {
-            return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
-                                ->resolveCommands($this->commands, true);
-        }
-
-        return $this->artisan;
-    }
 }
