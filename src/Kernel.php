@@ -43,8 +43,9 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Contracts\Events\Dispatcher      $events
+     *
      * @return void
      */
     public function __construct(Application $app, Dispatcher $events)
@@ -60,8 +61,9 @@ class Kernel implements KernelContract
     /**
      * Run the console application.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return int
      */
     public function handle($input, $output = null)
@@ -88,8 +90,9 @@ class Kernel implements KernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -100,8 +103,9 @@ class Kernel implements KernelContract
     /**
      * Queue the given console command.
      *
-     * @param  string  $command
-     * @param  array   $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return void
      */
     public function queue($command, array $parameters = [])
@@ -149,7 +153,8 @@ class Kernel implements KernelContract
     /**
      * Report the exception to the exception handler.
      *
-     * @param  \Exception  $e
+     * @param \Exception $e
+     *
      * @return void
      */
     protected function reportException(Exception $e)
@@ -163,8 +168,9 @@ class Kernel implements KernelContract
     /**
      * Report the exception to the exception handler.
      *
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Exception  $e
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param \Exception                                        $e
+     *
      * @return void
      */
     protected function renderException($output, Exception $e)
