@@ -4,7 +4,10 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
+use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,6 +15,15 @@ use Symfony\Component\Finder\Finder;
 
 class Find extends Command
 {
+    use RawCommand;
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var Illuminate\Http\Request
+     */
+    protected $request;
+
     /**
      * The name and signature of the console command.
      *
@@ -26,7 +38,7 @@ class Find extends Command
     ';
 
     /**
-     * [run description].
+     * run.
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
@@ -35,7 +47,7 @@ class Find extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        $cmd = app('request')->get('cmd');
+        $cmd = $this->request->get('cmd');
         $command = array_get($cmd, 'command');
         $command = strtr($command, [
             ' -name'     => ' -N',
@@ -62,7 +74,7 @@ class Find extends Command
      *
      * @return void
      */
-    public function handle(Filesystem $filesystem)
+    public function handle(Application $app, Filesystem $filesystem)
     {
         // set_time_limit(30);
         $finder = new Finder();
@@ -74,9 +86,9 @@ class Find extends Command
         $delete = $this->option('delete');
 
         if ($path === null) {
-            $path = base_path();
+            $path = $app->basePath();
         } else {
-            $path = base_path($path);
+            $path = $app->basePath().$path;
         }
 
         $finder

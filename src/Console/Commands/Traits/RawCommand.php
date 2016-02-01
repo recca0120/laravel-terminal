@@ -2,22 +2,22 @@
 
 namespace Recca0120\Terminal\Console\Commands\Traits;
 
-use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-trait CommandOnly
+trait RawCommand
 {
     /**
-     * get command.
+     * construct.
      *
-     * @return string
+     * @param \Illuminate\Contracts\Console\Kernel $artisan
      */
-    protected function command()
+    public function __construct(Request $request)
     {
-        return $this->argument('command');
+        parent::__construct();
+        $this->request = $request;
     }
 
     /**
@@ -31,7 +31,7 @@ trait CommandOnly
     public function run(InputInterface $input, OutputInterface $output)
     {
         $input = new ArrayInput([
-            'command' => array_get(app('request')->get('cmd'), 'rest'),
+            'command' => array_get($this->request->get('cmd'), 'rest'),
         ]);
 
         return parent::run($input, $output);
