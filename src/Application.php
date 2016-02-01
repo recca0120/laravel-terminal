@@ -11,9 +11,10 @@ class Application extends ConsoleApplication
     /**
      * Create a new Artisan console application.
      *
-     * @param  \Illuminate\Contracts\Container\Container  $laravel
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @param  string  $version
+     * @param \Illuminate\Contracts\Container\Container $laravel
+     * @param \Illuminate\Contracts\Events\Dispatcher   $events
+     * @param string                                    $version
+     *
      * @return void
      */
     public function __construct(Container $laravel, Dispatcher $events)

@@ -34,6 +34,7 @@ class Application extends Container implements ApplicationContract
      * Get or check the current application environment.
      *
      * @param  mixed
+     *
      * @return string
      */
     public function environment()
@@ -63,9 +64,10 @@ class Application extends Container implements ApplicationContract
     /**
      * Register a service provider with the application.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
-     * @param  array  $options
-     * @param  bool   $force
+     * @param \Illuminate\Support\ServiceProvider|string $provider
+     * @param array                                      $options
+     * @param bool                                       $force
+     *
      * @return \Illuminate\Support\ServiceProvider
      */
     public function register($provider, $options = [], $force = false)
@@ -75,8 +77,9 @@ class Application extends Container implements ApplicationContract
     /**
      * Register a deferred provider and service.
      *
-     * @param  string  $provider
-     * @param  string  $service
+     * @param string $provider
+     * @param string $service
+     *
      * @return void
      */
     public function registerDeferredProvider($provider, $service = null)
@@ -95,7 +98,8 @@ class Application extends Container implements ApplicationContract
     /**
      * Register a new boot listener.
      *
-     * @param  mixed  $callback
+     * @param mixed $callback
+     *
      * @return void
      */
     public function booting($callback)
@@ -105,7 +109,8 @@ class Application extends Container implements ApplicationContract
     /**
      * Register a new "booted" listener.
      *
-     * @param  mixed  $callback
+     * @param mixed $callback
+     *
      * @return void
      */
     public function booted($callback)
