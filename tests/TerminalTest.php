@@ -43,6 +43,6 @@ class TerminalTest extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue(strpos($this->command([
             'name' => 'find',
-        ]), 'Console') !== false);
+        ]), 'TerminalTest.php') !== false);
     }
 }
