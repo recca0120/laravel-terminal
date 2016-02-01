@@ -4,13 +4,14 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ArtisanContract;
-use Recca0120\Terminal\Console\Commands\Traits\CommandOnly;
+use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\StringInput;
 
 class Artisan extends Command
 {
-    use CommandOnly;
+    use RawCommand;
+
     /**
      * The name and signature of the console command.
      *
@@ -36,24 +37,13 @@ class Artisan extends Command
     ];
 
     /**
-     * construct.
-     *
-     * @param \Illuminate\Contracts\Console\Kernel $artisan
-     */
-    public function __construct(ArtisanContract $artisan)
-    {
-        parent::__construct();
-        $this->artisan = $artisan;
-    }
-
-    /**
      * handle.
      *
-     * @param \Illuminate\Database\Connection $connection
+     * @param \Illuminate\Contracts\Console\Kernel $artisan
      *
      * @return void
      */
-    public function handle()
+    public function handle(ArtisanContract $artisan)
     {
         $command = $this->argument('command');
         if ($this->needForce($command) === true) {
@@ -64,7 +54,7 @@ class Artisan extends Command
         if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
             throw new InvalidArgumentException('Command "'.$command.'" is not supported');
         }
-        $this->artisan->handle($input, $this->getOutput());
+        $artisan->handle($input, $this->getOutput());
     }
 
     /**

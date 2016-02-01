@@ -3,10 +3,12 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
+use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
 
 class ArtisanTinker extends Command
 {
-    use Traits\CommandOnly;
+    use RawCommand;
+
     /**
      * The name and signature of the console command.
      *
@@ -21,13 +23,21 @@ class ArtisanTinker extends Command
      */
     protected $description = 'artisn tinker';
 
+    /**
+     * handle.
+     *
+     * @return void
+     */
     public function handle()
     {
         $command = $this->argument('command');
-        $code = trim($command, ';').';';
+        $code = trim(trim($command), ';').';';
         $this->output->write('=> ');
         ob_start();
-        $returnValue = eval('return '.$code);
+        if (starts_with($code, 'echo') === false) {
+            $code = 'return '.$code;
+        }
+        $returnValue = eval($code);
         switch (gettype($returnValue)) {
             case 'object':
             case 'array':

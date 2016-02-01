@@ -2,7 +2,7 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Recca0120\Terminal\Console\Kernel;
@@ -19,11 +19,10 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function index(ApplicationContract $app, Kernel $kernel, Request $request)
+    public function index(Application $app, Kernel $kernel, Request $request)
     {
         $environment = $app->environment();
         $endPoint = action('\\'.static::class.'@rpcResponse');
-
         $defaultResponse = $this->rpcResponse($kernel, $request)->content();
 
         return view('terminal::index', compact('environment', 'endPoint', 'defaultResponse'));
@@ -44,7 +43,6 @@ class TerminalController extends Controller
         $input = new ArgvInput($argv);
         $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
         $status = $kernel->handle($input, $output);
-        $kernel->terminate($input, $status);
 
         return response()->json([
             'jsonrpc' => $request->get('jsonrpc'),

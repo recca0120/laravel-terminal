@@ -3,7 +3,6 @@
 namespace Recca0120\Terminal;
 
 use Exception;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
@@ -42,26 +41,11 @@ class Kernel implements KernelContract
     protected $commands = [];
 
     /**
-     * The bootstrap classes for the application.
-     *
-     * @var array
-     */
-    protected $bootstrappers = [
-        // 'Illuminate\Foundation\Bootstrap\DetectEnvironment',
-        // 'Illuminate\Foundation\Bootstrap\LoadConfiguration',
-        // 'Illuminate\Foundation\Bootstrap\ConfigureLogging',
-        // 'Illuminate\Foundation\Bootstrap\HandleExceptions',
-        // 'Illuminate\Foundation\Bootstrap\RegisterFacades',
-        // 'Illuminate\Foundation\Bootstrap\SetRequestForConsole',
-        // 'Illuminate\Foundation\Bootstrap\RegisterProviders',
-        // 'Illuminate\Foundation\Bootstrap\BootProviders',
-    ];
-
-    /**
      * Create a new console kernel instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Contracts\Events\Dispatcher      $events
+     *
      * @return void
      */
     public function __construct(Application $app, Dispatcher $events)
@@ -72,39 +56,19 @@ class Kernel implements KernelContract
 
         $this->app = $app;
         $this->events = $events;
-
-        $this->app->booted(function () {
-            $this->defineConsoleSchedule();
-        });
-    }
-
-    /**
-     * Define the application's command schedule.
-     *
-     * @return void
-     */
-    protected function defineConsoleSchedule()
-    {
-        $this->app->instance(
-            'Illuminate\Console\Scheduling\Schedule',
-            $schedule = new Schedule()
-        );
-
-        $this->schedule($schedule);
     }
 
     /**
      * Run the console application.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return int
      */
     public function handle($input, $output = null)
     {
         try {
-            $this->bootstrap();
-
             return $this->getArtisan()->run($input, $output);
         } catch (Exception $e) {
             $this->reportException($e);
@@ -124,47 +88,24 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Terminate the application.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  int  $status
-     * @return void
-     */
-    public function terminate($input, $status)
-    {
-        $this->app->terminate();
-    }
-
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
-    protected function schedule(Schedule $schedule)
-    {
-        //
-    }
-
-    /**
      * Run an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return int
      */
     public function call($command, array $parameters = [])
     {
-        $this->bootstrap();
-
         return $this->getArtisan()->call($command, $parameters);
     }
 
     /**
      * Queue the given console command.
      *
-     * @param  string  $command
-     * @param  array   $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return void
      */
     public function queue($command, array $parameters = [])
@@ -181,8 +122,6 @@ class Kernel implements KernelContract
      */
     public function all()
     {
-        $this->bootstrap();
-
         return $this->getArtisan()->all();
     }
 
@@ -193,26 +132,7 @@ class Kernel implements KernelContract
      */
     public function output()
     {
-        $this->bootstrap();
-
         return $this->getArtisan()->output();
-    }
-
-    /**
-     * Bootstrap the application for artisan commands.
-     *
-     * @return void
-     */
-    public function bootstrap()
-    {
-        if (!$this->app->hasBeenBootstrapped()) {
-            $this->app->bootstrapWith($this->bootstrappers());
-        }
-
-        // If we are calling a arbitary command from within the application, we will load
-        // all of the available deferred providers which will make all of the commands
-        // available to an application. Otherwise the command will not be available.
-        $this->app->loadDeferredProviders();
     }
 
     /**
@@ -231,35 +151,33 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Get the bootstrap classes for the application.
-     *
-     * @return array
-     */
-    protected function bootstrappers()
-    {
-        return $this->bootstrappers;
-    }
-
-    /**
      * Report the exception to the exception handler.
      *
-     * @param  \Exception  $e
+     * @param \Exception $e
+     *
      * @return void
      */
     protected function reportException(Exception $e)
     {
+        if (isset($this->app['Illuminate\Contracts\Debug\ExceptionHandler']) === false) {
+            throw $e;
+        }
         $this->app['Illuminate\Contracts\Debug\ExceptionHandler']->report($e);
     }
 
     /**
      * Report the exception to the exception handler.
      *
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Exception  $e
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param \Exception                                        $e
+     *
      * @return void
      */
     protected function renderException($output, Exception $e)
     {
+        if (isset($this->app['Illuminate\Contracts\Debug\ExceptionHandler']) === false) {
+            throw $e;
+        }
         $this->app['Illuminate\Contracts\Debug\ExceptionHandler']->renderForConsole($output, $e);
     }
 }
