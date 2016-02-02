@@ -1,7 +1,7 @@
 {
     "name": "recca0120/terminal",
-    "description": "Laravel Artisan Terminal",
-    "keywords": ["laravel", "artisan", "terminal"],
+    "description": "run laravel artisan command in web application",
+    "keywords": ["laravel", "artisan", "terminal", "console", "web", "web artisan"],
     "license": "MIT",
     "authors": [
         {
@@ -11,18 +11,16 @@
     ],
     "require": {
         "php": ">=5.5.9",
+        "illuminate/console": "~5.1",
         "illuminate/database": "~5.1",
-        "illuminate/events": "~5.1",
         "illuminate/filesystem": "~5.1",
-        "illuminate/http": "~5.1",
         "illuminate/routing": "~5.1",
-        "illuminate/console": "~5.1"
+        "symfony/finder": "~3.0"
     },
     "require-dev": {
         "nesbot/carbon": "~1.20",
         "mockery/mockery": "~0.9.2",
-        "phpunit/phpunit": "~4.1",
-        "recca0120/package-phpunit": "~0.2.0"
+        "phpunit/phpunit": "~4.1"
     },
     "autoload": {
         "psr-4": {

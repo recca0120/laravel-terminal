@@ -4,10 +4,7 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Request;
-use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,15 +12,6 @@ use Symfony\Component\Finder\Finder;
 
 class Find extends Command
 {
-    use RawCommand;
-
-    /**
-     * The name and signature of the console command.
-     *
-     * @var Illuminate\Http\Request
-     */
-    protected $request;
-
     /**
      * The name and signature of the console command.
      *
@@ -38,6 +26,13 @@ class Find extends Command
     ';
 
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'search for files in a directory hierarchy';
+
+    /**
      * run.
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
@@ -47,25 +42,16 @@ class Find extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        $cmd = $this->request->get('cmd');
-        $command = array_get($cmd, 'command');
+        $command = (string) $input;
         $command = strtr($command, [
             ' -name'     => ' -N',
             ' -type'     => ' -T',
             ' -maxdepth' => ' -M',
             ' -delete'   => ' -d true',
         ]);
-        $input = new StringInput($command);
 
-        return parent::run($input, $output);
+        return parent::run(new StringInput($command), $output);
     }
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'search for files in a directory hierarchy';
 
     /**
      * handle.
@@ -74,10 +60,9 @@ class Find extends Command
      *
      * @return void
      */
-    public function handle(Application $app, Filesystem $filesystem)
+    public function handle(Finder $finder, Filesystem $filesystem)
     {
         // set_time_limit(30);
-        $finder = new Finder();
 
         $path = $this->argument('path');
         $name = $this->option('name');
@@ -85,11 +70,13 @@ class Find extends Command
         $maxDepth = $this->option('maxdepth');
         $delete = $this->option('delete');
 
-        if ($path === null) {
-            $path = $app->basePath();
+        if (method_exists($this->laravel, 'basePath') === true) {
+            $root = $this->laravel->basePath();
         } else {
-            $path = $app->basePath().$path;
+            $root = getcwd();
         }
+
+        $path = realpath($root.'/'.$path);
 
         $finder
             ->in($path);
@@ -106,7 +93,6 @@ class Find extends Command
                 $finder->files();
                 break;
         }
-
         if ($maxDepth !== null) {
             if ($maxDepth == '0') {
                 $this->line($path);

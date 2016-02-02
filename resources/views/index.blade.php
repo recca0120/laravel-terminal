@@ -12,11 +12,7 @@
     <script src="{{ asset('vendor/terminal/js/app.js') }}"></script>
     <script>
     (function($) {
-        new Term(document.body, {
-            environment: "{{ $environment }}",
-            endPoint: "{{ $endPoint }}",
-            defaultResponse: {!! $defaultResponse !!}
-        });
+        new Term(document.body, {!! $options !!});
     })(jQuery);
     </script>
 </html>

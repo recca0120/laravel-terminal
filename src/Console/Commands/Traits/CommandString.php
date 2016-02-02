@@ -2,24 +2,12 @@
 
 namespace Recca0120\Terminal\Console\Commands\Traits;
 
-use Illuminate\Http\Request;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-trait RawCommand
+trait CommandString
 {
-    /**
-     * construct.
-     *
-     * @param \Illuminate\Contracts\Console\Kernel $artisan
-     */
-    public function __construct(Request $request)
-    {
-        parent::__construct();
-        $this->request = $request;
-    }
-
     /**
      * change to array input.
      *
@@ -30,8 +18,13 @@ trait RawCommand
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
+        $command = explode(' ', (string) $input);
+        array_shift($command);
+        foreach ($command as $key => $value) {
+            $command[$key] = preg_replace('/^[\'"]|[\'"]$/', '', $value);
+        }
         $input = new ArrayInput([
-            'command' => array_get($this->request->get('cmd'), 'rest'),
+            'command' => implode(' ', $command),
         ]);
 
         return parent::run($input, $output);

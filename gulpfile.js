@@ -39,17 +39,7 @@ elixir(function(mix) {
         .copy([
             'public'
         ], '../../../../vendor/terminal')
-        .browserSync({
-            files: [
-                 'src/**/*.php',
-                 'resources/views/**/*.php',
-                 config.get('public.css.outputFolder')+'/**/*.css',
-                 config.get('public.js.outputFolder')+'/**/*.js',
-            ],
-            proxy: 'http://127.0.0.1/laravel/'
-        }).phpUnit([
-            'src/**/*.php',
-            'resources/views/**/*.php',
+        .phpUnit([
             'tests/**/*'
         ]);
 });

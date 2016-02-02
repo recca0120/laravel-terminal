@@ -1,4 +1,4 @@
-# Laravel Terminal (Web Console)
+# Laravel Web Artisan
 
 [![Latest Stable Version](https://poser.pugx.org/recca0120/terminal/v/stable)](https://packagist.org/packages/recca0120/terminal)
 [![Total Downloads](https://poser.pugx.org/recca0120/terminal/downloads)](https://packagist.org/packages/recca0120/terminal)
@@ -76,35 +76,33 @@ find ./vendor -name tests -type d -maxdepth 4 -delete
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use DB;
 use Illuminate\Console\Command;
-use PDO;
-use Recca0120\Terminal\Console\CommandOnly;
+use Illuminate\Foundation\Inspiring;
 
-class MySql extends Command
+class Inspire extends Command
 {
-    use CommandOnly;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mysql';
+    protected $signature = 'inspire';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'mysql';
+    protected $description = 'Display an inspiring quote';
 
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
     public function handle()
     {
-        $query = $this->rest();
-        DB::setFetchMode(PDO::FETCH_ASSOC);
-        $rows = DB::select($query);
-        $headers = array_keys(array_get($rows, 0, []));
-        $this->table($headers, $rows);
+        $this->comment(PHP_EOL.Inspiring::quote().PHP_EOL);
     }
 }
 ```
@@ -125,26 +123,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\Artisan::class,
-        Commands\ArtisanTinker::class,
-        Commands\Mysql::class,
-        Commands\Find::class,
+        Commands\Inspire::class,
     ];
-
-    /**
-     * Get the Artisan application instance.
-     *
-     * @return \Illuminate\Console\Application
-     */
-    protected function getArtisan()
-    {
-        if (is_null($this->artisan)) {
-            return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
-                                ->resolveCommands($this->commands, true);
-        }
-
-        return $this->artisan;
-    }
 }
 
 ```

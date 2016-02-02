@@ -76,7 +76,7 @@ do ($ = jQuery, window, document) ->
             error: new OutputFormatterStyle "white", "red"
             info: new OutputFormatterStyle "green"
             comment: new OutputFormatterStyle "yellow"
-            question: new OutputFormatterStyle "black"
+            question: new OutputFormatterStyle "magenta"
 
         error: (text) =>
             @formatters.error.apply text
@@ -120,6 +120,17 @@ do ($ = jQuery, window, document) ->
         ids: {},
         formatter: new OutputFormatter
         colors: $.terminal.ansi_colors
+        term: null,
+        defaultPrompt: "$ "
+        needConfirm:
+            "artisan": [
+                "migrate"
+                "migrate:install"
+                "migrate:refresh"
+                "migrate:reset"
+                "migrate:rollback"
+                "db:seed"
+            ]
         color: (color, background, type = "bold") =>
             if @colors[type] and @colors[type][color]
                 return @colors[type][color]
@@ -138,16 +149,25 @@ do ($ = jQuery, window, document) ->
         question: (text) =>
             @formatter.question text
 
-        confirm: (term, message, title) =>
+        confirm: (term, message, title = "") =>
             deferred = $.Deferred()
-            term.echo title
+            if title
+                term.echo " #{title}"
+
             term.echo message
+            history = term.history()
+            history.disable()
             term.push (result) =>
-                deferred.resolve @toBoolean result
+                if @toBoolean result
+                    deferred.resolve true
+                else
+                    deferred.resolve false
+                    @serverInfo(term)
                 term.pop()
+                history.enable()
                 return
             ,
-                prompt: ">"
+                prompt: " > "
             deferred.promise()
 
         toBoolean: (result) =>
@@ -164,8 +184,34 @@ do ($ = jQuery, window, document) ->
                     @execute term, "#{commandPrefix.replace(/\s+/g, '-')} #{command}"
                 return false
             ,
-                prompt: "#{prompt}>"
+                prompt: "#{prompt} >"
             return false
+
+        capitalize = (str) =>
+            "#{str.charAt(0).toUpperCase()}#{str.slice(1)}"
+
+        confirmToProceed: (term, cmd, warning = "Application In Production!") =>
+            term.echo @comment("**************************************")
+            term.echo @comment("*     #{warning}     *")
+            term.echo @comment("**************************************")
+            term.echo " "
+            @confirm term, "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
+                .done (result) =>
+                    if result is true
+                        @rpcRequest term, cmd
+                    else
+                        term.echo " "
+                        term.echo "#{@comment('Command Cancelled!')}"
+                        term.echo " "
+
+        commandArtisan: (term, cmd) =>
+            cmd2 = $.terminal.parseCommand cmd.rest.trim()
+            if @options.environment is "production" and $.inArray("--force", cmd2.args) is -1
+                if $.inArray(cmd2.name, @options.confirmToProceed[cmd.name]) isnt -1
+                    @confirmToProceed term, cmd
+                    return
+            @rpcRequest term, cmd
+
         rpcRequest: (term, cmd) =>
             @ids[cmd.method] = @ids[cmd.method] || 0;
             Loading.show term
@@ -179,37 +225,11 @@ do ($ = jQuery, window, document) ->
                     cmd: cmd
             .success (response) =>
                 @formatter.apply(response.result, term)
-            .error (jqXhr, json, errorThrown) ->
+            .error (jqXhr, json, errorThrown) =>
                 @formatter.error("#{jqXhr.status}: #{errorThrown}", term)
-            .complete ->
+            .complete =>
                 Loading.hide term
-
-        capitalize = (str) =>
-            "#{str.charAt(0).toUpperCase()}#{str.slice(1)}"
-
-        commandArtisan: (term, cmd) =>
-            cmd2 = $.terminal.parseCommand cmd.rest.trim()
-            title = [
-                ""
-                @comment("**************************************")
-                @comment("*     Application In Production!     *")
-                @comment("**************************************")
-                ""
-            ].join "\n"
-            message = "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
-
-            if @options.environment is "production" and $.inArray("--force", cmd2.args) is -1
-                if (cmd2.name.indexOf("migrate") is 0 and cmd2.name.indexOf("migrate:status") is -1) or cmd2.name.indexOf("db:seed") is 0
-                    @confirm term, message, title
-                        .done (result) =>
-                            if result is true
-                                @rpcRequest term, cmd
-                            else
-                                term.echo " "
-                                term.echo "#{@comment('Command Cancelled!')}"
-                                term.echo " "
-                    return
-            @rpcRequest term, cmd
+                @serverInfo(term)
 
         interpreters:
             "mysql": "mysql"
@@ -220,7 +240,8 @@ do ($ = jQuery, window, document) ->
             command = command.trim()
             switch command
                 when "help", "list"
-                    @formatter.apply @options.defaultResponse.result, term
+                    @formatter.apply @options.helpInfo, term
+                    @serverInfo(term)
                 when ""
                     return
                 else
@@ -230,6 +251,7 @@ do ($ = jQuery, window, document) ->
                             return
 
                     cmd = $.terminal.parseCommand command.trim()
+
                     if @["command#{capitalize(cmd.name)}"]
                         @["command#{capitalize(cmd.name)}"](term, cmd)
                     else
@@ -249,6 +271,12 @@ do ($ = jQuery, window, document) ->
                 ""
             ].join "\n"
 
+        serverInfo: (term) =>
+            host = @info "#{@options.username}@#{@options.hostname}"
+            os = @question "#{@options.os}"
+            path = @comment "#{@options.basePath}"
+            term.echo "#{host} #{os} #{path}"
+
         constructor: (element, @options)->
             $(element).terminal (command, term) =>
                 @execute(term, command)
@@ -258,3 +286,4 @@ do ($ = jQuery, window, document) ->
                 onBlur: =>
                     false
                 greetings: @greetings()
+                prompt: @defaultPrompt

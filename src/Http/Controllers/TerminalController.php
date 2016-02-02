@@ -2,13 +2,10 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Recca0120\Terminal\Console\Kernel;
-use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Recca0120\Terminal\Console\Kernel as ConsoleKernel;
 
 class TerminalController extends Controller
 {
@@ -16,38 +13,58 @@ class TerminalController extends Controller
      * index.
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Recca0120\Terminal\Console\Kernel           $consoleKernel
      *
      * @return mixed
      */
-    public function index(Application $app, Kernel $kernel, Request $request)
+    public function index(ApplicationContract $app, ConsoleKernel $consoleKernel)
     {
-        $environment = $app->environment();
-        $endPoint = action('\\'.static::class.'@rpcResponse');
-        $defaultResponse = $this->rpcResponse($kernel, $request)->content();
+        $consoleKernel->call('--ansi');
+        $options = json_encode([
+            'username'         => 'LARAVEL',
+            'hostname'         => php_uname('n'),
+            'os'               => PHP_OS,
+            'basePath'         => $app->basePath(),
+            'environment'      => $app->environment(),
+            'version'          => $app->version(),
+            'endPoint'         => action('\\'.static::class.'@rpcResponse'),
+            'helpInfo'         => $consoleKernel->output(),
+            'confirmToProceed' => [
+                'artisan' => [
+                    'migrate',
+                    'migrate:install',
+                    'migrate:refresh',
+                    'migrate:reset',
+                    'migrate:rollback',
+                    'db:seed',
+                ],
+            ],
+        ]);
 
-        return view('terminal::index', compact('environment', 'endPoint', 'defaultResponse'));
+        return view(
+            'terminal::index',
+            compact('options')
+        );
     }
 
     /**
      * rpc response.
      *
-     * @param \Recca0120\Terminal\Console\Kernel $kernel
+     * @param \Recca0120\Terminal\Console\Kernel $consoleKernel
      * @param \Illuminate\Http\Request           $request
      *
      * @return mixed
      */
-    public function rpcResponse(Kernel $kernel, Request $request)
+    public function rpcResponse(ConsoleKernel $consoleKernel, Request $request)
     {
         $cmd = $request->get('cmd');
-        $argv = array_merge(['artisan', array_get($cmd, 'name')], array_get($cmd, 'args', []));
-        $input = new ArgvInput($argv);
-        $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
-        $status = $kernel->handle($input, $output);
+        $command = array_get($cmd, 'command');
+        $status = $consoleKernel->call($command);
 
         return response()->json([
             'jsonrpc' => $request->get('jsonrpc'),
             'id'      => $request->get('id'),
-            'result'  => $output->fetch(),
+            'result'  => $consoleKernel->output(),
             'error'   => $status,
         ]);
     }
