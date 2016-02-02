@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Console;
 
-use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -15,7 +14,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Artisan::class,
         Commands\ArtisanTinker::class,
-        Commands\Mysql::class,
         Commands\Find::class,
+        Commands\Mysql::class,
     ];
 }

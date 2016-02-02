@@ -220,7 +220,7 @@ do ($ = jQuery, window, document) ->
             command = command.trim()
             switch command
                 when "help", "list"
-                    @formatter.apply @options.defaultResponse.result, term
+                    @formatter.apply @options.helpInfo, term
                 when ""
                     return
                 else

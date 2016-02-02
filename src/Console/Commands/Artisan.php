@@ -4,13 +4,11 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ArtisanContract;
-use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\StringInput;
 
 class Artisan extends Command
 {
-    use RawCommand;
+    use Traits\CommandString;
 
     /**
      * The name and signature of the console command.
@@ -46,6 +44,7 @@ class Artisan extends Command
     public function handle(ArtisanContract $artisan)
     {
         $command = $this->argument('command');
+
         if ($this->needForce($command) === true) {
             $command .= ' --force';
         }

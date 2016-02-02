@@ -15,7 +15,7 @@
         new Term(document.body, {
             environment: "{{ $environment }}",
             endPoint: "{{ $endPoint }}",
-            defaultResponse: {!! $defaultResponse !!}
+            helpInfo: {!! $helpInfo !!}
         });
     })(jQuery);
     </script>

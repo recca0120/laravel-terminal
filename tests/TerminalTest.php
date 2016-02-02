@@ -1,48 +1,166 @@
 <?php
 
-use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Mockery as m;
-use Recca0120\Terminal\Console\Kernel;
-use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Recca0120\Terminal\Console\Commands\Artisan;
+use Recca0120\Terminal\Console\Commands\ArtisanTinker;
+use Recca0120\Terminal\Console\Commands\Find;
+use Recca0120\Terminal\Console\Commands\Mysql;
 
 class TerminalTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        $app = App::getInstance();
-        $app[KernelContract::class] = $kernel = new Kernel($app, $app['events']);
-    }
+    use Laravel;
 
     public function tearDown()
     {
         m::close();
     }
 
-    public function command($cmd)
+    public function test_kernel_call()
     {
-        $app = App::getInstance();
-        $kernel = $app[KernelContract::class];
-        $argv = array_merge(['artisan', array_get($cmd, 'name')], array_get($cmd, 'args', []));
-        $input = new ArgvInput($argv);
-        $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
-        $status = $kernel->handle($input, $output);
+        $app = $this->createApplication();
+        $app['request']->shouldReceive('ajax')->andReturn(false)->mock();
+        $app['events']
+            ->shouldReceive('fire')->andReturn(true)
+            ->shouldReceive('firing')->andReturn('ArtisanStarting')
+            ->mock();
+        $kernel = new Recca0120\Terminal\Console\Kernel($app, $app['events']);
+        $kernel->call('list');
 
-        return $output->fetch();
+        return [$kernel, $app];
     }
 
-    public function test_artisan_list_command()
+    /**
+     * @depends test_kernel_call
+     */
+    public function test_controller($arguments)
     {
-        $this->assertTrue(strpos($this->command([
-            'reset' => 'artisan list',
-        ]), 'Laravel') !== false);
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+
+        $controller = m::mock('Recca0120\Terminal\Http\Controllers\TerminalController')
+            ->makePartial();
+
+        $request = m::mock('Illuminate\Http\Request')
+            ->makePartial()
+            ->shouldReceive('get')->andReturn(['command' => 'list'])
+            ->mock();
+
+        $controller->index($app, $kernel, $request);
+
+        $controller->rpcResponse($kernel, $request);
+
+        return [$kernel, $app];
     }
 
-    public function test_find_command()
+    /**
+     * @depends test_kernel_call
+     */
+    public function test_application_call($arguments)
     {
-        $this->assertTrue(strpos($this->command([
-            'name' => 'find',
-        ]), 'TerminalTest.php') !== false);
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+
+        $artisan = new Recca0120\Terminal\Application($app, $app['events'], 'testing');
+        $artisan->call('list');
+        $this->assertRegExp('/list/', $artisan->output());
+
+        return [$kernel, $app, $artisan];
     }
+
+    /**
+     * @depends test_application_call
+     */
+    public function test_artisan($arguments)
+    {
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+        $artisan = $arguments[2];
+
+        $app['Illuminate\Contracts\Console\Kernel'] = m::mock('Illuminate\Contracts\Console\Kernel')
+            ->shouldReceive('handle')->andReturnUsing(function ($input) {
+                $this->assertEquals((string) $input, 'list');
+            })
+            ->mock();
+
+        $command = new Artisan();
+        $artisan->add($command);
+        $exitCode = $artisan->call('artisan list');
+        $this->assertEquals($exitCode, 0);
+    }
+
+    /**
+     * @depends test_application_call
+     */
+    public function test_artisan_tinker($arguments)
+    {
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+        $artisan = $arguments[2];
+
+        $command = new ArtisanTinker();
+        $artisan->add($command);
+        $exitCode = $artisan->call('tinker echo 123;');
+        $this->assertEquals($exitCode, 0);
+        $this->assertRegExp('/123/', $artisan->output());
+    }
+
+    /**
+     * @depends test_application_call
+     */
+    public function test_find($arguments)
+    {
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+        $artisan = $arguments[2];
+
+        $app['Symfony\Component\Finder\Finder'] = m::mock('Symfony\Component\Finder\Finder')
+            ->makePartial()
+            ->shouldReceive('in')->once()->passthru()
+            ->shouldReceive('depth')->with(m::mustBe('<2'))->once()->passthru()
+            ->mock();
+
+        $command = new Find();
+        $artisan->add($command);
+        $exitCode = $artisan->call('find ../src -name -maxdepth 2');
+        $this->assertEquals($exitCode, 0);
+        $this->assertRegExp('/ServiceProvider\.php/', $artisan->output());
+    }
+
+    /**
+     * @depends test_application_call
+     */
+    public function test_mysql($arguments)
+    {
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+        $artisan = $arguments[2];
+
+        $connection = m::mock('Illuminate\Database\Connection')
+            ->makePartial()
+            ->shouldReceive('select')->with('select * from users;')->andReturn([
+                ['recca0120@gmail.com'],
+            ])
+            ->mock();
+
+        $app['Illuminate\Database\ConnectionInterface'] = $connection;
+
+        $command = new Mysql();
+        $artisan->add($command);
+        $exitCode = $artisan->call('mysql select * from users;');
+        $this->assertEquals($exitCode, 0);
+        $this->assertRegExp('/recca0120@gmail\.com/', $artisan->output());
+    }
+}
+
+function action()
+{
+}
+
+function view()
+{
+}
+
+function response()
+{
+    return m::mock(['json' => null]);
 }

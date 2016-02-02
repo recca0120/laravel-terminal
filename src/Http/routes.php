@@ -11,8 +11,6 @@
 |
 */
 
-Route::group([], function () {
-    // Route::controller('/', 'TerminalController');
-    Route::get('/', 'TerminalController@index');
-    Route::post('/response', 'TerminalController@rpcResponse');
-});
+// Route::controller('/', 'TerminalController');
+Route::get('/', 'TerminalController@index');
+Route::post('/response', 'TerminalController@rpcResponse');

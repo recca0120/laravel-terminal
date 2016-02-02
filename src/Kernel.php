@@ -2,30 +2,13 @@
 
 namespace Recca0120\Terminal;
 
-use Exception;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Recca0120\Terminal\Application as Artisan;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
-use Throwable;
 
 class Kernel implements KernelContract
 {
-    /**
-     * The application implementation.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * The event dispatcher implementation.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
-
     /**
      * The Artisan application instance.
      *
@@ -43,56 +26,33 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Illuminate\Contracts\Events\Dispatcher      $events
-     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
-    public function __construct(Application $app, Dispatcher $events)
+    public function __construct(ApplicationContract $app, Dispatcher $events)
     {
-        if (!defined('ARTISAN_BINARY')) {
-            define('ARTISAN_BINARY', 'artisan');
-        }
-
         $this->app = $app;
         $this->events = $events;
     }
 
     /**
-     * Run the console application.
+     * Handle an incoming console command.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return int
      */
     public function handle($input, $output = null)
     {
-        try {
-            return $this->getArtisan()->run($input, $output);
-        } catch (Exception $e) {
-            $this->reportException($e);
-
-            $this->renderException($output, $e);
-
-            return 1;
-        } catch (Throwable $e) {
-            $e = new FatalThrowableError($e);
-
-            $this->reportException($e);
-
-            $this->renderException($output, $e);
-
-            return 1;
-        }
+        return $this->getArtisan()->run($input, $output);
     }
 
     /**
      * Run an Artisan console command by name.
      *
-     * @param string $command
-     * @param array  $parameters
-     *
+     * @param  string  $command
+     * @param  array  $parameters
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -101,18 +61,14 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Queue the given console command.
+     * Queue an Artisan console command by name.
      *
-     * @param string $command
-     * @param array  $parameters
-     *
-     * @return void
+     * @param  string  $command
+     * @param  array  $parameters
+     * @return int
      */
     public function queue($command, array $parameters = [])
     {
-        $this->app['Illuminate\Contracts\Queue\Queue']->push(
-            'Illuminate\Foundation\Console\QueuedJob', func_get_args()
-        );
     }
 
     /**
@@ -144,40 +100,9 @@ class Kernel implements KernelContract
     {
         if (is_null($this->artisan)) {
             return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
-                                ->resolveCommands($this->commands, true);
+                                ->resolveCommands($this->commands);
         }
 
         return $this->artisan;
-    }
-
-    /**
-     * Report the exception to the exception handler.
-     *
-     * @param \Exception $e
-     *
-     * @return void
-     */
-    protected function reportException(Exception $e)
-    {
-        if (isset($this->app['Illuminate\Contracts\Debug\ExceptionHandler']) === false) {
-            throw $e;
-        }
-        $this->app['Illuminate\Contracts\Debug\ExceptionHandler']->report($e);
-    }
-
-    /**
-     * Report the exception to the exception handler.
-     *
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param \Exception                                        $e
-     *
-     * @return void
-     */
-    protected function renderException($output, Exception $e)
-    {
-        if (isset($this->app['Illuminate\Contracts\Debug\ExceptionHandler']) === false) {
-            throw $e;
-        }
-        $this->app['Illuminate\Contracts\Debug\ExceptionHandler']->renderForConsole($output, $e);
     }
 }

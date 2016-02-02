@@ -3,11 +3,10 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
-use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
 
 class ArtisanTinker extends Command
 {
-    use RawCommand;
+    use Traits\CommandString;
 
     /**
      * The name and signature of the console command.

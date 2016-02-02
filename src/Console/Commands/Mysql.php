@@ -3,13 +3,13 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Connection;
+use Illuminate\Database\ConnectionInterface;
 use PDO;
-use Recca0120\Terminal\Console\Commands\Traits\RawCommand;
+use Recca0120\Terminal\Console\Commands\Traits\CommandString;
 
 class Mysql extends Command
 {
-    use RawCommand;
+    use CommandString;
 
     /**
      * The name and signature of the console command.
@@ -28,11 +28,11 @@ class Mysql extends Command
     /**
      * handle.
      *
-     * @param \Illuminate\Database\Connection $connection
+     * @param \Illuminate\Database\ConnectionInterface $connection
      *
      * @return void
      */
-    public function handle(Connection $connection)
+    public function handle(ConnectionInterface $connection)
     {
         $connection->setFetchMode(PDO::FETCH_ASSOC);
         $query = $this->argument('command');
