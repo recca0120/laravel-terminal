@@ -118,4 +118,18 @@ class Application extends ConsoleApplication
 
         return false;
     }
+
+    /**
+     * Renders a caught exception.
+     *
+     * @param \Exception      $e      An exception instance
+     * @param OutputInterface $output An OutputInterface instance
+     */
+    public function renderException(Exception $e, OutputInterface $output)
+    {
+        while ($prevException = $e->getPrevious()) {
+            $e = $prevException;
+        }
+        parent::renderException($e, $output);
+    }
 }

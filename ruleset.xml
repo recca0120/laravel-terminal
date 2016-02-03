@@ -16,7 +16,7 @@
   <rule ref="rulesets/naming.xml/ShortVariable">
     <priority>1</priority>
     <properties>
-      <property name="minimum" value="2" />
+      <property name="minimum" value="1" />
     </properties>
   </rule>
   <rule ref="rulesets/naming.xml/ShortMethodName">

@@ -122,15 +122,6 @@ do ($ = jQuery, window, document) ->
         colors: $.terminal.ansi_colors
         term: null,
         defaultPrompt: "$ "
-        needConfirm:
-            "artisan": [
-                "migrate"
-                "migrate:install"
-                "migrate:refresh"
-                "migrate:reset"
-                "migrate:rollback"
-                "db:seed"
-            ]
         color: (color, background, type = "bold") =>
             if @colors[type] and @colors[type][color]
                 return @colors[type][color]
@@ -184,7 +175,7 @@ do ($ = jQuery, window, document) ->
                     @execute term, "#{commandPrefix.replace(/\s+/g, '-')} #{command}"
                 return false
             ,
-                prompt: "#{prompt} >"
+                prompt: "#{prompt}> "
             return false
 
         capitalize = (str) =>
@@ -205,9 +196,9 @@ do ($ = jQuery, window, document) ->
                         term.echo " "
 
         commandArtisan: (term, cmd) =>
-            cmd2 = $.terminal.parseCommand cmd.rest.trim()
-            if @options.environment is "production" and $.inArray("--force", cmd2.args) is -1
-                if $.inArray(cmd2.name, @options.confirmToProceed[cmd.name]) isnt -1
+            restParsed = $.terminal.parseCommand cmd.rest.trim()
+            if @options.environment is "production" and $.inArray("--force", restParsed.args) is -1
+                if $.inArray(restParsed.name, @options.confirmToProceed[cmd.name]) isnt -1
                     @confirmToProceed term, cmd
                     return
             @rpcRequest term, cmd
@@ -231,11 +222,6 @@ do ($ = jQuery, window, document) ->
                 Loading.hide term
                 @serverInfo(term)
 
-        interpreters:
-            "mysql": "mysql"
-            "artisan tinker": "tinker"
-            "tinker": "tinker"
-
         execute: (term, command) =>
             command = command.trim()
             switch command
@@ -245,7 +231,7 @@ do ($ = jQuery, window, document) ->
                 when ""
                     return
                 else
-                    for interpreter, prompt of @interpreters
+                    for interpreter, prompt of @options.interpreters
                         if command is interpreter
                             @interpreter prompt, term
                             return
@@ -272,6 +258,8 @@ do ($ = jQuery, window, document) ->
             ].join "\n"
 
         serverInfo: (term) =>
+            if term.level() > 1
+                return
             host = @info "#{@options.username}@#{@options.hostname}"
             os = @question "#{@options.os}"
             path = @comment "#{@options.basePath}"
@@ -285,5 +273,7 @@ do ($ = jQuery, window, document) ->
                     @execute term, 'list'
                 onBlur: =>
                     false
+                onClear: (term) =>
+                    @serverInfo(term)
                 greetings: @greetings()
                 prompt: @defaultPrompt

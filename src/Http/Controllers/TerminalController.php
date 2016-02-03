@@ -29,6 +29,11 @@ class TerminalController extends Controller
             'version'          => $app->version(),
             'endPoint'         => action('\\'.static::class.'@rpcResponse'),
             'helpInfo'         => $consoleKernel->output(),
+            'interpreters'     => [
+                'mysql'          => 'mysql',
+                'artisan tinker' => 'tinker',
+                'tinker'         => 'tinker',
+            ],
             'confirmToProceed' => [
                 'artisan' => [
                     'migrate',

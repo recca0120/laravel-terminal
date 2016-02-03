@@ -22,7 +22,7 @@ class Artisan extends Command
      *
      * @var string
      */
-    protected $description = 'artisan';
+    protected $description = 'laravel artisan';
 
     /**
      * no support array.
