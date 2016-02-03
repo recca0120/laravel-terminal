@@ -26,8 +26,9 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Contracts\Events\Dispatcher      $events
+     *
      * @return void
      */
     public function __construct(ApplicationContract $app, Dispatcher $events)
@@ -39,8 +40,9 @@ class Kernel implements KernelContract
     /**
      * Handle an incoming console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return int
      */
     public function handle($input, $output = null)
@@ -51,8 +53,9 @@ class Kernel implements KernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -63,8 +66,9 @@ class Kernel implements KernelContract
     /**
      * Queue an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return int
      */
     public function queue($command, array $parameters = [])

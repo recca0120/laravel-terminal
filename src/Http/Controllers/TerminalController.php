@@ -13,8 +13,8 @@ class TerminalController extends Controller
      * index.
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Recca0120\Terminal\Console\Kernel $consoleKernel
-     * @param \Illuminate\Http\Request           $request
+     * @param \Recca0120\Terminal\Console\Kernel           $consoleKernel
+     * @param \Illuminate\Http\Request                     $request
      *
      * @return mixed
      */

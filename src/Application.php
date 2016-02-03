@@ -18,8 +18,9 @@ class Application extends ConsoleApplication
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param string $command
+     * @param array  $parameters
+     *
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -39,7 +40,8 @@ class Application extends ConsoleApplication
     /**
      * Resolve an array of commands through the application.
      *
-     * @param  array|mixed  $commands
+     * @param array|mixed $commands
+     *
      * @return $this
      */
     public function resolveCommands($commands)
@@ -54,7 +56,8 @@ class Application extends ConsoleApplication
     /**
      * Add a command to the console.
      *
-     * @param  \Symfony\Component\Console\Command\Command  $command
+     * @param \Symfony\Component\Console\Command\Command $command
+     *
      * @return \Symfony\Component\Console\Command\Command
      */
     public function add(SymfonyCommand $command)
