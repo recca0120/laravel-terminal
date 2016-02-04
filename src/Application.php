@@ -77,6 +77,11 @@ class Application extends ConsoleApplication
             if ($this->isAjax() === false) {
                 throw $e;
             }
+
+            while ($prevException = $e->getPrevious()) {
+                $e = $prevException;
+            }
+
             $this->renderException($e, $output);
 
             return 1;
@@ -117,19 +122,5 @@ class Application extends ConsoleApplication
         }
 
         return false;
-    }
-
-    /**
-     * Renders a caught exception.
-     *
-     * @param \Exception      $e      An exception instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    public function renderException(Exception $e, OutputInterface $output)
-    {
-        while ($prevException = $e->getPrevious()) {
-            $e = $prevException;
-        }
-        parent::renderException($e, $output);
     }
 }

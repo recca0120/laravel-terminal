@@ -8,11 +8,15 @@
     <link href="{{ asset('vendor/terminal/css/app.css') }}" rel="stylesheet"/>
 </head>
 <body>
+    <textarea id="editor"></textarea>
+    <div id="shell"></div>
     <script src="{{ asset('vendor/terminal/js/plugins.js') }}"></script>
     <script src="{{ asset('vendor/terminal/js/app.js') }}"></script>
     <script>
     (function($) {
-        new Term(document.body, {!! $options !!});
+        new Term("#shell", $.extend({!! $options !!}, {
+            editor: "#editor"
+        }));
     })(jQuery);
     </script>
 </html>

@@ -13,4 +13,4 @@
 
 // Route::controller('/', 'TerminalController');
 Route::get('/', 'TerminalController@index');
-Route::post('/response', 'TerminalController@rpcResponse');
+Route::post('/endpoint', 'TerminalController@endPoint');

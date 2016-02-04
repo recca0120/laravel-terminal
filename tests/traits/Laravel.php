@@ -26,6 +26,7 @@ trait Laravel
         if (is_null($this->app) === false) {
             return $this->app;
         }
+
         $app = m::mock(Container::class.', Illuminate\Contracts\Foundation\Application')
             ->makePartial()
             ->shouldReceive('basePath')->andReturn(realpath(__DIR__.'/../').'/')

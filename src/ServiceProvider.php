@@ -2,7 +2,7 @@
 
 namespace Recca0120\Terminal;
 
-use Illuminate\Contracts\Config\Repository as ConfigRepositoryContract;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -21,12 +21,14 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @return void
      */
-    public function boot(Request $request, ConfigRepositoryContract $config)
+    public function boot(Request $request, ConfigContract $config)
     {
         $this->handlePublishes();
-
-        if (in_array($request->getClientIp(), $config->get('terminal.whitelists', [])) === true ||
-            $config->get('app.debug') === true
+        if ($config->get('app.debug') === true  ||
+            in_array(
+                $request->getClientIp(),
+                $config->get('terminal.whitelists', [])
+            ) === true
         ) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
         }

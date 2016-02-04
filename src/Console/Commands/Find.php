@@ -56,7 +56,8 @@ class Find extends Command
     /**
      * handle.
      *
-     * @param \Illuminate\Database\Connection $connection
+     * @param \Symfony\Component\Finder\Finder  $finder
+     * @param \Illuminate\Filesystem\Filesystem $filesystem
      *
      * @return void
      */
@@ -70,7 +71,7 @@ class Find extends Command
         $maxDepth = $this->option('maxdepth');
         $delete = $this->option('delete');
 
-        if (method_exists($this->laravel, 'basePath') === true) {
+        if (empty($this->laravel) === false) {
             $root = $this->laravel->basePath();
         } else {
             $root = getcwd();

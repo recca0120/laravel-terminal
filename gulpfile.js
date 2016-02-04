@@ -27,6 +27,7 @@ elixir(function(mix) {
             "jquery.terminal/js/jquery.terminal-src.js",
             "jquery.terminal/js/unix_formatting.js",
             "jquery.terminal/js/xml_formatting.js",
+            "jsvi/vi.js",
         ], config.get('public.js.outputFolder') + '/plugins.js', 'resources/assets/vendor')
         .sass([
             'app.scss'

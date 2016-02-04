@@ -45,9 +45,9 @@ class TerminalTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('get')->andReturn(['command' => 'list'])
             ->mock();
 
-        $controller->index($app, $kernel, $request);
+        $controller->index($app, $kernel);
 
-        $controller->rpcResponse($kernel, $request);
+        $controller->endPoint($kernel, $request);
 
         return [$kernel, $app];
     }

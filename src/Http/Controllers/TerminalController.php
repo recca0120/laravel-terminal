@@ -27,7 +27,7 @@ class TerminalController extends Controller
             'basePath'         => $app->basePath(),
             'environment'      => $app->environment(),
             'version'          => $app->version(),
-            'endPoint'         => action('\\'.static::class.'@rpcResponse'),
+            'endPoint'         => action('\\'.static::class.'@endPoint'),
             'helpInfo'         => $consoleKernel->output(),
             'interpreters'     => [
                 'mysql'          => 'mysql',
@@ -46,10 +46,7 @@ class TerminalController extends Controller
             ],
         ]);
 
-        return view(
-            'terminal::index',
-            compact('options')
-        );
+        return view('terminal::index', compact('options'));
     }
 
     /**
@@ -60,7 +57,7 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function rpcResponse(ConsoleKernel $consoleKernel, Request $request)
+    public function endPoint(ConsoleKernel $consoleKernel, Request $request)
     {
         $cmd = $request->get('cmd');
         $command = array_get($cmd, 'command');

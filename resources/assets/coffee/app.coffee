@@ -26,7 +26,6 @@ do ($ = jQuery, window, document) ->
             term.set_prompt defaultPrompt
 
     class OutputFormatterStyle
-
         colorList:
             30: 'black',
             31: 'red',
@@ -121,7 +120,7 @@ do ($ = jQuery, window, document) ->
         formatter: new OutputFormatter
         colors: $.terminal.ansi_colors
         term: null,
-        defaultPrompt: "$ "
+        prompt: "$ "
         color: (color, background, type = "bold") =>
             if @colors[type] and @colors[type][color]
                 return @colors[type][color]
@@ -153,7 +152,7 @@ do ($ = jQuery, window, document) ->
                     deferred.resolve true
                 else
                     deferred.resolve false
-                    @serverInfo(term)
+                    @serverInfo()
                 term.pop()
                 history.enable()
                 return
@@ -166,46 +165,9 @@ do ($ = jQuery, window, document) ->
                 when 'y', 'yes' then true
                 else false
 
-        interpreter: (commandPrefix, term, prompt) =>
-            unless prompt
-                prompt = commandPrefix
-            term.push (command) =>
-                command = command.trim()
-                if command
-                    @execute term, "#{commandPrefix.replace(/\s+/g, '-')} #{command}"
-                return false
-            ,
-                prompt: "#{prompt}> "
-            return false
-
-        capitalize = (str) =>
-            "#{str.charAt(0).toUpperCase()}#{str.slice(1)}"
-
-        confirmToProceed: (term, cmd, warning = "Application In Production!") =>
-            term.echo @comment("**************************************")
-            term.echo @comment("*     #{warning}     *")
-            term.echo @comment("**************************************")
-            term.echo " "
-            @confirm term, "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
-                .done (result) =>
-                    if result is true
-                        @rpcRequest term, cmd
-                    else
-                        term.echo " "
-                        term.echo "#{@comment('Command Cancelled!')}"
-                        term.echo " "
-
-        commandArtisan: (term, cmd) =>
-            restParsed = $.terminal.parseCommand cmd.rest.trim()
-            if @options.environment is "production" and $.inArray("--force", restParsed.args) is -1
-                if $.inArray(restParsed.name, @options.confirmToProceed[cmd.name]) isnt -1
-                    @confirmToProceed term, cmd
-                    return
-            @rpcRequest term, cmd
-
-        rpcRequest: (term, cmd) =>
+        request: (cmd, callback = null) =>
             @ids[cmd.method] = @ids[cmd.method] || 0;
-            Loading.show term
+            Loading.show @term
             $.ajax
                 url: @options.endPoint,
                 dataType: 'json'
@@ -215,33 +177,100 @@ do ($ = jQuery, window, document) ->
                     id: ++@ids[cmd.method]
                     cmd: cmd
             .success (response) =>
-                @formatter.apply(response.result, term)
-            .error (jqXhr, json, errorThrown) =>
-                @formatter.error("#{jqXhr.status}: #{errorThrown}", term)
-            .complete =>
-                Loading.hide term
-                @serverInfo(term)
+                if response.error is 1
+                    @formatter.apply response.result, @term
+                    return
 
-        execute: (term, command) =>
+                if ($.inArray("-h", cmd.args) isnt -1) or ($.inArray("--help", cmd.args) isnt -1)
+                    @formatter.apply response.result, @term
+                    return
+
+                if callback isnt null
+                    setTimeout =>
+                        callback response
+                    , 100
+                else
+                    @formatter.apply response.result, @term
+            .error (jqXhr, json, errorThrown) =>
+                @formatter.error("#{jqXhr.status}: #{errorThrown}", @term)
+            .complete =>
+                Loading.hide @term
+                @serverInfo()
+
+        interpreter: (commandPrefix, prompt) =>
+            unless prompt
+                prompt = commandPrefix
+            @term.push (command) =>
+                command = command.trim()
+                if command
+                    @execute "#{commandPrefix.replace(/\s+/g, '-')} #{command}", @term
+                return false
+            ,
+                prompt: "#{prompt}> "
+            return false
+
+        capitalize = (str) =>
+            "#{str.charAt(0).toUpperCase()}#{str.slice(1)}"
+
+        confirmToProceed: (cmd, warning = "Application In Production!") =>
+            @term.echo @comment("**************************************")
+            @term.echo @comment("*     #{warning}     *")
+            @term.echo @comment("**************************************")
+            @term.echo " "
+            @confirm @term, "#{@info('Do you really wish to run this command? [y/N] (yes/no)')} #{@comment('[no]')}: "
+                .done (result) =>
+                    if result is true
+                        @request cmd
+                    else
+                        @term.echo " "
+                        @term.echo "#{@comment('Command Cancelled!')}"
+                        @term.echo " "
+
+        commandArtisan: (cmd) =>
+            restCmd = $.terminal.parseCommand cmd.rest.trim()
+            if @options.environment is "production" and $.inArray("--force", restCmd.args) is -1
+                if $.inArray(restCmd.name, @options.confirmToProceed[cmd.name]) isnt -1
+                    @confirmToProceed cmd
+                    return
+            @request cmd
+
+        commandVi: (cmd) =>
+            path = cmd.rest
+            @request cmd, (response) =>
+                @term.disable()
+                editor = $(@options.editor)
+                editor.html response.result
+                vi editor.get(0),
+                    onSave: =>
+                        val = JSON.stringify(editor.val())
+                        cmd.command += " --text=#{val}"
+                        cmd.rest += " --text=#{val}"
+                        cmd.args.push "--text=#{val}"
+                        @request cmd
+                    onExit: =>
+                        @term.enable()
+                        @term.focus()
+
+        execute: (command, term) =>
             command = command.trim()
             switch command
                 when "help", "list"
-                    @formatter.apply @options.helpInfo, term
-                    @serverInfo(term)
+                    @formatter.apply @options.helpInfo, @term
+                    @serverInfo()
                 when ""
                     return
                 else
                     for interpreter, prompt of @options.interpreters
                         if command is interpreter
-                            @interpreter prompt, term
+                            @interpreter prompt
                             return
 
                     cmd = $.terminal.parseCommand command.trim()
 
                     if @["command#{capitalize(cmd.name)}"]
-                        @["command#{capitalize(cmd.name)}"](term, cmd)
+                        @["command#{capitalize(cmd.name)}"](cmd)
                     else
-                        @rpcRequest term, cmd
+                        @request cmd
             return
 
         greetings: =>
@@ -257,23 +286,31 @@ do ($ = jQuery, window, document) ->
                 ""
             ].join "\n"
 
-        serverInfo: (term) =>
-            if term.level() > 1
+        serverInfo: =>
+            if @term.level() > 1
                 return
             host = @info "#{@options.username}@#{@options.hostname}"
             os = @question "#{@options.os}"
             path = @comment "#{@options.basePath}"
-            term.echo "#{host} #{os} #{path}"
+            @term.echo "#{host} #{os} #{path}"
 
-        constructor: (element, @options)->
-            $(element).terminal (command, term) =>
-                @execute(term, command)
-            ,
-                onInit: (term) =>
-                    @execute term, 'list'
-                onBlur: =>
-                    false
-                onClear: (term) =>
-                    @serverInfo(term)
+        onInit: (term) =>
+            @term = term
+            @execute 'list', term
+
+        onClear: (term) =>
+            @serverInfo()
+
+        constructor: (@element, @options)->
+            @element = $(@element)
+            @element.terminal @execute,
+                onInit: @onInit
+                onClear: @onClear
                 greetings: @greetings()
-                prompt: @defaultPrompt
+                prompt: @prompt
+
+            win = $(window)
+            win.on "resize", =>
+                @element.width(win.width())
+                @element.height(win.height())
+            win.trigger "resize"
