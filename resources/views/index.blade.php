@@ -6,6 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Terminal</title>
     <link href="{{ asset('vendor/terminal/css/app.css') }}" rel="stylesheet"/>
+    <style>
+    html, body{
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    </style>
 </head>
 <body>
     <textarea id="editor"></textarea>

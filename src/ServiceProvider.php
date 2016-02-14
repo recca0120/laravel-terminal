@@ -56,10 +56,10 @@ class ServiceProvider extends BaseServiceProvider
     {
         if ($this->app->routesAreCached() === false) {
             $prefix = 'terminal';
-            $middleware = (version_compare($this->app->version(), 5.2, '>=') === true) ? ['web'] : [];
+            // $middleware = (version_compare($this->app->version(), 5.2, '>=') === true) ? ['web'] : [];
             $router->group([
                 'as'         => 'terminal::',
-                'middleware' => $middleware,
+                // 'middleware' => $middleware,
                 'namespace'  => $this->namespace,
                 'prefix'     => $prefix,
             ], function () {

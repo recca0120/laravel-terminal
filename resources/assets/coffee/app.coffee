@@ -311,6 +311,6 @@ do ($ = jQuery, window, document) ->
 
             win = $(window)
             win.on "resize", =>
-                @element.width(win.width())
-                @element.height(win.height())
+                @element.width(@element.parent().width())
+                @element.height(@element.parent().height())
             win.trigger "resize"

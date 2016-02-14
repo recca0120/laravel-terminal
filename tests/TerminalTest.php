@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
@@ -37,7 +39,7 @@ class TerminalTest extends PHPUnit_Framework_TestCase
         $kernel = $arguments[0];
         $app = $arguments[1];
 
-        $controller = m::mock('Recca0120\Terminal\Http\Controllers\TerminalController')
+        $controller = m::mock(new Recca0120\Terminal\Http\Controllers\TerminalController($kernel))
             ->makePartial();
 
         $request = m::mock('Illuminate\Http\Request')
@@ -45,9 +47,11 @@ class TerminalTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('get')->andReturn(['command' => 'list'])
             ->mock();
 
-        $controller->index($app, $kernel);
+        $filesystem = new Filesystem();
 
-        $controller->endPoint($kernel, $request);
+        $controller->index($app, $filesystem);
+
+        $controller->endPoint($request);
 
         return [$kernel, $app];
     }
