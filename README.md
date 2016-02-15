@@ -13,7 +13,7 @@ Add Presenter to your composer.json file:
 
 ```js
 "require": {
-    "recca0120/terminal": "~2.0.5"
+    "recca0120/terminal": "^2.0.5"
 }
 ```
 Now, run a composer update on the command line from the root of your project:
@@ -147,4 +147,3 @@ class Kernel extends ConsoleKernel
 
 ### Find and Delete
 ![Find and Delete](http://4.bp.blogspot.com/-EH88LYVqH_s/VoXQ39EjRaI/AAAAAAAANtk/kS-RxatY1Kc/s1600/Image%2B4.png)
-
