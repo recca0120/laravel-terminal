@@ -70,7 +70,7 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param \Illuminate\Http\Request           $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return mixed
      */
