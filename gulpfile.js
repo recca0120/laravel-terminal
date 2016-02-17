@@ -20,8 +20,8 @@ elixir(function(mix) {
         .copy([
         ], config.get('public.css.outputFolder'))
         .copy([
-            // "resources/assets/vendor/jquery/dist/jquery.min.js",
-            // "resources/assets/vendor/jquery-mousewheel/jquery.mousewheel.min.js",
+            "resources/assets/vendor/jquery/dist/jquery.min.js",
+            "resources/assets/vendor/jquery-mousewheel/jquery.mousewheel.min.js",
         ], config.get('public.js.outputFolder'))
         .scripts([
             "jquery/dist/jquery.js",
@@ -45,9 +45,9 @@ elixir(function(mix) {
         .coffee([
             '**/*.coffee'
         ], config.get('public.js.outputFolder') + '/app.js')
-        .copy([
-            'public'
-        ], '../../../../vendor/terminal')
+        // .copy([
+        //     'public'
+        // ], '../../../../vendor/terminal')
         .phpUnit([
             'tests/**/*'
         ]);

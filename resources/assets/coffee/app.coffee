@@ -1,11 +1,4 @@
 do ($ = jQuery, window, document) ->
-    csrfToken = $ "meta[name='csrf-token']"
-        .attr "content"
-
-    $.ajaxSetup
-        headers:
-            'X-CSRF-TOKEN': csrfToken
-
     Loading = do ->
         anim = ["/", "|", "\\", "-"]
         intervalId = null
@@ -172,6 +165,8 @@ do ($ = jQuery, window, document) ->
                 url: @options.endPoint,
                 dataType: 'json'
                 type: 'post'
+                headers:
+                    'X-CSRF-TOKEN': @options.csrfToken
                 data:
                     jsonrpc: "2.0"
                     id: ++@ids[cmd.method]

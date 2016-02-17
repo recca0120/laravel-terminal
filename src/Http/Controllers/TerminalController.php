@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
+use DateTime;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -54,20 +55,9 @@ class TerminalController extends Controller
             ],
         ]);
 
-        $resourcePath = __DIR__.'/../../../public/';
-        $resources = [];
-        $resources['style'] = $filesystem->get($resourcePath.'css/app.css');
-        $resources['app'] = $filesystem->get($resourcePath.'js/app.js');
-
         if ($panel === true) {
-            $resources['jquery'] = $filesystem->get($resourcePath.'js/jquery.min.js');
-            $resources['mousewheel'] = $filesystem->get($resourcePath.'js/jquery.mousewheel.min.js');
-            $resources['terminal'] = $filesystem->get($resourcePath.'js/terminal.js');
-
             return view('terminal::panel', compact('options', 'resources'));
         }
-
-        $resources['plugins'] = $filesystem->get($resourcePath.'js/plugins.js');
 
         return view('terminal::index', compact('options', 'resources'));
     }
@@ -91,5 +81,17 @@ class TerminalController extends Controller
             'result'  => $this->consoleKernel->output(),
             'error'   => $status,
         ]);
+    }
+
+    public function media(Filesystem $filesystem, $file)
+    {
+        $mimeType = strpos($file, '.css') !== false ? 'text/css' : 'application/javascript';
+        $filename = __DIR__.'/../../../public/'.$file;
+
+        return response($filesystem->get($filename), 200, [
+            'content-type'  => $mimeType,
+            'last-modified' => DateTime::createFromFormat('U', $filesystem->lastModified($filename)),
+        ])
+        ->setEtag(sha1_file($filename));
     }
 }
