@@ -1,29 +1,28 @@
 <style>
-{!! $style !!}
+{!! $resources['style'] !!}
 </style>
 
 <textarea id="editor"></textarea>
-<div id="shell"></div>
+<div id="panel-shell"></div>
 
 <script type="text/javascript">
 if (!window.jQuery) {
-    {!! $jquery !!}
+    {!! $resources['jquery'] !!}
 }
 
 if (!window.jQuery.fn.mousewheel) {
-    {!! $mousewheel !!}
+    {!! $resources['mousewheel'] !!}
 }
 
-{!! $terminal !!}
+{!! $resources['terminal'] !!}
 
-{!! $script !!}
+{!! $resources['app'] !!}
 
 </script>
 
 <script>
 (function() {
-    {!! $script !!}
-    new Term("#shell", $.extend({!! $options !!}, {
+    new Term("#panel-shell", $.extend({!! $options !!}, {
         editor: "#editor"
     }));
 })();

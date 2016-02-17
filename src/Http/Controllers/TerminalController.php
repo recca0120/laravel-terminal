@@ -54,17 +54,22 @@ class TerminalController extends Controller
             ],
         ]);
 
-        if ($panel === true) {
-            $style = $filesystem->get(public_path('vendor/terminal/css/app.css'));
-            $jquery = $filesystem->get(public_path('vendor/terminal/js/jquery.min.js'));
-            $mousewheel = $filesystem->get(public_path('vendor/terminal/js/jquery.mousewheel.min.js'));
-            $terminal = $filesystem->get(public_path('vendor/terminal/js/terminal.js'));
-            $script = $filesystem->get(public_path('vendor/terminal/js/app.js'));
+        $resourcePath = __DIR__.'/../../../public/';
+        $resources = [];
+        $resources['style'] = $filesystem->get($resourcePath.'css/app.css');
+        $resources['app'] = $filesystem->get($resourcePath.'js/app.js');
 
-            return view('terminal::panel', compact('options', 'style', 'jquery', 'mousewheel', 'terminal', 'script'));
+        if ($panel === true) {
+            $resources['jquery'] = $filesystem->get($resourcePath.'js/jquery.min.js');
+            $resources['mousewheel'] = $filesystem->get($resourcePath.'js/jquery.mousewheel.min.js');
+            $resources['terminal'] = $filesystem->get($resourcePath.'js/terminal.js');
+
+            return view('terminal::panel', compact('options', 'resources'));
         }
 
-        return view('terminal::index', compact('options'));
+        $resources['plugins'] = $filesystem->get($resourcePath.'js/plugins.js');
+
+        return view('terminal::index', compact('options', 'resources'));
     }
 
     /**
