@@ -1,12 +1,14 @@
 <?php
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
+use Illuminate\Session\SessionInterface;
+use Illuminate\Session\SessionManager;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
 use Recca0120\Terminal\Console\Commands\Find;
 use Recca0120\Terminal\Console\Commands\Mysql;
+use Recca0120\Terminal\Http\Controllers\TerminalController;
 
 class TerminalTest extends PHPUnit_Framework_TestCase
 {
@@ -39,18 +41,28 @@ class TerminalTest extends PHPUnit_Framework_TestCase
         $kernel = $arguments[0];
         $app = $arguments[1];
 
-        $controller = m::mock(new Recca0120\Terminal\Http\Controllers\TerminalController($kernel))
+        $controller = m::mock(new TerminalController($kernel))
             ->makePartial();
 
-        $request = m::mock('Illuminate\Http\Request')
+        $session = m::mock(SessionInterface::class)
+            ->shouldReceive('isStarted')->andReturn(true)
+            ->shouldReceive('token')->andReturn('token')
+            ->mock();
+
+        $sessionManager = m::mock(SessionManager::class)
+            ->makePartial()
+            ->shouldReceive('driver')->andReturn($session)
+            ->mock();
+
+        $request = m::mock(Request::class)
+            ->makePartial();
+
+        $controller->index($app, $sessionManager, $request);
+
+        $request = m::mock(Request::class)
             ->makePartial()
             ->shouldReceive('get')->andReturn(['command' => 'list'])
             ->mock();
-
-        $filesystem = new Filesystem();
-
-        $controller->index($app, $filesystem);
-
         $controller->endPoint($request);
 
         return [$kernel, $app];

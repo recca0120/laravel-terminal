@@ -22,15 +22,27 @@ class TerminalController extends Controller
      * index.
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Illuminate\Filesystem\Filesystem            $filesystem
+     * @param \Illuminate\Session\SessionManager           $sessionManager
+     * @param \Illuminate\Http\Request                     $request
+     * @param bool                                         $panel
      *
      * @return mixed
      */
-    public function index(ApplicationContract $app, Filesystem $filesystem, SessionManager $sessionManager, $panel = false)
-    {
+    public function index(
+        ApplicationContract $app,
+        SessionManager $sessionManager,
+        Request $request,
+        $panel = false
+    ) {
+        $session = $sessionManager->driver();
+        if ($session->isStarted() === false) {
+            $session->setId($request->cookies->get($session->getName()));
+            $session->setRequestOnHandler($request);
+            $session->start();
+        }
         $this->consoleKernel->call('--ansi');
         $options = json_encode([
-            'csrfToken'        => $sessionManager->driver()->getToken(),
+            'csrfToken'        => $session->token(),
             'username'         => 'LARAVEL',
             'hostname'         => php_uname('n'),
             'os'               => PHP_OS,
@@ -66,7 +78,7 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param \Illuminate\Http\Request           $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return mixed
      */
