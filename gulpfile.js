@@ -21,7 +21,6 @@ elixir(function(mix) {
         ], config.get('public.css.outputFolder'))
         .copy([
             "resources/assets/vendor/jquery/dist/jquery.min.js",
-            "resources/assets/vendor/jquery-mousewheel/jquery.mousewheel.min.js",
         ], config.get('public.js.outputFolder'))
         .scripts([
             "jquery/dist/jquery.js",
@@ -32,6 +31,7 @@ elixir(function(mix) {
             "jsvi/vi.js",
         ], config.get('public.js.outputFolder') + '/plugins.js', 'resources/assets/vendor')
         .scripts([
+            "jquery-mousewheel/jquery.mousewheel.js",
             "jquery.terminal/js/jquery.terminal-src.js",
             "jquery.terminal/js/unix_formatting.js",
             "jquery.terminal/js/xml_formatting.js",

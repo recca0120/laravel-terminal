@@ -160,13 +160,11 @@ do ($ = jQuery, window, document) ->
 
         request: (cmd, callback = null) =>
             @ids[cmd.method] = @ids[cmd.method] || 0;
-            Loading.show @term
+            Loading.show @term 
             $.ajax
                 url: @options.endPoint,
                 dataType: 'json'
                 type: 'post'
-                headers:
-                    'X-CSRF-TOKEN': @options.csrfToken
                 data:
                     jsonrpc: "2.0"
                     id: ++@ids[cmd.method]

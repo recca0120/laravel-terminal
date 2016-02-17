@@ -26,8 +26,7 @@
     <script>
     (function($) {
         new Term("#shell", $.extend({!! $options !!}, {
-            editor: "#editor",
-            csrf_token: "{{ csrf_token() }}"
+            editor: "#editor"
         }));
     })(jQuery);
     </script>
