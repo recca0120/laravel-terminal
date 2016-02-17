@@ -3,8 +3,10 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Contracts\Config\Repository as ConfigContract;
+use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -16,26 +18,32 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected $namespace = 'Recca0120\Terminal\Http\Controllers';
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot(Request $request, ConfigContract $config)
-    {
-        if ($this->app->runningInConsole() === true) {
-            $this->handlePublishes();
-        }
+     /**
+      * Bootstrap any application services.
+      *
+      * @param \Illuminate\Http\Request $Request
+      * @param \Illuminate\Routing\Router $router
+      * @param \Illuminate\Contracts\Config\Repository $config
+      *
+      * @return void
+      */
+     public function boot(Request $request, Router $router, KernelContract $kernel, ConfigContract $config)
+     {
+         if ($this->app->runningInConsole() === true) {
+             $this->handlePublishes();
+         }
 
-        if ($config->get('app.debug') === true  ||
-            in_array(
-                $request->getClientIp(),
-                $config->get('terminal.whitelists', [])
-            ) === true
-        ) {
-            $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-        }
-    }
+         if ($config->get('app.debug') === true  ||
+             in_array(
+                 $request->getClientIp(),
+                 $config->get('terminal.whitelists', [])
+             ) === true
+         ) {
+             $kernel->pushMiddleware(StartSession::class);
+             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
+             $this->handleRoutes($router);
+         }
+     }
 
     /**
      * Register any application services.
@@ -45,7 +53,6 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
-        $this->app->call([$this, 'registerRoutes']);
     }
 
     /**
@@ -55,14 +62,12 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @return void
      */
-    public function registerRoutes(Router $router)
+    public function handleRoutes(Router $router)
     {
         if ($this->app->routesAreCached() === false) {
             $prefix = 'terminal';
-            $middleware = (version_compare($this->app->version(), 5.2, '>=') === true) ? ['web'] : [];
             $router->group([
                 'as'         => 'terminal::',
-                'middleware' => $middleware,
                 'namespace'  => $this->namespace,
                 'prefix'     => $prefix,
             ], function () {

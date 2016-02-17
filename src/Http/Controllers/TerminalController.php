@@ -2,11 +2,11 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use DateTime;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Session\SessionManager;
 use Recca0120\Terminal\Console\Kernel as ConsoleKernel;
 
 class TerminalController extends Controller
@@ -26,10 +26,11 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function index(ApplicationContract $app, Filesystem $filesystem, $panel = false)
+    public function index(ApplicationContract $app, Filesystem $filesystem, SessionManager $sessionManager, $panel = false)
     {
         $this->consoleKernel->call('--ansi');
         $options = json_encode([
+            'csrfToken'        => $sessionManager->driver()->getToken(),
             'username'         => 'LARAVEL',
             'hostname'         => php_uname('n'),
             'os'               => PHP_OS,
@@ -90,7 +91,7 @@ class TerminalController extends Controller
 
         return response($filesystem->get($filename), 200, [
             'content-type'  => $mimeType,
-            'last-modified' => DateTime::createFromFormat('U', $filesystem->lastModified($filename)),
+            'last-modified' => date('D, d M Y H:i:s ', $filesystem->lastModified($filename)).'GMT',
         ])
         ->setEtag(sha1_file($filename));
     }

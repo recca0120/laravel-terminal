@@ -36,20 +36,16 @@
     loadStyle("{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/app.css']) }}");
     var scripts = {
         jquery: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/jquery.min.js']) }}",
-        mousewheel: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/jquery.mousewheel.min.js']) }}",
         terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}",
         app: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/app.js']) }}"
     };
 
     var callback = function () {
-        loadScript(scripts.mousewheel, function () {
-            loadScript(scripts.terminal, function () {
-                loadScript(scripts.app, function() {
-                    new Term("#panel-shell", $.extend({!! $options !!}, {
-                        editor: "#panel-editor",
-                        csrfToken: "{{ csrf_token() }}"
-                    }));
-                });
+        loadScript(scripts.terminal, function () {
+            loadScript(scripts.app, function() {
+                new Term("#panel-shell", $.extend({!! $options !!}, {
+                    editor: "#panel-editor"
+                }));
             });
         });
     }
