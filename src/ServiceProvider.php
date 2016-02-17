@@ -3,10 +3,8 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Contracts\Config\Repository as ConfigContract;
-use Illuminate\Contracts\Http\Kernel as KernelContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -18,32 +16,28 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected $namespace = 'Recca0120\Terminal\Http\Controllers';
 
-     /**
-      * Bootstrap any application services.
-      *
-      * @param \Illuminate\Http\Request $Request
-      * @param \Illuminate\Routing\Router $router
-      * @param \Illuminate\Contracts\Config\Repository $config
-      *
-      * @return void
-      */
-     public function boot(Request $request, Router $router, KernelContract $kernel, ConfigContract $config)
-     {
-         if ($this->app->runningInConsole() === true) {
-             $this->handlePublishes();
-         }
-
-         if ($config->get('app.debug') === true  ||
-             in_array(
-                 $request->getClientIp(),
-                 $config->get('terminal.whitelists', [])
-             ) === true
-         ) {
-             $kernel->pushMiddleware(StartSession::class);
-             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-             $this->handleRoutes($router);
-         }
-     }
+    /**
+     * Bootstrap any application services.
+     *
+     * @param \Illuminate\Http\Request $Request
+     * @param \Illuminate\Routing\Router $router
+     * @param \Illuminate\Contracts\Config\Repository $config
+     *
+     * @return void
+     */
+    public function boot(Request $request, Router $router, ConfigContract $config)
+    {
+        $this->handlePublishes();
+        if ($config->get('app.debug') === true  ||
+            in_array(
+                $request->getClientIp(),
+                $config->get('terminal.whitelists', [])
+            ) === true
+        ) {
+            $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
+            $this->handleRoutes($router);
+        }
+    }
 
     /**
      * Register any application services.
@@ -70,7 +64,7 @@ class ServiceProvider extends BaseServiceProvider
                 'as'         => 'terminal::',
                 'namespace'  => $this->namespace,
                 'prefix'     => $prefix,
-            ], function () {
+            ], function (Router $router) {
                 require __DIR__.'/Http/routes.php';
             });
         }
@@ -94,5 +88,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             __DIR__.'/../public' => public_path('vendor/terminal'),
         ], 'public');
+    }
+
+    public function when()
+    {
+        return [static::class];
     }
 }
