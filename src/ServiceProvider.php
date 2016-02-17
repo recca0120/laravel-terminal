@@ -19,8 +19,8 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @param \Illuminate\Http\Request $Request
-     * @param \Illuminate\Routing\Router $router
+     * @param \Illuminate\Http\Request                $Request
+     * @param \Illuminate\Routing\Router              $router
      * @param \Illuminate\Contracts\Config\Repository $config
      *
      * @return void

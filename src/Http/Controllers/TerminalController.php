@@ -24,7 +24,7 @@ class TerminalController extends Controller
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param \Illuminate\Session\SessionManager           $sessionManager
      * @param \Illuminate\Http\Request                     $request
-     * @param bool $panel
+     * @param bool                                         $panel
      *
      * @return mixed
      */
@@ -78,7 +78,7 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return mixed
      */
