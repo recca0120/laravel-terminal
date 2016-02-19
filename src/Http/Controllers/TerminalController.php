@@ -96,15 +96,40 @@ class TerminalController extends Controller
         ]);
     }
 
-    public function media(Filesystem $filesystem, $file)
+    /**
+     * media.
+     *
+     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Http\Request $request
+     * @param string     $file
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function media(Filesystem $filesystem, Request $request, $file)
     {
-        $mimeType = strpos($file, '.css') !== false ? 'text/css' : 'application/javascript';
         $filename = __DIR__.'/../../../public/'.$file;
-
-        return response($filesystem->get($filename), 200, [
+        $mimeType = strpos($filename, '.css') !== false ? 'text/css' : 'application/javascript';
+        $lastModified = $filesystem->lastModified($filename);
+        $eTag = sha1_file($filename);
+        $headers = [
             'content-type'  => $mimeType,
-            'last-modified' => date('D, d M Y H:i:s ', $filesystem->lastModified($filename)).'GMT',
-        ])
-        ->setEtag(sha1_file($filename));
+            'last-modified' => date('D, d M Y H:i:s ', $lastModified).'GMT',
+        ];
+
+        if (@strtotime($request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
+            trim($request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
+        ) {
+            $response = response(null, 304, $headers);
+        } else {
+            $response = response()->stream(function () use ($filename) {
+                $out = fopen('php://output', 'wb');
+                $file = fopen($filename, 'rb');
+                stream_copy_to_stream($file, $out, filesize($filename));
+                fclose($out);
+                fclose($file);
+            }, 200, $headers);
+        }
+
+        return $response->setEtag($eTag);
     }
 }
