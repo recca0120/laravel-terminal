@@ -12,7 +12,7 @@
         link.setAttribute("rel", "stylesheet");
         link.setAttribute("type", "text/css");
         link.setAttribute("href", filename);
-        link.setAttribute("id", id)
+        link.setAttribute("id", id);
         var head = document.getElementsByTagName('head');
 
         if (head.length > 0) {

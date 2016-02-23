@@ -24,7 +24,7 @@ class TerminalController extends Controller
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param \Illuminate\Session\SessionManager           $sessionManager
      * @param \Illuminate\Http\Request                     $request
-     * @param bool                                         $panel
+     * @param string                                       $view
      *
      * @return mixed
      */
@@ -32,7 +32,7 @@ class TerminalController extends Controller
         ApplicationContract $app,
         SessionManager $sessionManager,
         Request $request,
-        $panel = false
+        $view = 'index'
     ) {
         $session = $sessionManager->driver();
         if ($session->isStarted() === false) {
@@ -68,11 +68,7 @@ class TerminalController extends Controller
             ],
         ]);
 
-        if ($panel === true) {
-            return view('terminal::panel', compact('options', 'resources'));
-        }
-
-        return view('terminal::index', compact('options', 'resources'));
+        return view('terminal::'.$view, compact('options', 'resources'));
     }
 
     /**

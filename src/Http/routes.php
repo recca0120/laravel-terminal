@@ -12,7 +12,7 @@
 */
 
 // Route::controller('/', 'TerminalController');
-Route::get('/', 'TerminalController@index');
+Route::get('/{view?}', 'TerminalController@index');
 Route::post('/endpoint', 'TerminalController@endPoint');
 Route::get('/media/{file}', 'TerminalController@media')
     ->where(['file' => '.+']);
