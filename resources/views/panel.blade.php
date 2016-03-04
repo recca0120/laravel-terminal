@@ -49,16 +49,13 @@
     var scripts = {
         jquery: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/jquery.min.js']) }}",
         terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}",
-        app: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/app.js']) }}"
     };
 
     var callback = function () {
         loadScript('terminal' ,scripts.terminal, function () {
-            loadScript('app', scripts.app, function() {
-                new Term("#panel-shell", $.extend({!! $options !!}, {
-                    editor: "#panel-editor"
-                }));
-            });
+            new Term("#panel-shell", $.extend({!! $options !!}, {
+                editor: "#panel-editor"
+            }));
         });
     }
 

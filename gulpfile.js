@@ -23,20 +23,12 @@ elixir(function(mix) {
             "resources/assets/vendor/jquery/dist/jquery.min.js",
         ], config.get('public.js.outputFolder'))
         .scripts([
-            "jquery/dist/jquery.js",
             "jquery-mousewheel/jquery.mousewheel.js",
             "jquery.terminal/js/jquery.terminal-src.js",
             "jquery.terminal/js/unix_formatting.js",
             "jquery.terminal/js/xml_formatting.js",
             "jsvi/vi.js",
-        ], config.get('public.js.outputFolder') + '/plugins.js', 'resources/assets/vendor')
-        .scripts([
-            "jquery-mousewheel/jquery.mousewheel.js",
-            "jquery.terminal/js/jquery.terminal-src.js",
-            "jquery.terminal/js/unix_formatting.js",
-            "jquery.terminal/js/xml_formatting.js",
-            "jsvi/vi.js",
-        ], config.get('public.js.outputFolder') + '/terminal.js', 'resources/assets/vendor')
+        ], config.get('assets.js.folder') + '/plugins.js', 'resources/assets/vendor')
         .sass([
             'app.scss'
         ], config.get('public.css.outputFolder') + '/app.css', {
@@ -44,11 +36,20 @@ elixir(function(mix) {
         })
         .coffee([
             '**/*.coffee'
+        ], config.get('assets.js.folder') + '/app.js')
+        .combine([
+            "resources/assets/vendor/jquery/dist/jquery.min.js",
+            config.get('assets.js.folder') + '/plugins.js',
+            config.get('assets.js.folder') + '/app.js',
         ], config.get('public.js.outputFolder') + '/app.js')
+        .combine([
+            config.get('assets.js.folder') + '/plugins.js',
+            config.get('assets.js.folder') + '/app.js',
+        ], config.get('public.js.outputFolder') + '/terminal.js')
         // .copy([
         //     'public'
         // ], '../../../../vendor/terminal')
-        .phpUnit([
-            'tests/**/*'
-        ]);
+        // .phpUnit([
+        //     'tests/**/*'
+        // ]);
 });

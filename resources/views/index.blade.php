@@ -21,7 +21,6 @@
 <body>
     <textarea id="editor"></textarea>
     <div id="shell"></div>
-    <script src="{{ asset('vendor/terminal/js/plugins.js') }}"></script>
     <script src="{{ asset('vendor/terminal/js/app.js') }}"></script>
     <script>
     (function($) {
