@@ -1,6 +1,4 @@
-<textarea id="panel-editor" style="display: none;"></textarea>
-<div id="panel-shell"></div>
-
+<div id="panel-terminal-shell"></div>
 <script>
 (function() {
     var loadStyle = function(id, filename) {
@@ -45,24 +43,13 @@
         }
     }
 
-    loadStyle('css', "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/app.css']) }}");
+    loadStyle('css', "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/bundle.css']) }}");
     var scripts = {
-        jquery: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/jquery.min.js']) }}",
-        terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}",
+        terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/bundle.js']) }}",
     };
 
-    var callback = function () {
-        loadScript('terminal' ,scripts.terminal, function () {
-            new Term("#panel-shell", $.extend({!! $options !!}, {
-                editor: "#panel-editor"
-            }));
-        });
-    }
-
-    if (!window.jQuery) {
-        loadScript('jquery', scripts.jquery, callback);
-    } else {
-        callback();
-    }
+    loadScript('terminal' ,scripts.terminal, function () {
+        new Terminal("#panel-terminal-shell", {!! $options !!});
+    });
 })();
 </script>

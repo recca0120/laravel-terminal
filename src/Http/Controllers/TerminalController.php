@@ -96,8 +96,8 @@ class TerminalController extends Controller
      * media.
      *
      * @param \Illuminate\Filesystem\Filesystem $filesystem
-     * @param \Illuminate\Http\Request $request
-     * @param string     $file
+     * @param \Illuminate\Http\Request          $request
+     * @param string                            $file
      *
      * @return \Illuminate\Http\Response
      */

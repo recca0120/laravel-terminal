@@ -1,5 +1,6 @@
 * text=auto
 
+/screenshots export-ignore
 /build export-ignore
 /tests export-ignore
 .editorconfig export-ignore
