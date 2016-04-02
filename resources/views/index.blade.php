@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Terminal</title>
-    <link href="{{ asset('vendor/terminal/css/app.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('vendor/terminal/css/bundle.css') }}" rel="stylesheet"/>
     <style>
     html, body{
         width: 100%;
@@ -19,14 +19,12 @@
     </style>
 </head>
 <body>
-    <textarea id="editor"></textarea>
-    <div id="shell"></div>
-    <script src="{{ asset('vendor/terminal/js/app.js') }}"></script>
+    <div id="terminal-shell"></div>
+    <script src="{{ asset('vendor/terminal/js/bundle.js') }}"></script>
     <script>
-    (function($) {
-        new Term("#shell", $.extend({!! $options !!}, {
-            editor: "#editor"
-        }));
-    })(jQuery);
+    (function() {
+        new Terminal("#terminal-shell", {!! $options !!});
+    })();
     </script>
+</body>
 </html>

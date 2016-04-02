@@ -39,7 +39,7 @@ class Vi extends Command
         }
         $path = realpath($root.'/'.$path);
         if (is_null($text) === false) {
-            $filesystem->put(json_decode($text, true));
+            $filesystem->put($path, $text);
         } else {
             $this->line($filesystem->get($path));
         }

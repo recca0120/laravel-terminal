@@ -1,0 +1,16 @@
+@import 'node_modules/jquery.terminal/css/jquery.terminal';
+@import 'node_modules/codemirror/lib/codemirror';
+@import 'node_modules/codemirror/addon/dialog/dialog';
+@import 'node_modules/codemirror/addon/display/fullscreen';
+@import 'node_modules/codemirror/theme/monokai';
+
+#terminal-shell,
+#panel-terminal-shell
+{
+    padding: 10px 10px !important;
+    min-width: 480px;
+}
+
+.CodeMirror-fullscreen {
+    z-index: 50000 !important;
+}
