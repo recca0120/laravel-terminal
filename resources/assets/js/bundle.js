@@ -1,14 +1,6 @@
 'use strict';
 
-let $;
-
-if (!window.jQuery) {
-    $ = require('jquery');
-} else {
-    $ = window.jQuery;
-}
-
-// $ = window.jQuery = window.$ = require('jquery');
+import $ from './jquery';
 require('jquery-mousewheel');
 require('jquery.terminal');
 require('jquery.terminal/js/unix_formatting');
@@ -29,7 +21,7 @@ import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
-
+ 
 class Loading {
     constructor(term) {
         this.$term = term;

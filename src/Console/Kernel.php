@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\ArtisanTinker::class,
         Commands\Find::class,
         Commands\Mysql::class,
+        Commands\Tail::class,
         Commands\Vi::class,
     ];
 }
