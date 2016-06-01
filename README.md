@@ -184,3 +184,10 @@ $ tail server.php
 $ tail server.php --line 5
 ```
 ![Tail Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/tail-command.png)
+
+
+### Cleanup
+```bash
+$ cleanup
+```
+![Cleanup Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/cleanup-command.png)

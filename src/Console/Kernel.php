@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\Artisan::class,
         Commands\ArtisanTinker::class,
+        Commands\Cleanup::class,
         Commands\Find::class,
         Commands\Mysql::class,
         Commands\Tail::class,
