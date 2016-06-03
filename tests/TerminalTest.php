@@ -6,6 +6,7 @@ use Illuminate\Session\SessionManager;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
+use Recca0120\Terminal\Console\Commands\Cleanup;
 use Recca0120\Terminal\Console\Commands\Find;
 use Recca0120\Terminal\Console\Commands\Mysql;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
@@ -165,6 +166,21 @@ class TerminalTest extends PHPUnit_Framework_TestCase
         $exitCode = $artisan->call('mysql select * from users;');
         $this->assertEquals($exitCode, 0);
         $this->assertRegExp('/recca0120@gmail\.com/', $artisan->output());
+    }
+
+    /**
+     * @depends test_application_call
+     */
+    public function test_cleanup($arguments)
+    {
+        $kernel = $arguments[0];
+        $app = $arguments[1];
+        $artisan = $arguments[2];
+
+        $command = new Cleanup();
+        $artisan->add($command);
+        $exitCode = $artisan->call('cleanup');
+        $this->assertEquals($exitCode, 0);
     }
 }
 

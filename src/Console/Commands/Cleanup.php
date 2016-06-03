@@ -5,6 +5,7 @@ namespace Recca0120\Terminal\Console\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class Cleanup extends Command
 {
@@ -22,6 +23,8 @@ class Cleanup extends Command
      */
     protected $description = 'cleanup vendor folder';
 
+    protected $filesystem;
+
     /**
      * handle.
      *
@@ -31,36 +34,65 @@ class Cleanup extends Command
      */
     public function handle(Filesystem $filesystem)
     {
+        $this->filesystem = $filesystem;
+
         if (empty($this->laravel) === false) {
             $root = $this->laravel->basePath();
         } else {
             $root = getcwd();
         }
 
-        $vendorDir = realpath($root.'/vendor');
+        $this->cleanupDirectories([
+            $root.'/node_modules',
+            $root.'/vendor/*/*/node_modules',
+            $root.'/vendor/*/*/vendor',
+        ]);
+
+        $this->cleanupComposer(realpath($root.'/vendor'));
+    }
+
+    public function cleanupDirectories($directories)
+    {
+        foreach ($directories as $directory) {
+            $files = $this->filesystem->glob($directory, GLOB_ONLYDIR);
+            $this->cleanup($files);
+        }
+    }
+
+    public function cleanupComposer($vendorDirectory)
+    {
         $rules = static::getRules();
         foreach ($rules as $packageDir => $rules) {
-            $packageDir = $vendorDir.'/'.$packageDir;
-            if ($filesystem->isDirectory($packageDir) === false) {
+            $packageDir = $vendorDirectory.'/'.$packageDir;
+            if ($this->filesystem->isDirectory($packageDir) === false) {
                 continue;
             }
 
             foreach ((array) $rules as $part) {
                 $patterns = explode(' ', trim($part));
                 foreach ($patterns as $pattern) {
-                    foreach ($filesystem->glob($packageDir.'/'.$pattern) as $file) {
-                        $this->info('cleanup: '.$file);
-                        try {
-                            if ($filesystem->isDirectory($file) === true) {
-                                $filesystem->deleteDirectory($file, true);
-                            } else {
-                                $filesystem->delete($file);
-                            }
-                        } catch (Exception $e) {
-                            $this->error($e->getMessage());
-                        }
-                    }
+                    $this->cleanup($this->filesystem->glob($packageDir.'/'.$pattern));
                 }
+            }
+        }
+    }
+
+    public function cleanup($files)
+    {
+        if (count($files) === 0) {
+            return;
+        }
+        $directories = [];
+        foreach ($files as $file) {
+            try {
+                if ($this->filesystem->isDirectory($file) === true) {
+                    $this->filesystem->deleteDirectory($file, true);
+                } else {
+                    $this->filesystem->delete($file);
+                }
+                $this->info(sprintf('cleanup: %s', $file));
+            } catch (Exception $e) {
+                $this->error($e->getMessage());
             }
         }
     }

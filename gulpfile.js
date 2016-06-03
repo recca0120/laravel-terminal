@@ -1,4 +1,5 @@
 var elixir = require('laravel-elixir');
+var path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -14,23 +15,23 @@ var elixir = require('laravel-elixir');
 elixir(function(mix) {
     mix
         .copy([
-        ], config.get('public.font.outputFolder'))
+        ], elixir.config.get('public.font.outputFolder'))
         .copy([
-        ], config.get('public.img.outputFolder'))
+        ], elixir.config.get('public.img.outputFolder'))
         .copy([
-        ], config.get('public.css.outputFolder'))
+        ], elixir.config.get('public.css.outputFolder'))
         .sass([
             'bundle.scss'
-        ], config.get('public.css.outputFolder') + '/bundle.css')
+        ], elixir.config.get('public.css.outputFolder') + '/bundle.css')
         .browserify([
             'bundle.js'
-        ], config.get('public.js.outputFolder') + '/bundle.js')
+        ], elixir.config.get('public.js.outputFolder') + '/bundle.js')
         .browserSync({
             files: [
                 'src/**/*.php',
                 'resources/views/**/*.php',
-                config.get('public.css.outputFolder')+'/**/*.css',
-                config.get('public.js.outputFolder')+'/**/*.js',
+                elixir.config.get('public.css.outputFolder')+'/**/*.css',
+                elixir.config.get('public.js.outputFolder')+'/**/*.js',
             ],
             proxy: {
                 target: '127.0.0.1'
@@ -38,6 +39,7 @@ elixir(function(mix) {
             startPath: '/asf/terminal'
         })
         .phpUnit([
+            'src/**/*.php',
             'tests/**/*'
-        ]);
+        ], path.normalize('vendor/bin/phpunit') + ' --verbose');
 });
