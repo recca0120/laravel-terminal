@@ -11,6 +11,9 @@
         link.setAttribute("type", "text/css");
         link.setAttribute("href", filename);
         link.setAttribute("id", id);
+        link.onerror = function() {
+            loadStyle(id, filename);
+        }
         var head = document.getElementsByTagName('head');
 
         if (head.length > 0) {
@@ -32,6 +35,9 @@
         js.setAttribute("type","text/javascript");
         js.setAttribute("src", filename);
         js.setAttribute("id", id);
+        js.onerror = function() {
+            loadScript(id, filename, callback);
+        }
         if (callback) {
             js.onload = callback;
         }

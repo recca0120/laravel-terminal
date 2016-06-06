@@ -21,7 +21,9 @@ import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
- 
+
+let console = window.console;
+
 class Loading {
     constructor(term) {
         this.$term = term;
@@ -170,7 +172,7 @@ class Terminal extends Commands {
     constructor(element, options = {}) {
         super();
         this.$element = $(element);
-        this.$win = $(window);
+        this.$win = $(global);
         this.$term = null;
         Object.assign(this, {
             options: Object.assign({}, options),
@@ -310,7 +312,8 @@ class Terminal extends Commands {
             return;
         }
 
-        let host = this.info(`${this.options.username}@${this.options.hostname}`);
+        let host = `${this.info(this.options.username)}${this.info('@')}${this.info(this.options.hostname)}`;
+        console.log(host);
         let os = this.question(`${this.options.os}`);
         let path = this.comment(`${this.options.basePath}`);
         this.$term.echo(`${host} ${os} ${path}`);
@@ -408,6 +411,6 @@ class Terminal extends Commands {
     }
 }
 
-window.Terminal = Terminal;
+global.Terminal = Terminal;
 
 export default Terminal;

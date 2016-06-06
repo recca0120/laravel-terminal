@@ -1,14 +1,14 @@
 {
   "private": true,
   "devDependencies": {
-    "gulp": "^3.8.8"
+    "gulp": "^3.9.1"
   },
   "dependencies": {
-    "bootstrap-sass": "^3.0.0",
-    "codemirror": "^5.13.2",
-    "jquery": "^2.2.2",
+    "bootstrap-sass": "^3.3.6",
+    "codemirror": "^5.15.2",
+    "jquery": "^2.2.4",
     "jquery-mousewheel": "^3.1.13",
-    "jquery.terminal": "^0.9.3",
-    "laravel-elixir": "^5.0.0"
+    "jquery.terminal": "^0.10.11",
+    "laravel-elixir": "^6.0.0-2"
   }
 }
