@@ -313,7 +313,6 @@ class Terminal extends Commands {
         }
 
         let host = `${this.info(this.options.username)}${this.info('@')}${this.info(this.options.hostname)}`;
-        console.log(host);
         let os = this.question(`${this.options.os}`);
         let path = this.comment(`${this.options.basePath}`);
         this.$term.echo(`${host} ${os} ${path}`);
