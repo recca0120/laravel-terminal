@@ -23,6 +23,11 @@ class Cleanup extends Command
      */
     protected $description = 'cleanup vendor folder';
 
+    /**
+     * $filesystem.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
     protected $filesystem;
 
     /**
@@ -51,6 +56,12 @@ class Cleanup extends Command
         $this->cleanupComposer(realpath($root.'/vendor'));
     }
 
+    /**
+     * cleanupDirectories.
+     * @method cleanupDirectories
+     *
+     * @param  array             $directories
+     */
     public function cleanupDirectories($directories)
     {
         foreach ($directories as $directory) {
@@ -59,6 +70,13 @@ class Cleanup extends Command
         }
     }
 
+    /**
+     * cleanupComposer.
+     *
+     * @method cleanupComposer
+     *
+     * @param  string          $vendorDirectory
+     */
     public function cleanupComposer($vendorDirectory)
     {
         $rules = static::getRules();
@@ -77,6 +95,13 @@ class Cleanup extends Command
         }
     }
 
+    /**
+     * cleanup.
+     *
+     * @method cleanup
+     *
+     * @param  array $files
+     */
     public function cleanup($files)
     {
         if (count($files) === 0) {
@@ -97,6 +122,13 @@ class Cleanup extends Command
         }
     }
 
+    /**
+     * getRules.
+     *
+     * @method getRules
+     * 
+     * @return array
+     */
     public static function getRules()
     {
         // Default patterns for common files

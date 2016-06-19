@@ -6,9 +6,10 @@
   "dependencies": {
     "bootstrap-sass": "^3.3.6",
     "codemirror": "^5.15.2",
-    "jquery": "^2.2.4",
+    "jquery": "^3.0.0",
+    "jquery-migrate": "^3.0.0",
     "jquery-mousewheel": "^3.1.13",
-    "jquery.terminal": "^0.10.11",
+    "jquery.terminal": "^0.10.12",
     "laravel-elixir": "^6.0.0-2"
   }
 }

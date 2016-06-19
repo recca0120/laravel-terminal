@@ -5,12 +5,63 @@
 @import 'node_modules/codemirror/theme/monokai';
 
 #terminal-shell,
-#panel-terminal-shell
 {
     padding: 10px 10px !important;
     min-width: 480px;
 }
 
+.terminal-panel {
+    padding: 10px 10px !important;
+    color: rgb(170, 170, 170) !important;
+    font-family: monospace !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    font-weight: normal !important;
+    font-size: 12px;
+    overflow-x: hidden;
+    a {
+        color: #0f60ff !important;
+        &:hover {
+            color: red !important;
+            text-decoration: underline !important;
+        }
+    }
+}
+
 .CodeMirror-fullscreen {
     z-index: 50000 !important;
 }
+//
+// <style class="tracy-debug">
+// .Laravel-TerminalPanel {
+//     min-width: 700px;
+//     min-height: 500px;
+//     background: #000;
+//     overflow-x: hidden !important;
+// }
+//
+// .Laravel-TerminalPanel #panel-shell {
+//     margin: 10px 15px;
+// }
+//
+// .Laravel-TerminalPanel div,
+// .Laravel-TerminalPanel span,
+// .Laravel-TerminalPanel a {
+//     background: #000;
+//     color: rgb(170, 170, 170);
+//     font-family: monospace;
+//     font-size: 12px;
+//     font-style: normal;
+//     font-variant: normal;
+//     font-weight: normal;
+// }
+//
+// .Laravel-TerminalPanel a {
+//     color: #0f60ff !important;
+// }
+//
+// .Laravel-TerminalPanel a:hover {
+//     color: red !important;
+//     text-decoration: underline !important;
+// }
+// </style>

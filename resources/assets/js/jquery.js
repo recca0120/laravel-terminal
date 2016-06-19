@@ -1,10 +1,12 @@
 'user strict';
 
 let $;
-if (!window.jQuery) {
-    $ = window.jQuery = window.$ = require('jquery');
+if (!global.jQuery) {
+    $ = global.jQuery = global.$ = require('jquery');
+    $.migrateMute = true;
+    require('jquery-migrate');
 } else {
-    $ = window.jQuery;
+    $ = global.jQuery;
 }
 
 export default $;
