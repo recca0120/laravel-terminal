@@ -1,4 +1,7 @@
-<div id="panel-terminal-shell"></div>
+@php
+    $id = str_random(30);
+@endphp
+<div id="panel-terminal-shell-{{ $id }}" class="terminal-panel"></div>
 <script>
 (function() {
     var loadStyle = function(id, filename) {
@@ -55,7 +58,7 @@
     };
 
     loadScript('terminal' ,scripts.terminal, function () {
-        new Terminal("#panel-terminal-shell", {!! $options !!});
+        new Terminal("#panel-terminal-shell-{{ $id }}", {!! $options !!});
     });
 })();
 </script>

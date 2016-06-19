@@ -200,8 +200,8 @@ class Terminal extends Commands {
             let parent = this.$element.parent();
             let width, height;
             if (parent.prop('tagName').toLowerCase() === 'body') {
-                width = parent.width()-20;
-                height = parent.height()-20;
+                width = parent.width() - 20;
+                height = parent.height() - 20;
             } else {
                 width = parent.width();
                 height = parent.height();
