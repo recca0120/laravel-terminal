@@ -31,7 +31,7 @@ class ArtisanTinker extends Command
     {
         $command = $this->argument('command');
         $code = trim(trim($command), ';').';';
-        $this->output->write('=> ');
+        $this->getOutput()->write('=> ');
         ob_start();
         if (starts_with($code, 'echo') === false) {
             $code = 'return '.$code;

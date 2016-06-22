@@ -1,6 +1,6 @@
 var elixir = require('laravel-elixir');
-require('laravel-elixir-browserify-official');
 var path = require('path');
+require('laravel-elixir-browserify-official');
 
 /*
  |--------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Contracts\Console\Kernel as KernelContract;
-use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Recca0120\Terminal\Application as Artisan;
 
@@ -26,12 +26,12 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Illuminate\Contracts\Events\Dispatcher      $events
+     * @param \Illuminate\Contracts\Foundation\Application    $app
+     * @param \Illuminate\Contracts\Events\DispatcherContract $events
      *
      * @return void
      */
-    public function __construct(ApplicationContract $app, Dispatcher $events)
+    public function __construct(ApplicationContract $app, DispatcherContract $events)
     {
         $this->app = $app;
         $this->events = $events;

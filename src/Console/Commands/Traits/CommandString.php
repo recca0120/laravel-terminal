@@ -14,7 +14,7 @@ trait CommandString
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return [\Symfony\Component\Console\Input\InputInterface
+     * @return \Symfony\Component\Console\Input\InputInterface
      */
     public function run(InputInterface $input, OutputInterface $output)
     {

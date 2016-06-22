@@ -1,9 +1,10 @@
 <?php
 
-use \Illuminate\Hashing\BcryptHasher;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Facade;
@@ -27,7 +28,7 @@ trait Laravel
             return $this->app;
         }
 
-        $app = m::mock(Container::class.', Illuminate\Contracts\Foundation\Application')
+        $app = m::mock(Container::class.', '.ApplicationContract::class)
             ->makePartial()
             ->shouldReceive('basePath')->andReturn(realpath(__DIR__.'/../').'/')
             ->shouldReceive('version')->andReturn('5.x.testing')
@@ -37,11 +38,10 @@ trait Laravel
         $app->setInstance($app);
 
         $app['request'] = m::mock(Request::class);
-
-        $app['events'] = m::mock(Dispatcher::class);
+        $app['events'] = m::mock(DispatcherContract::class);
 
         foreach ($this->aliases as $className => $alias) {
-            if (class_exists() === false) {
+            if (class_exists($alias) === false) {
                 class_alias($className, $alias);
             }
         }
