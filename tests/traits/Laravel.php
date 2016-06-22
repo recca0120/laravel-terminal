@@ -41,7 +41,9 @@ trait Laravel
         $app['events'] = m::mock(Dispatcher::class);
 
         foreach ($this->aliases as $className => $alias) {
-            class_alias($className, $alias);
+            if (class_exists() === false) {
+                class_alias($className, $alias);
+            }
         }
 
         Facade::setFacadeApplication($app);
