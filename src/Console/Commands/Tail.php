@@ -37,9 +37,9 @@ class Tail extends Command
         $lines = $this->option('lines');
 
         if (empty($path) === false) {
-            $path = ((is_null($this->laravel) === false) ? $this->laravel->basePath() : getcwd()).'/'.$path;
+            $path = $this->laravel->basePath().'/'.$path;
         } else {
-            $path = (is_null($this->laravel) === false) ? $this->laravel->storagePath() : getcwd();
+            $path = $this->laravel->storagePath();
             $path = collect($filesystem->glob($path.'/logs/*.log'))
                 ->filter(function ($log) {
                     return is_file($log);
@@ -56,13 +56,15 @@ class Tail extends Command
     protected function readLine($file, $lines = 50)
     {
         if (file_exists($file) === false) {
-            return 'tail: cannot open ‘'.$file.'’ for reading: No such file or directory';
+            $this->error('tail: cannot open ‘'.$file.'’ for reading: No such file or directory');
+
+            return;
         }
 
         $fp = fopen($file, 'r');
         $i = 1;
         $result = [];
-        while (!feof($fp)) {
+        while (! feof($fp)) {
             if ($i > $lines) {
                 break;
             }
