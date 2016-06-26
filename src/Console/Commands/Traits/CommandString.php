@@ -18,6 +18,7 @@ trait CommandString
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
+        $command = (string) $input;
         $command = explode(' ', (string) $input);
         array_shift($command);
         foreach ($command as $key => $value) {

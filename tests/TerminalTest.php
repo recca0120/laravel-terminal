@@ -63,8 +63,6 @@ class TerminalTest extends PHPUnit_Framework_TestCase
 
     /**
      * @depends test_artisan
-     *
-     * @expectedException InvalidArgumentException
      */
     public function test_artisan_command($artisan)
     {
@@ -78,11 +76,22 @@ class TerminalTest extends PHPUnit_Framework_TestCase
             $command->handle($artisan);
         })->once();
         $artisan->call('artisan migrate');
+    }
 
+    /**
+     * @depends test_artisan
+     *
+     * @expectedException InvalidArgumentException
+     */
+    public function test_artisan_command_exception($artisan)
+    {
+        $command = new Artisan();
+        $artisan->add($command);
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
             $artisan = m::mock(ArtisanContract::class);
             $command->handle($artisan);
         })->once();
+
         $artisan->call('artisan down');
     }
 
@@ -166,13 +175,6 @@ class TerminalTest extends PHPUnit_Framework_TestCase
         $command = new Tail();
         $artisan->add($command);
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $filesystem = m::mock(Filesystem::class);
-            $command->handle($filesystem);
-        })->once();
-        $artisan->call('tail TerminalTest.php --lines 5');
-        $this->assertTrue(strpos(file_get_contents(__FILE__), trim($artisan->output())) !== false);
-
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
             $filesystem = m::mock(Filesystem::class)
                 ->shouldReceive('glob')->once()->andReturn([
                     __FILE__,
@@ -180,14 +182,14 @@ class TerminalTest extends PHPUnit_Framework_TestCase
                 ->mock();
             $command->handle($filesystem);
         })->once();
+        $artisan->call('tail TerminalTest.php --lines 5');
         $artisan->call('tail --lines 5');
-        $this->assertTrue(strpos(file_get_contents(__FILE__), trim($artisan->output())) !== false);
     }
 
     /**
      * @depends test_artisan
      */
-    public function test_vi_command($artisan)
+    public function test_vi_command_read($artisan)
     {
         $command = new Vi();
         $artisan->add($command);
@@ -198,7 +200,15 @@ class TerminalTest extends PHPUnit_Framework_TestCase
             $command->handle($filesystem);
         })->once();
         $artisan->call('vi TerminalTest.php');
+    }
 
+    /**
+     * @depends test_artisan
+     */
+    public function test_vi_command_write($artisan)
+    {
+        $command = new Vi();
+        $artisan->add($command);
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
             $filesystem = m::mock(Filesystem::class)
                 ->shouldReceive('put')->with(realpath(__DIR__.'/TerminalTest.php'), 'abc')
