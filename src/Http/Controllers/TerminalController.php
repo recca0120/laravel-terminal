@@ -11,8 +11,20 @@ use Recca0120\Terminal\Console\Kernel as ConsoleKernel;
 
 class TerminalController extends Controller
 {
+    /**
+     * $consoleKernel.
+     *
+     * @var \Recca0120\Terminal\Console\Kernel
+     */
     protected $consoleKernel;
 
+    /**
+     * __construct.
+     *
+     * @method __construct
+     *
+     * @param ConsoleKernel $consoleKernel
+     */
     public function __construct(ConsoleKernel $consoleKernel)
     {
         $this->consoleKernel = $consoleKernel;
@@ -80,8 +92,7 @@ class TerminalController extends Controller
      */
     public function endPoint(Request $request)
     {
-        $cmd = $request->get('cmd');
-        $command = array_get($cmd, 'command');
+        $command = $request->get('command');
         $status = $this->consoleKernel->call($command);
 
         return response()->json([

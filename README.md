@@ -13,7 +13,7 @@ Add Presenter to your composer.json file:
 
 ```js
 "require": {
-    "recca0120/terminal": "^1.3.3"
+    "recca0120/terminal": "^1.5.1"
 }
 ```
 Now, run a composer update on the command line from the root of your project:

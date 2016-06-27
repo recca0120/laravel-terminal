@@ -40,45 +40,43 @@ class Cleanup extends Command
     public function handle(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
+        $root = $this->laravel->basePath();
 
-        if (empty($this->laravel) === false) {
-            $root = $this->laravel->basePath();
-        } else {
-            $root = getcwd();
-        }
-
-        $this->cleanupDirectories([
+        $this->deleteDirectory([
             $root.'/node_modules',
             $root.'/vendor/*/*/node_modules',
             $root.'/vendor/*/*/vendor',
         ]);
 
-        $this->cleanupComposer(realpath($root.'/vendor'));
+        $this->cleanupVendor(realpath($root.'/vendor'));
     }
 
     /**
-     * cleanupDirectories.
+     * deleteDirectory.
      *
-     * @method cleanupDirectories
+     * @method deleteDirectory
      *
      * @param array $directories
      */
-    public function cleanupDirectories($directories)
+    public function deleteDirectory($directories)
     {
         foreach ($directories as $directory) {
             $files = $this->filesystem->glob($directory, GLOB_ONLYDIR);
-            $this->cleanup($files);
+            $this->delete($files);
+            if ($this->filesystem->isDirectory($directory) === true) {
+                @rmdir($directory);
+            }
         }
     }
 
     /**
-     * cleanupComposer.
+     * cleanupVendor.
      *
-     * @method cleanupComposer
+     * @method cleanupVendor
      *
      * @param string $vendorDirectory
      */
-    public function cleanupComposer($vendorDirectory)
+    public function cleanupVendor($vendorDirectory)
     {
         $rules = static::getRules();
         foreach ($rules as $packageDir => $rules) {
@@ -90,20 +88,20 @@ class Cleanup extends Command
             foreach ((array) $rules as $part) {
                 $patterns = explode(' ', trim($part));
                 foreach ($patterns as $pattern) {
-                    $this->cleanup($this->filesystem->glob($packageDir.'/'.$pattern));
+                    $this->delete($this->filesystem->glob($packageDir.'/'.$pattern));
                 }
             }
         }
     }
 
     /**
-     * cleanup.
+     * delete.
      *
-     * @method cleanup
+     * @method delete
      *
      * @param array $files
      */
-    public function cleanup($files)
+    public function delete($files)
     {
         if (count($files) === 0) {
             return;
@@ -116,7 +114,7 @@ class Cleanup extends Command
                 } else {
                     $this->filesystem->delete($file);
                 }
-                $this->info(sprintf('cleanup: %s', $file));
+                $this->info(sprintf('delete: %s', $file));
             } catch (Exception $e) {
                 $this->error($e->getMessage());
             }

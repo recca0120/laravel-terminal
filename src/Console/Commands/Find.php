@@ -71,16 +71,10 @@ class Find extends Command
         $maxDepth = $this->option('maxdepth');
         $delete = $this->option('delete');
 
-        if (empty($this->laravel) === false) {
-            $root = $this->laravel->basePath();
-        } else {
-            $root = getcwd();
-        }
-
+        $root = $this->laravel->basePath();
         $path = realpath($root.'/'.$path);
 
-        $finder
-            ->in($path);
+        $finder->in($path);
 
         if ($name !== null) {
             $finder->name($name);

@@ -6,14 +6,12 @@ use Illuminate\Console\Command;
 
 class ArtisanTinker extends Command
 {
-    use Traits\CommandString;
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tinker';
+    protected $signature = 'tinker {--command=}';
 
     /**
      * The console command description.
@@ -29,34 +27,35 @@ class ArtisanTinker extends Command
      */
     public function handle()
     {
-        $command = $this->argument('command');
+        $command = $this->option('command');
         $code = trim(trim($command), ';').';';
-        $this->output->write('=> ');
-        ob_start();
-        if (starts_with($code, 'echo') === false) {
-            $code = 'return '.$code;
+        $result = null;
+        if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
+            ob_start();
+            eval($code);
+            $output = ob_get_clean();
+            $this->line(trim($output));
+        } else {
+            eval('$result = '.$code);
         }
-        $returnValue = eval($code);
-        switch (gettype($returnValue)) {
+
+        $this->getOutput()->write('=> ');
+        switch (gettype($result)) {
             case 'object':
             case 'array':
-                $this->line(var_export($returnValue, true));
+                    $this->line(var_export($result, true));
                 break;
             case 'string':
-                $this->info($returnValue);
+                    $this->comment($result);
                 break;
             case 'number':
             case 'integer':
             case 'float':
-                $this->comment($returnValue);
+                $this->info($result);
                 break;
             default:
-                $this->line($returnValue);
+                $this->line($result);
                 break;
-        }
-        $result = ob_get_clean();
-        if (empty($result) === false) {
-            $this->line(preg_replace("/(\n|\n\r)+/", '', $result));
         }
     }
 }

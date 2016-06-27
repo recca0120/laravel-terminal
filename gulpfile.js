@@ -1,5 +1,6 @@
 var elixir = require('laravel-elixir');
 var path = require('path');
+require('laravel-elixir-browserify-official');
 
 /*
  |--------------------------------------------------------------------------
@@ -36,7 +37,7 @@ elixir(function(mix) {
             proxy: {
                 target: '127.0.0.1'
             },
-            startPath: '/asf/terminal'
+            startPath: '/project/terminal'
         })
         .phpUnit([
             'src/**/*.php',

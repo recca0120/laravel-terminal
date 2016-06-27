@@ -1,198 +1,233 @@
 <?php
 
+use Illuminate\Contracts\Console\Kernel as ArtisanContract;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
-use Illuminate\Session\SessionInterface;
-use Illuminate\Session\SessionManager;
 use Mockery as m;
+use Recca0120\Terminal\Application;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
 use Recca0120\Terminal\Console\Commands\Cleanup;
 use Recca0120\Terminal\Console\Commands\Find;
 use Recca0120\Terminal\Console\Commands\Mysql;
-use Recca0120\Terminal\Http\Controllers\TerminalController;
+use Recca0120\Terminal\Console\Commands\Tail;
+use Recca0120\Terminal\Console\Commands\Vi;
+use Recca0120\Terminal\Console\Kernel;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
 
 class TerminalTest extends PHPUnit_Framework_TestCase
 {
-    use Laravel;
-
     public function tearDown()
     {
         m::close();
     }
 
-    public function test_kernel_call()
+    public function test_kernel()
     {
-        $app = $this->createApplication();
-        $app['request']->shouldReceive('ajax')->andReturn(false)->mock();
-        $app['events']
-            ->shouldReceive('fire')->andReturn(true)
-            ->shouldReceive('firing')->andReturn('ArtisanStarting')
-            ->mock();
-        $kernel = new Recca0120\Terminal\Console\Kernel($app, $app['events']);
-        $kernel->call('list');
-
-        return [$kernel, $app];
-    }
-
-    /**
-     * @depends test_kernel_call
-     */
-    public function test_controller($arguments)
-    {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-
-        $controller = m::mock(new TerminalController($kernel))
-            ->makePartial();
-
-        $session = m::mock(SessionInterface::class)
-            ->shouldReceive('isStarted')->andReturn(true)
-            ->shouldReceive('token')->andReturn('token')
+        $events = m::mock(DispatcherContract::class)
+            ->shouldReceive('fire')
+            ->shouldReceive('firing')
             ->mock();
 
-        $sessionManager = m::mock(SessionManager::class)
-            ->makePartial()
-            ->shouldReceive('driver')->andReturn($session)
-            ->mock();
-
-        $request = m::mock(Request::class)
-            ->makePartial();
-
-        $controller->index($app, $sessionManager, $request);
-
-        $request = m::mock(Request::class)
-            ->makePartial()
-            ->shouldReceive('get')->andReturn(['command' => 'list'])
-            ->mock();
-        $controller->endPoint($request);
-
-        return [$kernel, $app];
-    }
-
-    /**
-     * @depends test_kernel_call
-     */
-    public function test_application_call($arguments)
-    {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-
-        $artisan = new Recca0120\Terminal\Application($app, $app['events'], 'testing');
-        $artisan->call('list');
-        $this->assertRegExp('/list/', $artisan->output());
-
-        return [$kernel, $app, $artisan];
-    }
-
-    /**
-     * @depends test_application_call
-     */
-    public function test_artisan($arguments)
-    {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-        $artisan = $arguments[2];
-
-        $app['Illuminate\Contracts\Console\Kernel'] = m::mock('Illuminate\Contracts\Console\Kernel')
-            ->shouldReceive('handle')->andReturnUsing(function ($input) {
-                $this->assertEquals((string) $input, 'list');
+        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class)
+            ->shouldReceive('offsetGet')->with('request')->andReturn(m::mock(Request::class))
+            ->shouldReceive('offsetGet')->with('events')->andReturn($events)
+            ->shouldReceive('version')->andReturn('testing')
+            ->shouldReceive('make')->andReturnUsing(function ($class) {
+                return new $class();
             })
             ->mock();
 
+        $kernel = new Kernel($app, $events);
+        $kernel->call('list');
+    }
+
+    public function test_artisan()
+    {
+        $events = m::mock(DispatcherContract::class)
+            ->shouldReceive('fire')
+            ->mock();
+
+        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class)
+            ->shouldReceive('offsetGet')->with('request')->andReturn(m::mock(Request::class))
+            ->shouldReceive('basePath')->andReturn(__DIR__)
+            ->shouldReceive('storagePath')->andReturn(__DIR__)
+            ->mock();
+
+        return new Application($app, $events, 'testing');
+    }
+
+    /**
+     * @depends test_artisan
+     */
+    public function test_artisan_command($artisan)
+    {
         $command = new Artisan();
         $artisan->add($command);
-        $exitCode = $artisan->call('artisan list');
-        $this->assertEquals($exitCode, 0);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $artisan = m::mock(ArtisanContract::class);
+            $artisan->shouldReceive('handle')->with(m::on(function ($input) {
+                return (string) $input === 'migrate --force';
+            }), m::type(OutputInterface::class))->once();
+            $command->handle($artisan);
+        })->once();
+        $artisan->call('artisan --command=migrate');
     }
 
     /**
-     * @depends test_application_call
+     * @depends test_artisan
+     *
+     * @expectedException InvalidArgumentException
      */
-    public function test_artisan_tinker($arguments)
+    public function test_artisan_command_exception($artisan)
     {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-        $artisan = $arguments[2];
+        $command = new Artisan();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $artisan = m::mock(ArtisanContract::class);
+            $command->handle($artisan);
+        })->once();
 
+        $artisan->call('artisan --command=down');
+    }
+
+    /**
+     * @depends test_artisan
+     */
+    public function test_artisan_thinker_command($artisan)
+    {
         $command = new ArtisanTinker();
         $artisan->add($command);
-        $exitCode = $artisan->call('tinker echo 123;');
-        $this->assertEquals($exitCode, 0);
-        $this->assertRegExp('/123/', $artisan->output());
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $command->handle();
+        })->times(4);
+        $artisan->call('tinker --command="echo 123;"');
+        $artisan->call('tinker --command="123;"');
+        $artisan->call('tinker --command="[];"');
+        $artisan->call('tinker --command="\'abc\'"');
     }
 
     /**
-     * @depends test_application_call
+     * @depends test_artisan
      */
-    public function test_find($arguments)
+    public function test_cleanup_command($artisan)
     {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-        $artisan = $arguments[2];
-
-        $app['Symfony\Component\Finder\Finder'] = m::mock('Symfony\Component\Finder\Finder')
-            ->makePartial()
-            ->shouldReceive('in')->once()->passthru()
-            ->shouldReceive('depth')->with(m::mustBe('<2'))->once()->passthru()
-            ->mock();
-
-        $command = new Find();
-        $artisan->add($command);
-        $exitCode = $artisan->call('find ../src -name -maxdepth 2');
-        $this->assertEquals($exitCode, 0);
-        $this->assertRegExp('/ServiceProvider\.php/', $artisan->output());
-    }
-
-    /**
-     * @depends test_application_call
-     */
-    public function test_mysql($arguments)
-    {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-        $artisan = $arguments[2];
-
-        $connection = m::mock('Illuminate\Database\Connection')
-            ->makePartial()
-            ->shouldReceive('select')->with('select * from users;')->andReturn([
-                ['recca0120@gmail.com'],
-            ])
-            ->mock();
-
-        $app['Illuminate\Database\ConnectionInterface'] = $connection;
-
-        $command = new Mysql();
-        $artisan->add($command);
-        $exitCode = $artisan->call('mysql select * from users;');
-        $this->assertEquals($exitCode, 0);
-        $this->assertRegExp('/recca0120@gmail\.com/', $artisan->output());
-    }
-
-    /**
-     * @depends test_application_call
-     */
-    public function test_cleanup($arguments)
-    {
-        $kernel = $arguments[0];
-        $app = $arguments[1];
-        $artisan = $arguments[2];
-
         $command = new Cleanup();
         $artisan->add($command);
-        $exitCode = $artisan->call('cleanup');
-        $this->assertEquals($exitCode, 0);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $filesystem = m::mock(Filesystem::class)
+                ->shouldReceive('glob')
+                ->shouldReceive('isDirectory')
+                ->shouldReceive('deleteDirectory')
+                ->mock();
+            $command->handle($filesystem);
+        })->once();
+        $artisan->call('cleanup');
     }
-}
 
-function action()
-{
-}
+    /**
+     * @depends test_artisan
+     */
+    public function test_find_command($artisan)
+    {
+        $command = new Find();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $finder = m::mock(Finder::class)
+                ->shouldReceive('in')->with(__DIR__)
+                ->shouldReceive('name')->with('*')
+                ->shouldReceive('depth')->with('<1')
+                ->shouldReceive('files')
+                ->shouldReceive('getIterator')->andReturn(new AppendIterator())
+                ->mock();
+            $filesystem = m::mock(Filesystem::class);
+            $command->handle($finder, $filesystem);
+        })->once();
+        $artisan->call('find ./ -name * -type f -maxdepth 1 -delete');
+    }
 
-function view()
-{
-}
+    /**
+     * @depends test_artisan
+     */
+    public function test_mysql($artisan)
+    {
+        $command = new Mysql();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $connection = m::mock(ConnectionInterface::class)
+                ->shouldReceive('setFetchMode')->once()
+                ->shouldReceive('select')->with('select * from users;')->andReturn([])->once()
+                ->mock();
+            $command->handle($connection);
+        })->once();
+        $artisan->call('mysql --command="select * from users;"');
+    }
 
-function response()
-{
-    return m::mock(['json' => null]);
+    /**
+     * @depends test_artisan
+     */
+    public function test_tail_command($artisan)
+    {
+        $command = new Tail();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $filesystem = m::mock(Filesystem::class);
+            $command->handle($filesystem);
+        })->once();
+        $artisan->call('tail TerminalTest.php --lines 5');
+    }
+
+    /**
+     * @depends test_artisan
+     */
+    public function test_tail_command_glob($artisan)
+    {
+        $command = new Tail();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $filesystem = m::mock(Filesystem::class)
+                ->shouldReceive('glob')->once()->andReturn([
+                    __FILE__,
+                ])
+                ->mock();
+            $command->handle($filesystem);
+        })->once();
+        $artisan->call('tail --lines 5');
+    }
+
+    /**
+     * @depends test_artisan
+     */
+    public function test_vi_command_read($artisan)
+    {
+        $command = new Vi();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $filesystem = m::mock(Filesystem::class)
+                ->shouldReceive('get')->with(realpath(__DIR__.'/TerminalTest.php'))
+                ->mock();
+            $command->handle($filesystem);
+        })->once();
+        $artisan->call('vi TerminalTest.php');
+    }
+
+    /**
+     * @depends test_artisan
+     */
+    public function test_vi_command_write($artisan)
+    {
+        $command = new Vi();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $filesystem = m::mock(Filesystem::class)
+                ->shouldReceive('put')->with(realpath(__DIR__.'/TerminalTest.php'), 'abc')
+                ->mock();
+            $command->handle($filesystem);
+        })->once();
+        $artisan->call('vi TerminalTest.php --text="abc"');
+    }
 }

@@ -32,11 +32,7 @@ class Vi extends Command
     {
         $path = $this->argument('path');
         $text = $this->option('text');
-        if (empty($this->laravel) === false) {
-            $root = $this->laravel->basePath();
-        } else {
-            $root = getcwd();
-        }
+        $root = $this->laravel->basePath();
         $path = realpath($root.'/'.$path);
         if (is_null($text) === false) {
             $filesystem->put($path, $text);
