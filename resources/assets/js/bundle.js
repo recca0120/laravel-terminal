@@ -7,180 +7,26 @@ require('jquery.terminal/js/unix_formatting');
 
 import './polyfill';
 import OutputFormatter from './output-formatter';
-import CodeMirror from 'codemirror';
-import 'codemirror/addon/dialog/dialog';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/mode/loadmode';
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/addon/display/fullscreen';
-import 'codemirror/mode/clike/clike';
-import 'codemirror/mode/meta';
-import 'codemirror/keymap/vim';
-import 'codemirror/mode/php/php';
-import 'codemirror/mode/css/css';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-import 'codemirror/mode/xml/xml';
+import Loading from './loading';
+
+import Artisan from './commands/artisan';
+import Default from './commands/default';
+import Help from './commands/help';
+import Mysql from './commands/mysql';
+import Tinker from './commands/tinker';
+import Vi from './commands/vi';
 
 let console = window.console;
 
-class Loading {
-    constructor(term) {
-        this.$term = term;
-        Object.assign(this, {
-            anim: ['/', '|', '\\', '-'],
-            prompt: null,
-            delay: 50,
-            intervalId: null,
-            counter: 0
-        });
-    }
-    show() {
-        this.counter++;
-        this.$term.disable();
-        this.prompt = this.$term.get_prompt();
-        let i = 0;
-        this.intervalId = setInterval(() => {
-            this.$term.set_prompt(this.anim[i++]);
-            if (i > this.anim.length - 1) {
-                i = 0;
-            }
-        }, this.delay);
-    }
-
-    hide() {
-        this.counter--;
-        if (this.counter <= 0) {
-            clearInterval(this.intervalId);
-            this.$term.enable();
-            this.$term.set_prompt(this.prompt);
-            this.counter = 0;
-        }
-    }
-}
-
-class Commands {
-    artisan(cmd) {
-        let rest = $.terminal.parseCommand(cmd.rest.trim());
-        if (this.options.environment === 'production' &&
-            rest.args.includes('--force') === false &&
-            this.options.confirmToProceed[cmd.name].includes(rest.name) === true
-        ) {
-            this.$term.echo(this.comment('**************************************'));
-            this.$term.echo(this.comment(`*     Application In Production!     *`));
-            this.$term.echo(this.comment('**************************************'));
-            this.$term.echo(' ');
-
-            let promise = this.confirm(`${this.info('Do you really wish to run this command? [y/N] (yes/no)')} ${this.comment('[no]')}: `)
-            promise.then(() => {
-                this.makeRequest(cmd).then((response) => {
-                    this.echo(response.result);
-                });
-            }, () => {
-                this.echo(" ");
-                this.$term.echo(`${this.comment('Command Cancelled!')}`);
-                this.echo(" ");
-            });
-        } else {
-            this.makeRequest(cmd).then((response) => {
-                this.echo(response.result);
-            }, () => {});
-        }
-    }
-
-    getEditor() {
-        let textarea = $('<textarea style="display: none;"></textarea>').appendTo(document.body).get(0);
-        let editor = CodeMirror.fromTextArea(textarea, {
-            lineNumbers: true,
-            matchBrackets: true,
-            keyMap: 'vim',
-            showCursorWhenSelecting: true,
-            theme: 'monokai'
-        });
-        editor.getWrapperElement().className += ' CodeMirror-fullscreen';
-        $(editor.getWrapperElement()).hide();
-
-        return editor;
-    }
-
-    vi(cmd) {
-        let path = cmd.rest;
-        let editor = this.editor;
-        this.makeRequest(cmd).then((response) => {
-            this.$term.pause();
-            let m, info, mode, spec;
-            if (m = path.match(/.+\.([^.]+)$/)) {
-                info = CodeMirror.findModeByExtension(m[1]);
-                if (info) {
-                    mode = info.mode;
-                    spec = info.mime;
-                }
-            } else if (/\//.test(path)) {
-                info = info = CodeMirror.findModeByMIME(path);
-                if (info) {
-                    mode = info.mode;
-                    spec = info.mime;
-                }
-            } else {
-                mode = spec = val;
-            };
-
-            if (['htmlmixed', 'css', 'javascript', 'php'].includes(mode) === false) {
-                mode = 'php';
-                spec = 'application/x-httpd-php';
-            }
-
-            if (mode) {
-                editor.setOption("mode", spec);
-                CodeMirror.autoLoadMode(editor, mode);
-            }
-
-            $(editor.getWrapperElement()).show();
-            let doc = editor.getDoc();
-            let cm = doc.cm;
-            doc.setValue(response.result);
-            doc.setCursor(0);
-            editor.focus();
-            cm.focus();
-            let save = () => {
-                let value = JSON.stringify(doc.getValue());
-                cmd.command += ` --text=${value}`;
-                cmd.rest += ` --text=${value}`;
-                cmd.args.push += ` --text=${value}`;
-                this.makeRequest(cmd).then(() => {}, () => {});
-            }
-            let quit = () => {
-                $(editor.getWrapperElement()).hide();
-                this.$term.resume();
-                this.$term.focus();
-            }
-            CodeMirror.Vim.defineEx('q', 'q', function() {
-                quit();
-            });
-            CodeMirror.Vim.defineEx('w', 'w', function() {
-                save();
-            });
-            CodeMirror.Vim.defineEx('wq', 'wq', function() {
-                save();
-                quit();
-            });
-        }, () => {});
-    }
-}
-
-class Terminal extends Commands {
+class Terminal {
     constructor(element, options = {}) {
-        super();
         this.$element = $(element);
         this.$win = $(global);
         this.$term = null;
         Object.assign(this, {
             options: Object.assign({}, options),
-            editor: this.getEditor(),
             formatter: new OutputFormatter,
-            requestIds: [],
-            loading: null,
-            prompt: "$ "
+            prompt: "$ ",
         });
 
         this.$element.terminal(this.run.bind(this), {
@@ -188,6 +34,14 @@ class Terminal extends Commands {
             onInit: (term) => {
                 this.$term = term;
                 this.loading = new Loading(term);
+                this.commands = [
+                    new Help(this, options),
+                    new Artisan(this, options),
+                    new Mysql(this, options),
+                    new Tinker(this, options),
+                    new Vi(this, options),
+                    new Default(this, options),
+                ];
                 this.run('list');
             },
             onClear: () => {
@@ -212,85 +66,30 @@ class Terminal extends Commands {
     }
 
     run(command) {
-        command = command.trim();
-        let cmd = $.terminal.parseCommand(command);
-        switch (cmd.command) {
-            case 'help':
-            case 'list':
-                this.echo(this.options.helpInfo);
-                this.serverInfo();
-                break;
-            case '':
+        for (let interpreter in this.options.interpreters) {
+            if (command === interpreter) {
+                let prompt = this.options.interpreters[interpreter];
+                this.interpreter(prompt);
                 return;
-            default:
-                for (let interpreter in this.options.interpreters) {
-                    if (command === interpreter) {
-                        let prompt = this.options.interpreters[interpreter];
-                        this.interpreter(prompt);
-                        return;
-                    }
-                }
+            }
+        }
 
-                switch (cmd.name) {
-                    case 'artisan':
-                        this.artisan(cmd);
-                        break;
-                    case 'vi':
-                        this.vi(cmd);
-                        break;
-                    default:
-                        this.makeRequest(cmd).then((response) => {
-                            this.echo(response.result);
-                        }, () => {});
-                        break;
-                }
+        let cmd = $.terminal.parseCommand(command.trim());
+        for (let i = 0; i < this.commands.length; i++) {
+            let command = this.commands[i];
+            if (command.match(cmd.name) === true) {
+                command.call(cmd);
                 break;
+            }
         }
     }
 
     interpreter(prompt) {
         this.$term.push((command) => {
-            this.run(`${prompt.replace(/\s+/g, '-')} ${JSON.stringify(command)}`);
+            this.run(`${prompt.replace(/\s+/g, '-')} ${command}`);
         }, {
             prompt: `${prompt}> `
         })
-    }
-
-    makeRequest(cmd) {
-        return new Promise((resolve, reject) => {
-            this.requestIds[cmd.method] = this.requestIds[cmd.method] || 0;
-            this.loading.show();
-            $.ajax({
-                url: this.options.endPoint,
-                dataType: 'json',
-                type: 'post',
-                headers: {
-                    'X-CSRF-TOKEN': this.options.csrfToken
-                },
-                data: {
-                    jsonrpc: '2.0',
-                    id: ++this.requestIds[cmd.method],
-                    cmd: cmd
-                }
-            }).success((response) => {
-                if (response.error === 1) {
-                    this.echo(response.result);
-                    reject(response);
-                    return;
-                }
-                setTimeout(() => {
-                    resolve(response);
-                }, 50);
-            }).error((jqXhr, json, errorThrown) => {
-                this.error(`${jqXhr.status}: ${errorThrown}`);
-                reject(errorThrown);
-            }).complete(() => {
-                setTimeout(() => {
-                    this.serverInfo();
-                }, 50);
-                this.loading.hide();
-            });
-        });
     }
 
     greetings() {

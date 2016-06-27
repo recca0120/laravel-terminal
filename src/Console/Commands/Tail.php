@@ -64,7 +64,7 @@ class Tail extends Command
         $fp = fopen($file, 'r');
         $i = 1;
         $result = [];
-        while (! feof($fp)) {
+        while (!feof($fp)) {
             if ($i > $lines) {
                 break;
             }

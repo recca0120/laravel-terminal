@@ -9,14 +9,12 @@ use Symfony\Component\Console\Input\StringInput;
 
 class Artisan extends Command
 {
-    use Traits\CommandString;
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'artisan';
+    protected $signature = 'artisan {--command=}';
 
     /**
      * The console command description.
@@ -44,7 +42,7 @@ class Artisan extends Command
      */
     public function handle(ArtisanContract $artisan)
     {
-        $command = $this->argument('command');
+        $command = $this->option('command');
 
         if ($this->needForce($command) === true) {
             $command .= ' --force';

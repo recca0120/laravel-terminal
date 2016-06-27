@@ -92,8 +92,7 @@ class TerminalController extends Controller
      */
     public function endPoint(Request $request)
     {
-        $cmd = $request->get('cmd');
-        $command = array_get($cmd, 'command');
+        $command = $request->get('command');
         $status = $this->consoleKernel->call($command);
 
         return response()->json([

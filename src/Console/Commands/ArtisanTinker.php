@@ -6,14 +6,12 @@ use Illuminate\Console\Command;
 
 class ArtisanTinker extends Command
 {
-    use Traits\CommandString;
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tinker';
+    protected $signature = 'tinker {--command=}';
 
     /**
      * The console command description.
@@ -29,7 +27,7 @@ class ArtisanTinker extends Command
      */
     public function handle()
     {
-        $command = $this->argument('command');
+        $command = $this->option('command');
         $code = trim(trim($command), ';').';';
         $result = null;
         if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
@@ -43,7 +41,7 @@ class ArtisanTinker extends Command
 
         $this->getOutput()->write('=> ');
         switch (gettype($result)) {
-            case 'object';
+            case 'object':
             case 'array':
                     $this->line(var_export($result, true));
                 break;

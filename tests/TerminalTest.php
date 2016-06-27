@@ -75,7 +75,7 @@ class TerminalTest extends PHPUnit_Framework_TestCase
             }), m::type(OutputInterface::class))->once();
             $command->handle($artisan);
         })->once();
-        $artisan->call('artisan migrate');
+        $artisan->call('artisan --command=migrate');
     }
 
     /**
@@ -92,7 +92,7 @@ class TerminalTest extends PHPUnit_Framework_TestCase
             $command->handle($artisan);
         })->once();
 
-        $artisan->call('artisan down');
+        $artisan->call('artisan --command=down');
     }
 
     /**
@@ -105,10 +105,10 @@ class TerminalTest extends PHPUnit_Framework_TestCase
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
             $command->handle();
         })->times(4);
-        $artisan->call('tinker echo 123;');
-        $artisan->call('tinker 123;');
-        $artisan->call('tinker [];');
-        // $artisan->call('tinker "abcd";');
+        $artisan->call('tinker --command="echo 123;"');
+        $artisan->call('tinker --command="123;"');
+        $artisan->call('tinker --command="[];"');
+        $artisan->call('tinker --command="\'abc\'"');
     }
 
     /**
@@ -164,13 +164,27 @@ class TerminalTest extends PHPUnit_Framework_TestCase
                 ->mock();
             $command->handle($connection);
         })->once();
-        $artisan->call('mysql select * from users;');
+        $artisan->call('mysql --command="select * from users;"');
     }
 
     /**
      * @depends test_artisan
      */
     public function test_tail_command($artisan)
+    {
+        $command = new Tail();
+        $artisan->add($command);
+        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
+            $filesystem = m::mock(Filesystem::class);
+            $command->handle($filesystem);
+        })->once();
+        $artisan->call('tail TerminalTest.php --lines 5');
+    }
+
+    /**
+     * @depends test_artisan
+     */
+    public function test_tail_command_glob($artisan)
     {
         $command = new Tail();
         $artisan->add($command);
@@ -182,7 +196,6 @@ class TerminalTest extends PHPUnit_Framework_TestCase
                 ->mock();
             $command->handle($filesystem);
         })->once();
-        $artisan->call('tail TerminalTest.php --lines 5');
         $artisan->call('tail --lines 5');
     }
 
