@@ -45,7 +45,7 @@ export default class Command {
                     command: command
                 }
             }).success((response) => {
-                if (response.error === 1) {
+                if (response.error !== 0) {
                     reject(response);
                     return;
                 }
