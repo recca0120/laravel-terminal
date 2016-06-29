@@ -1,6 +1,5 @@
+require('gulp-util').env.production = true;
 var elixir = require('laravel-elixir');
-var path = require('path');
-require('laravel-elixir-browserify-official');
 
 /*
  |--------------------------------------------------------------------------
@@ -15,12 +14,6 @@ require('laravel-elixir-browserify-official');
 
 elixir(function(mix) {
     mix
-        .copy([
-        ], elixir.config.get('public.font.outputFolder'))
-        .copy([
-        ], elixir.config.get('public.img.outputFolder'))
-        .copy([
-        ], elixir.config.get('public.css.outputFolder'))
         .sass([
             'bundle.scss'
         ], elixir.config.get('public.css.outputFolder') + '/bundle.css')
@@ -39,8 +32,8 @@ elixir(function(mix) {
             },
             startPath: '/project/terminal'
         })
-        .phpUnit([
-            'src/**/*.php',
-            'tests/**/*'
-        ], path.normalize('vendor/bin/phpunit') + ' --verbose');
+        .copy(elixir.config.get('public.css.outputFolder'), '../../../../vendor/terminal/css/')
+        .copy(elixir.config.get('public.js.outputFolder'), '../../../../vendor/terminal/js/')
+        .phpUnit()
+        ;
 });

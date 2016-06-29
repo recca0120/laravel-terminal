@@ -10,7 +10,8 @@
     "jquery-migrate": "^3.0.0",
     "jquery-mousewheel": "^3.1.13",
     "jquery.terminal": "^0.10.12",
-    "laravel-elixir": "^6.0.0-4",
-    "laravel-elixir-browserify-official": "^0.1.2"
+    "laravel-elixir": "^6.0.0-8",
+    "laravel-elixir-browserify-official": "^0.1.2",
+    "laravel-elixir-browsersync-official": "^1.0.0"
   }
 }
