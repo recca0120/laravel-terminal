@@ -46,6 +46,7 @@ class Cleanup extends Command
             $root.'/node_modules',
             $root.'/vendor/*/*/node_modules',
             $root.'/vendor/*/*/vendor',
+            $root.'/vendor/*/*/.git',
         ]);
 
         $this->cleanupVendor(realpath($root.'/vendor'));
