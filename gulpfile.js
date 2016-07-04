@@ -1,5 +1,6 @@
 require('gulp-util').env.production = true;
 var elixir = require('laravel-elixir');
+var path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,7 +14,7 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    // elixir.config.publicPath = '../../../../vendor/terminal/';
+    elixir.config.publicPath = path.normalize(__dirname + '/../../../vendor/terminal');
     var publicPath = elixir.config.publicPath;
     var cssOutputFolder = elixir.config.get('public.css.outputFolder');
     var jsOutputFolder = elixir.config.get('public.js.outputFolder');
