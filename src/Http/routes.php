@@ -11,7 +11,17 @@
 |
 */
 
-Route::get('/{view?}', 'TerminalController@index');
-Route::post('/endpoint', 'TerminalController@endPoint');
-Route::get('/media/{file}', 'TerminalController@media')
-    ->where(['file' => '.+']);
+Route::get('/{view?}', [
+    'as'   => 'index',
+    'uses' => 'TerminalController@index',
+]);
+
+Route::post('/endpoint', [
+    'as'   => 'endpoint',
+    'uses' => 'TerminalController@endPoint',
+]);
+
+Route::get('/media/{file}', [
+    'as'   => 'media',
+    'uses' => 'TerminalController@media',
+])->where(['file' => '.+']);
