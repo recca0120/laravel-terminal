@@ -90,8 +90,13 @@ class ServiceProvider extends BaseServiceProvider
         ], 'public');
     }
 
+    /**
+     * Get the events that trigger this service provider to register.
+     *
+     * @return array
+     */
     public function when()
     {
-        return [static::class];
+        return [];
     }
 }
