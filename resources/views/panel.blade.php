@@ -1,6 +1,3 @@
-@php
-    $id = str_random(30);
-@endphp
 <div id="panel-terminal-shell-{{ $id }}" class="terminal-panel"></div>
 <script>
 (function() {

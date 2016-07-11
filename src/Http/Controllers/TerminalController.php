@@ -40,12 +40,8 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function index(
-        ApplicationContract $app,
-        SessionManager $sessionManager,
-        Request $request,
-        $view = 'index'
-    ) {
+    public function index(ApplicationContract $app, SessionManager $sessionManager, Request $request, $view = 'index')
+    {
         $session = $sessionManager->driver();
         if ($session->isStarted() === false) {
             $session->setId($request->cookies->get($session->getName()));
@@ -79,8 +75,9 @@ class TerminalController extends Controller
                 ],
             ],
         ]);
+        $id = ($view === 'panel') ? str_random(30) : null;
 
-        return view('terminal::'.$view, compact('options', 'resources'));
+        return view('terminal::'.$view, compact('options', 'resources', 'id'));
     }
 
     /**
