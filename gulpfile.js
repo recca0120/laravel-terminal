@@ -38,6 +38,6 @@ elixir(function(mix) {
             },
             startPath: '/project/terminal'
         })
-        .copy(publicPath, path.normalize(__dirname + '/../../../vendor/terminal'))
+        .copy(publicPath, path.normalize(__dirname + '/../../../../vendor/terminal'))
         .phpUnit();
 });
