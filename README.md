@@ -7,6 +7,7 @@
 [![Monthly Downloads](https://poser.pugx.org/recca0120/terminal/d/monthly)](https://packagist.org/packages/recca0120/terminal)
 [![Daily Downloads](https://poser.pugx.org/recca0120/terminal/d/daily)](https://packagist.org/packages/recca0120/terminal)
 
+
 ## Installation
 
 Add Presenter to your composer.json file:
@@ -45,10 +46,18 @@ artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
 
 http://localhost/path/to/terminal
 
-### Whitelist
+### config
+
 ```php
 return [
+    'enabled'    => true,
     'whitelists' => ['127.0.0.1', 'your ip'],
+    'router'     => [
+        'prefix'     => 'terminal',
+        'as'         => 'terminal.',
+        // if laravel 5.1 remove web
+        'middleware' => 'web',
+    ],
 ];
 
 ```

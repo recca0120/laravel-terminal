@@ -35,7 +35,7 @@ class ServiceProvider extends BaseServiceProvider
             ) === true
         ) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
-            $this->handleRoutes($router);
+            $this->handleRoutes($router, $config);
         }
     }
 
@@ -56,15 +56,12 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @return void
      */
-    public function handleRoutes(Router $router)
+    public function handleRoutes(Router $router, ConfigContract $config)
     {
         if ($this->app->routesAreCached() === false) {
-            $prefix = 'terminal';
-            $router->group([
-                'as'         => 'terminal.',
-                'namespace'  => $this->namespace,
-                'prefix'     => $prefix,
-            ], function (Router $router) {
+            $router->group(array_merge($config->get('terminal.router'), [
+                'namespace' => $this->namespace,
+            ]), function (Router $router) {
                 require __DIR__.'/Http/routes.php';
             });
         }
