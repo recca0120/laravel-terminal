@@ -2,7 +2,7 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -42,7 +42,7 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function index(ApplicationContract $app, SessionManager $sessionManager, Request $request, Encrypter $encrypter, $view = 'index')
+    public function index(ApplicationContract $app, SessionManager $sessionManager, Request $request, EncrypterContract $encrypter, $view = 'index')
     {
         $session = $sessionManager->driver();
         if ($session->isStarted() === false) {
