@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -36,15 +37,18 @@ class TerminalController extends Controller
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param \Illuminate\Session\SessionManager           $sessionManager
      * @param \Illuminate\Http\Request                     $request
+     * @param \Illuminate\Contracts\Encryption\Encrypter   $encrypter
      * @param string                                       $view
      *
      * @return mixed
      */
-    public function index(ApplicationContract $app, SessionManager $sessionManager, Request $request, $view = 'index')
+    public function index(ApplicationContract $app, SessionManager $sessionManager, Request $request, Encrypter $encrypter, $view = 'index')
     {
         $session = $sessionManager->driver();
         if ($session->isStarted() === false) {
-            $session->setId($request->cookies->get($session->getName()));
+            $sessionName = $request->cookies->get($session->getName());
+            $sessionName = ($session->isValidId($sessionName) === false) ? $encrypter->decrypt($sessionName) : $sessionName;
+            $session->setId($sessionName);
             $session->setRequestOnHandler($request);
             $session->start();
         }
