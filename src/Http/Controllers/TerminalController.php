@@ -34,11 +34,11 @@ class TerminalController extends Controller
     /**
      * index.
      *
-     * @param \Illuminate\Contracts\Foundation\Application  $app
-     * @param \Illuminate\Session\SessionManager            $sessionManager
-     * @param \Illuminate\Http\Request                      $request
-     * @param \Illuminate\Contracts\Encryption\Encrypter    $encrypter
-     * @param string                                        $view
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Session\SessionManager           $sessionManager
+     * @param \Illuminate\Http\Request                     $request
+     * @param \Illuminate\Contracts\Encryption\Encrypter   $encrypter
+     * @param string                                       $view
      *
      * @return mixed
      */
