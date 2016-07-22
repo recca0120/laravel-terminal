@@ -9,5 +9,6 @@ export default class Help extends Command {
 
     call(cmd) {
         this.api.echo(this.api.options.helpInfo);
+        this.api.serverInfo();
     }
 }
