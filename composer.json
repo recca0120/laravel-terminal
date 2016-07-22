@@ -13,11 +13,12 @@
         "php": ">=5.5.9",
         "illuminate/console": "~5.1",
         "illuminate/database": "~5.1",
+        "illuminate/encryption": "~5.1",
+        "illuminate/encryption": "~5.1",
         "illuminate/filesystem": "~5.1",
         "illuminate/routing": "~5.1",
         "paragonie/random_compat": "~1.1",
-        "symfony/finder": "2.7.*|2.8.*|3.0.*",
-        "illuminate/encryption": "^5.2"
+        "symfony/finder": "2.7.*|2.8.*|3.0.*"
     },
     "require-dev": {
         "nesbot/carbon": "~1.20",
