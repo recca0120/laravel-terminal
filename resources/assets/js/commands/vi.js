@@ -91,6 +91,10 @@ export default class Vi extends Command {
                 save();
                 quit();
             });
+        }, (response) => {
+            this.api.loading.hide();
+            this.api.echo(response.result);
+            this.api.serverInfo();
         });
     }
 }
