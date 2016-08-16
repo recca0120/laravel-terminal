@@ -50,9 +50,19 @@ class Tail extends Command
                 ->first();
         }
 
-        $this->line(implode('', $this->readLine($path, $lines)));
+        $this->readLine($path, $lines);
     }
 
+    /**
+     * readLine.
+     *
+     * @method readLine
+     *
+     * @param string $file
+     * @param int    $lines
+     *
+     * @return string
+     */
     protected function readLine($file, $lines = 50)
     {
         if (file_exists($file) === false) {
@@ -74,6 +84,6 @@ class Tail extends Command
         }
         fclose($fp);
 
-        return $result;
+        $this->line(implode('', $result));
     }
 }

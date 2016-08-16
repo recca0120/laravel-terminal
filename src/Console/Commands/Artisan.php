@@ -38,6 +38,8 @@ class Artisan extends Command
      *
      * @param \Illuminate\Contracts\Console\Kernel $artisan
      *
+     * @throws \InvalidArgumentException
+     *
      * @return void
      */
     public function handle(ArtisanContract $artisan)
@@ -48,7 +50,6 @@ class Artisan extends Command
             $command .= ' --force';
         }
         $input = new StringInput($command);
-
         if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
             throw new InvalidArgumentException('Command "'.$command.'" is not supported');
         }

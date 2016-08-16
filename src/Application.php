@@ -135,10 +135,10 @@ class Application extends ConsoleApplication
     private function isAjax()
     {
         if (is_null($this->laravel['request']) === false) {
-            return Request::capture()->ajax();
+            return $this->laravel['request']->ajax();
         }
 
-        return $this->laravel['request']->ajax();
+        return Request::capture()->ajax();
     }
 
     /**
