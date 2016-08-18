@@ -6,5 +6,6 @@ return [
     'router'     => [
         'prefix'     => 'terminal',
         'as'         => 'terminal.',
+        'middleware' => ['web'],
     ],
 ];

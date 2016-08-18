@@ -55,6 +55,7 @@ return [
     'router'     => [
         'prefix'     => 'terminal',
         'as'         => 'terminal.',
+        'middleware' => ['web'], // if you use laravel 5.1 remove web
     ],
 ];
 

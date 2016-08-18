@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\Routing\ResponseFactory as ResponseFactoryContract;
 use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
@@ -52,29 +51,17 @@ class TerminalController extends Controller
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param \Illuminate\Session\SessionManager           $sessionManager
      * @param \Illuminate\Http\Request                     $request
-     * @param \Illuminate\Contracts\Encryption\Encrypter   $encrypter
      */
     public function __construct(
         ConsoleKernel $consoleKernel,
         ApplicationContract $app,
         SessionManager $sessionManager,
-        Request $request,
-        EncrypterContract $encrypter
+        Request $request
     ) {
         $this->consoleKernel = $consoleKernel;
         $this->app = $app;
         $this->request = $request;
         $this->session = $sessionManager->driver();
-
-        if ($this->app->runningInConsole() === false && $this->session->isStarted() === false) {
-            $sessionName = $request->cookies->get($this->session->getName());
-            $sessionName = ($this->session->isValidId($sessionName) === false) ?
-                $encrypter->decrypt($sessionName) :
-                $sessionName;
-            $this->session->setId($sessionName);
-            $this->session->setRequestOnHandler($request);
-            $this->session->start();
-        }
     }
 
     /**
