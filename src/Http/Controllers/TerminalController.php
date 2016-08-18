@@ -4,10 +4,13 @@ namespace Recca0120\Terminal\Http\Controllers;
 
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Routing\ResponseFactory as ResponseFactoryContract;
+use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Session\SessionManager;
+use Illuminate\Support\Str;
 use Recca0120\Terminal\Console\Kernel as ConsoleKernel;
 
 class TerminalController extends Controller
@@ -20,48 +23,81 @@ class TerminalController extends Controller
     protected $consoleKernel;
 
     /**
+     * $app.
+     *
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
+    protected $app;
+
+    /**
+     * $request.
+     *
+     * @var \Illuminate\Http\Request
+     */
+    protected $request;
+
+    /**
+     * $session.
+     *
+     * @var \Illuminate\Session\SessionInterface
+     */
+    protected $session;
+
+    /**
      * __construct.
      *
      * @method __construct
      *
-     * @param ConsoleKernel $consoleKernel
+     * @param \Recca0120\Terminal\Console\Kernel           $consoleKernel
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Session\SessionManager           $sessionManager
+     * @param \Illuminate\Http\Request                     $request
+     * @param \Illuminate\Contracts\Encryption\Encrypter   $encrypter
      */
-    public function __construct(ConsoleKernel $consoleKernel)
-    {
+    public function __construct(
+        ConsoleKernel $consoleKernel,
+        ApplicationContract $app,
+        SessionManager $sessionManager,
+        Request $request,
+        EncrypterContract $encrypter
+    ) {
         $this->consoleKernel = $consoleKernel;
+        $this->app = $app;
+        $this->request = $request;
+        $this->session = $sessionManager->driver();
+
+        if ($this->app->runningInConsole() === false && $this->session->isStarted() === false) {
+            $sessionName = $request->cookies->get($this->session->getName());
+            $sessionName = ($this->session->isValidId($sessionName) === false) ?
+                $encrypter->decrypt($sessionName) :
+                $sessionName;
+            $this->session->setId($sessionName);
+            $this->session->setRequestOnHandler($request);
+            $this->session->start();
+        }
     }
 
     /**
      * index.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Illuminate\Session\SessionManager           $sessionManager
-     * @param \Illuminate\Http\Request                     $request
-     * @param \Illuminate\Contracts\Encryption\Encrypter   $encrypter
-     * @param string                                       $view
+     * @param \Illuminate\Contracts\Response\Factory     $responseFactory
+     * @param \Illuminate\Contracts\Routing\UrlGenerator $urlGenerator
+     * @param string                                     $view
      *
      * @return mixed
      */
-    public function index(ApplicationContract $app, SessionManager $sessionManager, Request $request, EncrypterContract $encrypter, $view = 'index')
+    public function index(ResponseFactoryContract $responseFactory, UrlGeneratorContract $urlGenerator, $view = 'index')
     {
-        $session = $sessionManager->driver();
-        if ($session->isStarted() === false) {
-            $sessionName = $request->cookies->get($session->getName());
-            $sessionName = ($session->isValidId($sessionName) === false) ? $encrypter->decrypt($sessionName) : $sessionName;
-            $session->setId($sessionName);
-            $session->setRequestOnHandler($request);
-            $session->start();
-        }
         $this->consoleKernel->call('--ansi');
         $options = json_encode([
-            'csrfToken'        => $session->token(),
+            'csrfToken'        => $this->session->token(),
             'username'         => 'LARAVEL',
             'hostname'         => php_uname('n'),
             'os'               => PHP_OS,
-            'basePath'         => $app->basePath(),
-            'environment'      => $app->environment(),
-            'version'          => $app->version(),
-            'endPoint'         => action('\\'.static::class.'@endPoint'),
+            'basePath'         => $this->app->basePath(),
+            'environment'      => $this->app->environment(),
+            'version'          => $this->app->version(),
+            'endPoint'         => $urlGenerator->action('\\'.static::class.'@endPoint'),
             'helpInfo'         => $this->consoleKernel->output(),
             'interpreters'     => [
                 'mysql'          => 'mysql',
@@ -79,26 +115,27 @@ class TerminalController extends Controller
                 ],
             ],
         ]);
-        $id = ($view === 'panel') ? str_random(30) : null;
+        $id = ($view === 'panel') ? Str::random(30) : null;
 
-        return view('terminal::'.$view, compact('options', 'resources', 'id'));
+        return $responseFactory->view('terminal::'.$view, compact('options', 'resources', 'id'));
     }
 
     /**
      * rpc response.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Response\Factory $responseFactory
+     * @param \Illuminate\Http\Request               $request
      *
      * @return mixed
      */
-    public function endPoint(Request $request)
+    public function endPoint(ResponseFactoryContract $responseFactory)
     {
-        $command = $request->get('command');
+        $command = $this->request->get('command');
         $status = $this->consoleKernel->call($command);
 
-        return response()->json([
-            'jsonrpc' => $request->get('jsonrpc'),
-            'id'      => $request->get('id'),
+        return $responseFactory->json([
+            'jsonrpc' => $this->request->get('jsonrpc'),
+            'id'      => $this->request->get('id'),
             'result'  => $this->consoleKernel->output(),
             'error'   => $status,
         ]);
@@ -113,8 +150,11 @@ class TerminalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function media(Filesystem $filesystem, Request $request, $file)
-    {
+    public function media(
+        Filesystem $filesystem,
+        ResponseFactoryContract $responseFactory,
+        $file
+    ) {
         $filename = __DIR__.'/../../../public/'.$file;
         $mimeType = strpos($filename, '.css') !== false ? 'text/css' : 'application/javascript';
         $lastModified = $filesystem->lastModified($filename);
@@ -124,12 +164,12 @@ class TerminalController extends Controller
             'last-modified' => date('D, d M Y H:i:s ', $lastModified).'GMT',
         ];
 
-        if (@strtotime($request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
-            trim($request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
+        if (@strtotime($this->request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
+            trim($this->request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
         ) {
-            $response = response(null, 304, $headers);
+            $response = $responseFactory->make(null, 304, $headers);
         } else {
-            $response = response()->stream(function () use ($filename) {
+            $response = $responseFactory->stream(function () use ($filename) {
                 $out = fopen('php://output', 'wb');
                 $file = fopen($filename, 'rb');
                 stream_copy_to_stream($file, $out, filesize($filename));

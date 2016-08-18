@@ -28,6 +28,7 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(Request $request, Router $router, ConfigContract $config)
     {
         $this->handlePublishes();
+
         if ($config->get('app.debug') === true  ||
             in_array(
                 $request->getClientIp(),
@@ -75,25 +76,15 @@ class ServiceProvider extends BaseServiceProvider
     protected function handlePublishes()
     {
         $this->publishes([
-            __DIR__.'/../config/terminal.php' => config_path('terminal.php'),
+            __DIR__.'/../config/terminal.php' => $this->app->configPath().'/terminal.php',
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),
+            __DIR__.'/../resources/views' => $this->app->basePath().'/resources/views/vendor/terminal',
         ], 'views');
 
         $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/terminal'),
+            __DIR__.'/../public' => $this->app->publicPath().'/vendor/terminal',
         ], 'public');
-    }
-
-    /**
-     * Get the events that trigger this service provider to register.
-     *
-     * @return array
-     */
-    public function when()
-    {
-        return [];
     }
 }
