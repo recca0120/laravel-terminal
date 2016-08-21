@@ -41,10 +41,9 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         $view->shouldReceive('addNamespace')->with('terminal', m::any());
 
         $config
-            ->shouldReceive('get')->with('app.debug')->andReturn(true)
-            ->shouldReceive('get')->with('terminal', [])->andReturn([])
-            ->shouldReceive('set')->with('terminal', m::any())
-            ->shouldReceive('get')->with('terminal.router')->andReturn([]);
+            ->shouldReceive('get')->with('app.debug', false)->once()->andReturn(true)
+            ->shouldReceive('get')->with('terminal', [])->twice()->andReturn([])
+            ->shouldReceive('set')->with('terminal', m::any())->once();
 
         $app
             ->shouldReceive('offsetGet')->with('config')->andReturn($config)

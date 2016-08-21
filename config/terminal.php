@@ -3,7 +3,7 @@
 return [
     'enabled'    => true,
     'whitelists' => [],
-    'router'     => [
+    'route'      => [
         'prefix'     => 'terminal',
         'as'         => 'terminal.',
         'middleware' => ['web'],

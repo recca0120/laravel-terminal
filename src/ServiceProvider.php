@@ -2,9 +2,9 @@
 
 namespace Recca0120\Terminal;
 
-use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -19,20 +19,20 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @param \Illuminate\Http\Request                $Request
-     * @param \Illuminate\Routing\Router              $router
-     * @param \Illuminate\Contracts\Config\Repository $config
+     * @param \Illuminate\Http\Request   $Request
+     * @param \Illuminate\Routing\Router $router
      *
      * @return void
      */
-    public function boot(Request $request, Router $router, ConfigContract $config)
+    public function boot(Request $request, Router $router)
     {
         $this->handlePublishes();
-
-        if ($config->get('app.debug') === true  ||
+        $debugEnabled = $this->app['config']->get('app.debug', false);
+        $config = $this->app['config']->get('terminal', []);
+        if ($debugEnabled === true  ||
             in_array(
                 $request->getClientIp(),
-                $config->get('terminal.whitelists', [])
+                Arr::get($config, 'whitelists', [])
             ) === true
         ) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
@@ -54,15 +54,16 @@ class ServiceProvider extends BaseServiceProvider
      * register routes.
      *
      * @param Illuminate\Routing\Router $router
+     * @param array                     $config
      *
      * @return void
      */
-    public function handleRoutes(Router $router, ConfigContract $config)
+    public function handleRoutes(Router $router, $config = [])
     {
         if ($this->app->routesAreCached() === false) {
-            $router->group(array_merge($config->get('terminal.router'), [
+            $router->group(array_merge([
                 'namespace' => $this->namespace,
-            ]), function (Router $router) {
+            ], Arr::get($config, 'route', [])), function (Router $router) {
                 require __DIR__.'/Http/routes.php';
             });
         }
