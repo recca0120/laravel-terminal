@@ -1,9 +1,9 @@
 'use strict';
 
-import $ from './jquery';
-require('jquery-mousewheel');
-require('jquery.terminal');
-require('jquery.terminal/js/unix_formatting');
+import './jquery';
+import 'jquery-mousewheel';
+import 'jquery.terminal';
+import 'jquery.terminal/js/unix_formatting';
 
 import './polyfill';
 import OutputFormatter from './output-formatter';
@@ -16,12 +16,10 @@ import Mysql from './commands/mysql';
 import Tinker from './commands/tinker';
 import Vi from './commands/vi';
 
-let console = window.console;
-
-class Terminal {
+export default class Terminal {
     constructor(element, options = {}) {
         this.$element = $(element);
-        this.$win = $(global);
+        this.$win = $(window);
         this.$term = null;
         Object.assign(this, {
             options: Object.assign({}, options),
@@ -207,8 +205,4 @@ class Terminal {
 
         return false;
     }
-}
-
-global.Terminal = Terminal;
-
-export default Terminal;
+};

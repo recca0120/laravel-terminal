@@ -1,6 +1,23 @@
 'use strict';
 
-import $ from './jquery';
+import './jquery';
+// import 'babel-polyfill';
+
+(function() {
+    var testObject = {};
+
+    if (!(Object.setPrototypeOf || testObject.__proto__)) {
+        var nativeGetPrototypeOf = Object.getPrototypeOf;
+
+        Object.getPrototypeOf = function(object) {
+            if (object.__proto__) {
+                return object.__proto__;
+            } else {
+                return nativeGetPrototypeOf.call(Object, object);
+            }
+        }
+    }
+})();
 
 if (!Object.assign) {
     Object.assign = $.extend;
@@ -14,28 +31,29 @@ if (!Array.prototype.includes) {
     });
 }
 
-if (!window.Promise) {
-    class Promise {
-        constructor(callback) {
-            this.deferred = $.Deferred();
-            callback((o) => {
-                this.deferred.resolve(o);
-            }, (o) => {
-                this.deferred.reject(o);
-            });
-            this.promise = this.deferred.promise();
-        }
-
-        then(resolve, reject) {
-            this.promise.done(resolve);
-            this.promise.fail(reject);
-            return this;
-        }
-
-        catch(reject) {
-            this.promise.fail(reject);
-            return this;
-        }
+class jQueryPromise {
+    constructor(callback) {
+        this.deferred = $.Deferred();
+        callback((o) => {
+            this.deferred.resolve(o);
+        }, (o) => {
+            this.deferred.reject(o);
+        });
+        this.promise = this.deferred.promise();
     }
-    window.Promise = Promise;
+
+    then(resolve, reject) {
+        this.promise.done(resolve);
+        this.promise.fail(reject);
+        return this;
+    }
+
+    catch(reject) {
+        this.promise.fail(reject);
+        return this;
+    }
+}
+
+if (!window.Promise) {
+    window.Promise = jQueryPromise;
 }

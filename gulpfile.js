@@ -1,6 +1,7 @@
-require('gulp-util').env.production = true;
-var elixir = require('laravel-elixir');
-var path = require('path');
+const gulpUtil = require('gulp-util');
+gulpUtil.env.production = true;
+const path = require('path');
+const elixir = require('laravel-elixir');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,31 +14,31 @@ var path = require('path');
  |
  */
 
-elixir(function(mix) {
-    var publicPath = elixir.config.publicPath;
-    var cssOutputFolder = elixir.config.get('public.css.outputFolder');
-    var jsOutputFolder = elixir.config.get('public.js.outputFolder');
-    var fontOutputFolder = publicPath + '/fonts/';
-    var imgOutputFolder = publicPath + '/img/';
+elixir((mix) => {
+    let publicPath = elixir.config.publicPath;
+    let cssOutputFolder = elixir.config.get('public.css.outputFolder');
+    let jsOutputFolder = elixir.config.get('public.js.outputFolder');
+    let fontOutputFolder = `${publicPath}/fonts`;
+    let imgOutputFolder = `${publicPath}/img`;
     mix
         .sass([
             'bundle.scss'
-        ], cssOutputFolder + '/bundle.css')
-        .browserify([
-            'bundle.js'
-        ], jsOutputFolder + '/bundle.js')
+        ], `${cssOutputFolder}/bundle.css`)
+        .rollup('bundle.js', `${jsOutputFolder}/bundle.js`, null, {
+            moduleName: 'Terminal'
+        })
         .browserSync({
             files: [
                 'src/**/*.php',
                 'resources/views/**/*.php',
-                cssOutputFolder + '/**/*.css',
-                jsOutputFolder + '/**/*.js',
+                `${cssOutputFolder}/**/*.css`,
+                `${jsOutputFolder}/**/*.js`,
             ],
             proxy: {
                 target: '127.0.0.1'
             },
             startPath: '/project/terminal'
         })
-        .copy(publicPath, path.normalize(__dirname + '/../../../../vendor/terminal'))
+        // .copy(publicPath, path.normalize(`${__dirname}/../../../../vendor/terminal`))
         .phpUnit();
 });
