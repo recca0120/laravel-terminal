@@ -1,9 +1,11 @@
 # Laravel Web Artisan
 
-[![Latest Stable Version](https://poser.pugx.org/recca0120/terminal/v/stable)](https://packagist.org/packages/recca0120/terminal)
-[![Total Downloads](https://poser.pugx.org/recca0120/terminal/downloads)](https://packagist.org/packages/recca0120/terminal)
-[![Latest Unstable Version](https://poser.pugx.org/recca0120/terminal/v/unstable)](https://packagist.org/packages/recca0120/terminal)
-[![License](https://poser.pugx.org/recca0120/terminal/license)](https://packagist.org/packages/recca0120/terminal)
+[![StyleCI](https://styleci.io/repos/45892521/shield?style=flat)](https://styleci.io/repos/40661503)
+[![Build Status](https://travis-ci.org/recca0120/terminal.svg)](https://travis-ci.org/recca0120/terminal)
+[![Total Downloads](https://poser.pugx.org/recca0120/terminal/d/total.svg)](https://packagist.org/packages/recca0120/terminal)
+[![Latest Stable Version](https://poser.pugx.org/recca0120/terminal/v/stable.svg)](https://packagist.org/packages/recca0120/terminal)
+[![Latest Unstable Version](https://poser.pugx.org/recca0120/terminal/v/unstable.svg)](https://packagist.org/packages/recca0120/terminal)
+[![License](https://poser.pugx.org/recca0120/terminal/license.svg)](https://packagist.org/packages/recca0120/terminal)
 [![Monthly Downloads](https://poser.pugx.org/recca0120/terminal/d/monthly)](https://packagist.org/packages/recca0120/terminal)
 [![Daily Downloads](https://poser.pugx.org/recca0120/terminal/d/daily)](https://packagist.org/packages/recca0120/terminal)
 

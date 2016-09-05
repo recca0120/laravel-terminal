@@ -1,7 +1,7 @@
 /vendor
 /resources/assets/vendor
 /node_modules
-/report
+/build
 composer.phar
 composer.lock
 .php_cs.cache
