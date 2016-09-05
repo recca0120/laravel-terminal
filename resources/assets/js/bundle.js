@@ -73,10 +73,12 @@ export default class Terminal {
         });
     }
 
-    scrollToBottom() {
-        this.$element.parent().animate({
-            scrollTop: 9e9
-        });
+    scrollToBottom(delay = 200) {
+        setTimeout(() => {
+            this.$element.parent().animate({
+                scrollTop: 9e9
+            });
+        }, delay);
     }
 
     run(command) {
