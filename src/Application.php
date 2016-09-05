@@ -33,7 +33,9 @@ class Application extends ConsoleApplication
         $this->setCatchExceptions(false);
 
         $command = $command.''.implode(' ', $parameters);
-        $result = $this->run(new StringInput($command), $this->lastOutput);
+        $input = new StringInput($command);
+        $input->setInteractive(false);
+        $result = $this->run($input, $this->lastOutput);
 
         $this->setCatchExceptions(true);
 

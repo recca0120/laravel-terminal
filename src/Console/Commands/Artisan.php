@@ -50,6 +50,7 @@ class Artisan extends Command
             $command .= ' --force';
         }
         $input = new StringInput($command);
+        $input->setInteractive(false);
         if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
             throw new InvalidArgumentException('Command "'.$command.'" is not supported');
         }
