@@ -19,8 +19,15 @@ import Vi from './commands/vi';
 export default class Terminal {
     constructor(element, options = {}) {
         this.$element = $(element);
+        this.$parent = this.$element.parent();
         this.$win = $(window);
         this.$term = null;
+        let parentTagName = this.$parent.prop('tagName').toLowerCase();
+
+        if (!options.endPoint) {
+            options.endPoint = options.endpoint;
+        }
+
         Object.assign(this, {
             options: Object.assign({}, options),
             formatter: new OutputFormatter,
@@ -49,18 +56,27 @@ export default class Terminal {
         });
 
         this.$win.on('resize', () => {
-            let parent = this.$element.parent();
-            let width, height;
-            if (parent.prop('tagName').toLowerCase() === 'body') {
-                width = parent.width() - 20;
-                height = parent.height() - 20;
+            if (parentTagName === 'body') {
+                let width = this.$parent.width() - 20;
+                let height = this.$parent.height() - 20;
+                this.$element.width(width);
+                this.$element.height(height);
             } else {
-                width = parent.width();
-                height = parent.height();
+                this.scrollToBottom();
             }
-            this.$element.width(width);
-            this.$element.height(height);
         }).trigger('resize');
+
+        this.$parent.on('click', () => {
+            if (this.$term) {
+                this.$term.focus();
+            }
+        });
+    }
+
+    scrollToBottom() {
+        this.$element.parent().animate({
+            scrollTop: 9e9
+        });
     }
 
     run(command) {

@@ -16,13 +16,17 @@ export default class Command {
     call(cmd) {
         this.api.loading.show();
         this.makeRequest(cmd.command).then((response) => {
+            let responseResult = response.result ? response.result : response;
             this.api.loading.hide();
-            this.api.echo(response.result);
+            this.api.echo(responseResult);
             this.api.serverInfo();
+            this.api.scrollToBottom();
         }, (response) => {
+            let responseResult = response.result ? response.result : response;
             this.api.loading.hide();
-            this.api.echo(response.result);
+            this.api.echo(responseResult);
             this.api.serverInfo();
+            this.api.scrollToBottom();
         });
     }
 
@@ -43,18 +47,20 @@ export default class Command {
                     jsonrpc: '2.0',
                     id: ++this.requestId,
                     command: command
-                }
-            }).success((response) => {
-                if (response.error !== 0) {
-                    reject(response);
-                    return;
-                }
+                },
+                success: (response) => {
+                    if (response.error !== 0) {
+                        reject(response);
+                        return;
+                    }
 
-                resolve(response);
-            }).error((jqXhr, json, errorThrown) => {
-                reject({
-                    result: `${jqXhr.status}: ${errorThrown}`
-                });
+                    resolve(response);
+                },
+                error: (jqXhr, json, errorThrown) => {
+                    reject({
+                        result: `${jqXhr.status}: ${errorThrown}`
+                    });
+                }
             });
         });
     }
