@@ -41,9 +41,14 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         $view->shouldReceive('addNamespace')->with('terminal', m::any());
 
         $config
-            ->shouldReceive('get')->with('app.debug', false)->once()->andReturn(true)
-            ->shouldReceive('get')->with('terminal', [])->twice()->andReturn([])
+            ->shouldReceive('get')->with('app.debug', false)->once()->andReturn(false)
+            ->shouldReceive('get')->with('terminal', [])->twice()->andReturn([
+                'whitelists' => ['127.0.0.1'],
+            ])
             ->shouldReceive('set')->with('terminal', m::any())->once();
+
+        $request
+            ->shouldReceive('getClientIp')->once()->andReturn('127.0.0.1');
 
         $app
             ->shouldReceive('offsetGet')->with('config')->andReturn($config)

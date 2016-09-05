@@ -27,14 +27,10 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(Request $request, Router $router)
     {
         $this->handlePublishes();
-        $debugEnabled = $this->app['config']->get('app.debug', false);
         $config = $this->app['config']->get('terminal', []);
-        if ($debugEnabled === true  ||
-            in_array(
-                $request->getClientIp(),
-                Arr::get($config, 'whitelists', [])
-            ) === true
-        ) {
+        $enabled = $this->app['config']->get('app.debug', false);
+        $enabled = $enabled === false ? Arr::get($config, 'enabled', false) : $enabled;
+        if ($enabled === true || in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
         }

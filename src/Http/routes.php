@@ -18,7 +18,7 @@ Route::get('/{view?}', [
 
 Route::post('/endpoint', [
     'as'   => 'endpoint',
-    'uses' => 'TerminalController@endPoint',
+    'uses' => 'TerminalController@endpoint',
 ]);
 
 Route::get('/media/{file}', [

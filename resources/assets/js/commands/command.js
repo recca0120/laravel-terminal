@@ -33,7 +33,7 @@ export default class Command {
     makeRequest(command) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: this.api.options.endPoint,
+                url: this.api.options.endpoint,
                 dataType: 'json',
                 type: 'post',
                 headers: {

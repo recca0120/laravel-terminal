@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Mockery as m;
 use Recca0120\Terminal\Console\Kernel;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 
 class KernelTest extends PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,7 @@ class KernelTest extends PHPUnit_Framework_TestCase
         $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);
+        $output = new NullOutput();
         $kernel = new Kernel($app, $events);
 
         /*
@@ -62,9 +64,9 @@ class KernelTest extends PHPUnit_Framework_TestCase
         */
 
         $kernel->call('list');
-        $output = $kernel->output();
+        $kernel->output();
         $kernel->all();
         $kernel->queue('foo');
-        $kernel->handle($input);
+        $kernel->handle($input, $output);
     }
 }

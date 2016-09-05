@@ -77,16 +77,16 @@ class TerminalController extends Controller
     {
         $this->consoleKernel->call('--ansi');
         $options = json_encode([
-            'csrfToken'        => $this->session->token(),
-            'username'         => 'LARAVEL',
-            'hostname'         => php_uname('n'),
-            'os'               => PHP_OS,
-            'basePath'         => $this->app->basePath(),
-            'environment'      => $this->app->environment(),
-            'version'          => $this->app->version(),
-            'endPoint'         => $urlGenerator->action('\\'.static::class.'@endPoint'),
-            'helpInfo'         => $this->consoleKernel->output(),
-            'interpreters'     => [
+            'csrfToken'    => $this->session->token(),
+            'username'     => 'LARAVEL',
+            'hostname'     => php_uname('n'),
+            'os'           => PHP_OS,
+            'basePath'     => $this->app->basePath(),
+            'environment'  => $this->app->environment(),
+            'version'      => $this->app->version(),
+            'endpoint'     => $urlGenerator->action('\\'.static::class.'@endpoint'),
+            'helpInfo'     => $this->consoleKernel->output(),
+            'interpreters' => [
                 'mysql'          => 'mysql',
                 'artisan tinker' => 'tinker',
                 'tinker'         => 'tinker',
@@ -115,7 +115,7 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function endPoint(ResponseFactoryContract $responseFactory)
+    public function endpoint(ResponseFactoryContract $responseFactory)
     {
         $command = $this->request->get('command');
         $status = $this->consoleKernel->call($command);

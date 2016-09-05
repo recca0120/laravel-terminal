@@ -162,7 +162,7 @@ do ($ = jQuery, window, document) ->
             @ids[cmd.method] = @ids[cmd.method] || 0;
             Loading.show @term
             $.ajax
-                url: @options.endPoint,
+                url: @options.endpoint,
                 dataType: 'json'
                 type: 'post'
                 headers:
