@@ -1,7 +1,7 @@
 # Laravel Web Artisan
 
 [![StyleCI](https://styleci.io/repos/45892521/shield?style=flat)](https://styleci.io/repos/40661503)
-[![Build Status](https://travis-ci.org/recca0120/terminal.svg)](https://travis-ci.org/recca0120/terminal)
+[![Build Status](https://travis-ci.org/recca0120/laravel-terminal.svg)](https://travis-ci.org/recca0120/laravel-terminal)
 [![Total Downloads](https://poser.pugx.org/recca0120/terminal/d/total.svg)](https://packagist.org/packages/recca0120/terminal)
 [![Latest Stable Version](https://poser.pugx.org/recca0120/terminal/v/stable.svg)](https://packagist.org/packages/recca0120/terminal)
 [![Latest Unstable Version](https://poser.pugx.org/recca0120/terminal/v/unstable.svg)](https://packagist.org/packages/recca0120/terminal)

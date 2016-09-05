@@ -75,7 +75,7 @@ class FindTest extends PHPUnit_Framework_TestCase
                 ->mock();
             $filesystem = m::mock(Filesystem::class);
             $command->handle($finder, $filesystem);
-        })->once();
+        });
 
         $artisan->call('find ./ -name * -type f -maxdepth 1 -delete');
     }
@@ -115,7 +115,7 @@ class FindTest extends PHPUnit_Framework_TestCase
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command, $finder) {
             $filesystem = m::mock(Filesystem::class);
             $command->handle($finder, $filesystem);
-        })->once();
+        });
 
         $artisan->call('find ./ -name * -type d -maxdepth 0 -delete');
     }
