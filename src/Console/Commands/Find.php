@@ -44,10 +44,10 @@ class Find extends Command
     {
         $command = (string) $input;
         $command = strtr($command, [
-            ' -name'     => ' -N',
-            ' -type'     => ' -T',
+            ' -name' => ' -N',
+            ' -type' => ' -T',
             ' -maxdepth' => ' -M',
-            ' -delete'   => ' -d true',
+            ' -delete' => ' -d true',
         ]);
 
         return parent::run(new StringInput($command), $output);

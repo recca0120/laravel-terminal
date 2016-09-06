@@ -29,7 +29,7 @@ class Artisan extends Command
      * @var array
      */
     protected $notSupport = [
-        'down'   => '',
+        'down' => '',
         'tinker' => '',
     ];
 

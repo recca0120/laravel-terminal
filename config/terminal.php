@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'enabled'    => true,
+    'enabled' => true,
     'whitelists' => [],
-    'route'      => [
-        'prefix'     => 'terminal',
-        'as'         => 'terminal.',
+    'route' => [
+        'prefix' => 'terminal',
+        'as' => 'terminal.',
         'middleware' => ['web'],
     ],
 ];

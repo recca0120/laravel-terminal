@@ -24,9 +24,7 @@ elixir((mix) => {
         .sass([
             'bundle.scss'
         ], `${cssOutputFolder}/bundle.css`)
-        .rollup('bundle.js', `${jsOutputFolder}/bundle.js`, null, {
-            moduleName: 'Terminal'
-        })
+        .webpack('bundle.js', `${jsOutputFolder}/bundle.js`)
         .browserSync({
             files: [
                 'src/**/*.php',

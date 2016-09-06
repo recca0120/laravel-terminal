@@ -12,16 +12,16 @@
 */
 
 Route::get('/{view?}', [
-    'as'   => 'index',
+    'as' => 'index',
     'uses' => 'TerminalController@index',
 ]);
 
 Route::post('/endpoint', [
-    'as'   => 'endpoint',
+    'as' => 'endpoint',
     'uses' => 'TerminalController@endpoint',
 ]);
 
 Route::get('/media/{file}', [
-    'as'   => 'media',
+    'as' => 'media',
     'uses' => 'TerminalController@media',
 ])->where(['file' => '.+']);

@@ -20,13 +20,11 @@ export default class Command {
             this.api.loading.hide();
             this.api.echo(responseResult);
             this.api.serverInfo();
-            this.api.scrollToBottom();
         }, (response) => {
             let responseResult = response.result ? response.result : response;
             this.api.loading.hide();
             this.api.echo(responseResult);
             this.api.serverInfo();
-            this.api.scrollToBottom();
         });
     }
 

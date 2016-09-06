@@ -77,19 +77,19 @@ class TerminalController extends Controller
     {
         $this->consoleKernel->call('--ansi');
         $options = json_encode([
-            'csrfToken'    => $this->session->token(),
-            'username'     => 'LARAVEL',
-            'hostname'     => php_uname('n'),
-            'os'           => PHP_OS,
-            'basePath'     => $this->app->basePath(),
-            'environment'  => $this->app->environment(),
-            'version'      => $this->app->version(),
-            'endpoint'     => $urlGenerator->action('\\'.static::class.'@endpoint'),
-            'helpInfo'     => $this->consoleKernel->output(),
+            'csrfToken' => $this->session->token(),
+            'username' => 'LARAVEL',
+            'hostname' => php_uname('n'),
+            'os' => PHP_OS,
+            'basePath' => $this->app->basePath(),
+            'environment' => $this->app->environment(),
+            'version' => $this->app->version(),
+            'endpoint' => $urlGenerator->action('\\'.static::class.'@endpoint'),
+            'helpInfo' => $this->consoleKernel->output(),
             'interpreters' => [
-                'mysql'          => 'mysql',
+                'mysql' => 'mysql',
                 'artisan tinker' => 'tinker',
-                'tinker'         => 'tinker',
+                'tinker' => 'tinker',
             ],
             'confirmToProceed' => [
                 'artisan' => [
@@ -122,9 +122,9 @@ class TerminalController extends Controller
 
         return $responseFactory->json([
             'jsonrpc' => $this->request->get('jsonrpc'),
-            'id'      => $this->request->get('id'),
-            'result'  => $this->consoleKernel->output(),
-            'error'   => $status,
+            'id' => $this->request->get('id'),
+            'result' => $this->consoleKernel->output(),
+            'error' => $status,
         ]);
     }
 
@@ -147,7 +147,7 @@ class TerminalController extends Controller
         $lastModified = $filesystem->lastModified($filename);
         $eTag = sha1_file($filename);
         $headers = [
-            'content-type'  => $mimeType,
+            'content-type' => $mimeType,
             'last-modified' => date('D, d M Y H:i:s ', $lastModified).'GMT',
         ];
 

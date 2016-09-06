@@ -16,7 +16,7 @@ import Mysql from './commands/mysql';
 import Tinker from './commands/tinker';
 import Vi from './commands/vi';
 
-export default class Terminal {
+class Terminal {
     constructor(element, options = {}) {
         this.$element = $(element);
         this.$parent = this.$element.parent();
@@ -131,6 +131,7 @@ export default class Terminal {
         let os = this.question(`${this.options.os}`);
         let path = this.comment(`${this.options.basePath}`);
         this.$term.echo(`${host} ${os} ${path}`);
+        this.scrollToBottom();
     }
 
     error(text) {
@@ -190,6 +191,7 @@ export default class Terminal {
                 this.$term.echo(title);
             }
             this.$term.echo(message);
+            this.api.scrollToBottom();
             this.$term.push((result) => {
                 if (this.toBoolean(result) === true) {
                     resolve(true);
@@ -224,3 +226,5 @@ export default class Terminal {
         return false;
     }
 };
+
+window.Terminal = Terminal;
