@@ -10,6 +10,7 @@ use Recca0120\Terminal\ServiceProvider;
 use Recca0120\Terminal\Kernel;
 use Recca0120\Terminal\Application as Artisan;
 use Symfony\Component\Console\Command\Command;
+
 class ServiceProviderTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
@@ -31,7 +32,6 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         $router = m::mock(Router::class);
         $view = m::mock(stdClass::class);
         $events = m::mock(Dispatcher::class);
-
 
         /*
         |------------------------------------------------------------
@@ -65,14 +65,15 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('offsetGet')->with('events')->times(3)->andReturn($events)
             ->shouldReceive('version')->andReturn('testing')->once()
             ->shouldReceive('singleton')->with(Kernel::class, Kernel::class)
-            ->shouldReceive('singleton')->with(Artisan::class, m::type(Closure::class))->andReturnUsing(function($className, $closure) use ($app) {
+            ->shouldReceive('singleton')->with(Artisan::class, m::type(Closure::class))->andReturnUsing(function ($className, $closure) use ($app) {
                 return $closure($app);
             })
-            ->shouldReceive('make')->andReturnUsing(function() {
+            ->shouldReceive('make')->andReturnUsing(function () {
                 $command = m::mock(Command::class);
 
                 $command->shouldReceive('setApplication')
                     ->shouldReceive('isEnabled')->andReturn(false);
+
                 return $command;
             });
 

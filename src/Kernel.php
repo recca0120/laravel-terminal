@@ -3,11 +3,10 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Contracts\Console\Kernel as KernelContract;
-use Illuminate\Contracts\Events\Dispatcher as Dispatcher;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Recca0120\Terminal\Application as Artisan;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Foundation\Console\QueuedJob;
+
 class Kernel implements KernelContract
 {
     /**

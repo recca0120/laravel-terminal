@@ -16,5 +16,5 @@ return [
         \Recca0120\Terminal\Console\Commands\Mysql::class,
         \Recca0120\Terminal\Console\Commands\Tail::class,
         \Recca0120\Terminal\Console\Commands\Vi::class,
-    ]
+    ],
 ];

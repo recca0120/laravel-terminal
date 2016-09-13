@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\Request;
 use Mockery as m;
 use Recca0120\Terminal\Kernel;
 use Recca0120\Terminal\Application as Artisan;
@@ -10,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Foundation\Console\QueuedJob;
+
 class KernelTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
