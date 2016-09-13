@@ -23,9 +23,9 @@ export default class Artisan extends Command {
                 cmd.command = `artisan --command="${this.addslashes(cmd.rest)}"`;
                 super.call(cmd);
             }, () => {
-                this.echo(" ");
+                this.$term.echo(" ");
                 this.$term.echo(`${this.comment('Command Cancelled!')}`);
-                this.echo(" ");
+                this.$term.echo(" ");
             });
         } else {
             cmd.command = `artisan --command="${this.addslashes(cmd.rest)}"`;

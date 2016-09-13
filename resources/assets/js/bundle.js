@@ -191,7 +191,7 @@ class Terminal {
                 this.$term.echo(title);
             }
             this.$term.echo(message);
-            this.api.scrollToBottom();
+            this.scrollToBottom();
             this.$term.push((result) => {
                 if (this.toBoolean(result) === true) {
                     resolve(true);
