@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
-use Illuminate\Contracts\Routing\ResponseFactory as ResponseFactoryContract;
-use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Session\SessionManager;
 use Mockery as m;
-use Recca0120\Terminal\Console\Kernel as ConsoleKernel;
+use Recca0120\Terminal\Kernel;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
 
 class TerminalControllerTest extends PHPUnit_Framework_TestCase
@@ -24,12 +24,12 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $consoleKernel = m::mock(ConsoleKernel::class);
-        $app = m::mock(ApplicationContract::class);
+        $consoleKernel = m::mock(Kernel::class);
+        $app = m::mock(Application::class);
         $sessionManager = m::mock(SessionManager::class);
         $request = m::mock(Request::class);
-        $responseFactory = m::mock(ResponseFactoryContract::class);
-        $urlGenerator = m::mock(UrlGeneratorContract::class);
+        $responseFactory = m::mock(ResponseFactory::class);
+        $urlGenerator = m::mock(UrlGenerator::class);
         /*
         |------------------------------------------------------------
         | Expectation
@@ -70,12 +70,12 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $consoleKernel = m::mock(ConsoleKernel::class);
-        $app = m::mock(ApplicationContract::class);
+        $consoleKernel = m::mock(Kernel::class);
+        $app = m::mock(Application::class);
         $sessionManager = m::mock(SessionManager::class);
         $request = m::mock(Request::class);
-        $responseFactory = m::mock(ResponseFactoryContract::class);
-        $urlGenerator = m::mock(UrlGeneratorContract::class);
+        $responseFactory = m::mock(ResponseFactory::class);
+        $urlGenerator = m::mock(UrlGenerator::class);
         /*
         |------------------------------------------------------------
         | Expectation

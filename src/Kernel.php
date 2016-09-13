@@ -6,7 +6,8 @@ use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Contracts\Events\Dispatcher as Dispatcher;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Recca0120\Terminal\Application as Artisan;
-
+use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Foundation\Console\QueuedJob;
 class Kernel implements KernelContract
 {
     /**
@@ -31,10 +32,9 @@ class Kernel implements KernelContract
      *
      * @return void
      */
-    public function __construct(ApplicationContract $app, Dispatcher $events)
+    public function __construct(Artisan $artisan)
     {
-        $this->app = $app;
-        $this->events = $events;
+        $this->artisan = $artisan;
     }
 
     /**
@@ -47,7 +47,7 @@ class Kernel implements KernelContract
      */
     public function handle($input, $output = null)
     {
-        return $this->getArtisan()->run($input, $output);
+        return $this->artisan->run($input, $output);
     }
 
     /**
@@ -60,7 +60,7 @@ class Kernel implements KernelContract
      */
     public function call($command, array $parameters = [])
     {
-        return $this->getArtisan()->call($command, $parameters);
+        return $this->artisan->call($command, $parameters);
     }
 
     /**
@@ -73,6 +73,10 @@ class Kernel implements KernelContract
      */
     public function queue($command, array $parameters = [])
     {
+        $app = $this->artisan->getLaravel();
+        $app[Queue::class]->push(
+            QueuedJob::class, func_get_args()
+        );
     }
 
     /**
@@ -82,7 +86,7 @@ class Kernel implements KernelContract
      */
     public function all()
     {
-        return $this->getArtisan()->all();
+        return $this->artisan->all();
     }
 
     /**
@@ -92,21 +96,6 @@ class Kernel implements KernelContract
      */
     public function output()
     {
-        return $this->getArtisan()->output();
-    }
-
-    /**
-     * Get the Artisan application instance.
-     *
-     * @return \Illuminate\Console\Application
-     */
-    protected function getArtisan()
-    {
-        if (is_null($this->artisan)) {
-            return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
-                                ->resolveCommands($this->commands);
-        }
-
-        return $this->artisan;
+        return $this->artisan->output();
     }
 }

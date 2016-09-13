@@ -4,10 +4,12 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Console\Kernel;
+use Recca0120\Terminal\Kernel;
+use Recca0120\Terminal\Application as Artisan;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\NullOutput;
-
+use Symfony\Component\Console\Output\OutputInterface;
+use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Foundation\Console\QueuedJob;
 class KernelTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
@@ -23,12 +25,12 @@ class KernelTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);
-        $output = new NullOutput();
-        $kernel = new Kernel($app, $events);
+        $output = m::mock(OutputInterface::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
+        $artisan = m::mock(Artisan::class);
+        $kernel = new Kernel($artisan);
+        $queue = m::mock(Queue::class);
 
         /*
         |------------------------------------------------------------
@@ -36,26 +38,16 @@ class KernelTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $request->shouldReceive('ajax')->andReturn(false);
+        $artisan
+            ->shouldReceive('call')->with('list', [])->once()
+            ->shouldReceive('output')->once()
+            ->shouldReceive('all')->once()
+            ->shouldReceive('run')->with($input, $output)->once()
+            ->shouldReceive('getLaravel')->andReturn($app)->once();
 
-        $input
-            ->shouldReceive('hasParameterOption')->andReturn(false)
-            ->shouldReceive('getParameterOption')->andReturn([])
-            ->shouldReceive('getFirstArgument')->andReturnNull();
+        $app->shouldReceive('offsetGet')->with(Queue::class)->once()->andReturn($queue);
 
-        $events
-            ->shouldReceive('fire')
-            ->shouldReceive('firing');
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->andReturn($request)
-            ->shouldReceive('offsetGet')->with('events')->andReturn($events)
-            ->shouldReceive('version')->andReturn('testing')
-            ->shouldReceive('make')->andReturnUsing(function ($class) {
-                return new $class();
-            });
-
-        $kernel = new Kernel($app, $events);
+        $queue->shouldReceive('push')->with(QueuedJob::class, ['foo', ['bar']])->once();
 
         /*
         |------------------------------------------------------------
@@ -66,7 +58,7 @@ class KernelTest extends PHPUnit_Framework_TestCase
         $kernel->call('list');
         $kernel->output();
         $kernel->all();
-        $kernel->queue('foo');
+        $kernel->queue('foo', ['bar']);
         $kernel->handle($input, $output);
     }
 }

@@ -10,16 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Str;
-use Recca0120\Terminal\Console\Kernel as ConsoleKernel;
+use Recca0120\Terminal\Kernel;
 
 class TerminalController extends Controller
 {
     /**
-     * $consoleKernel.
+     * $kernel.
      *
-     * @var \Recca0120\Terminal\Console\Kernel
+     * @var \Recca0120\Terminal\Kernel
      */
-    protected $consoleKernel;
+    protected $kernel;
 
     /**
      * $app.
@@ -47,18 +47,18 @@ class TerminalController extends Controller
      *
      * @method __construct
      *
-     * @param \Recca0120\Terminal\Console\Kernel           $consoleKernel
+     * @param \Recca0120\Terminal\Kernel                   $kernel
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param \Illuminate\Session\SessionManager           $sessionManager
      * @param \Illuminate\Http\Request                     $request
      */
     public function __construct(
-        ConsoleKernel $consoleKernel,
+        Kernel $kernel,
         Application $app,
         SessionManager $sessionManager,
         Request $request
     ) {
-        $this->consoleKernel = $consoleKernel;
+        $this->consoleKernel = $kernel;
         $this->app = $app;
         $this->request = $request;
         $this->session = $sessionManager->driver();

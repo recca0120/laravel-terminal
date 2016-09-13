@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Contracts\Console\Kernel as ArtisanContract;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Application;
-use Recca0120\Terminal\Console\Commands\Artisan;
+use Recca0120\Terminal\Application as Artisan;
+use Recca0120\Terminal\Console\Commands\Artisan as ArtisanCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ArtisanTest extends PHPUnit_Framework_TestCase
@@ -18,8 +18,8 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
 
     protected function getArtisan()
     {
-        $events = m::mock(DispatcherContract::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $events = m::mock(Dispatcher::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
 
         $request->shouldReceive('ajax')->andReturn(true);
@@ -30,7 +30,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('basePath')->andReturn(__DIR__)
             ->shouldReceive('storagePath')->andReturn(__DIR__);
 
-        return new Application($app, $events, 'testing');
+        return new Artisan($app, $events, 'testing');
     }
 
     public function test_handle()
@@ -42,7 +42,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         */
 
         $artisan = $this->getArtisan();
-        $command = new Artisan();
+        $command = new ArtisanCommand();
 
         /*
         |------------------------------------------------------------
@@ -59,7 +59,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         */
 
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $artisan = m::mock(ArtisanContract::class);
+            $artisan = m::mock(Kernel::class);
             $artisan->shouldReceive('handle')->with(m::on(function ($input) {
                 return (string) $input === 'migrate --force';
             }), m::type(OutputInterface::class))->once();
@@ -77,7 +77,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         */
 
         $artisan = $this->getArtisan();
-        $command = new Artisan();
+        $command = new ArtisanCommand();
 
         /*
         |------------------------------------------------------------
@@ -94,7 +94,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         */
 
         $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $artisan = m::mock(ArtisanContract::class);
+            $artisan = m::mock(Kernel::class);
             $command->handle($artisan);
         })->once();
 

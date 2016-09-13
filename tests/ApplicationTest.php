@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Contracts\Events\Dispatcher as Dispatcher;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Application;
-use Recca0120\Terminal\Console\Commands\Artisan;
+use Recca0120\Terminal\Application as Artisan;
+use Recca0120\Terminal\Console\Commands\Artisan as ArtisanCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -26,9 +26,9 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         */
 
         $events = m::mock(Dispatcher::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
-        $command = m::mock(new Artisan());
+        $command = m::mock(new ArtisanCommand());
 
         /*
         |------------------------------------------------------------
@@ -51,7 +51,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $application = new Application($app, $events, 'testing');
+        $application = new Artisan($app, $events, 'testing');
         $application->resolveCommands([]);
         $application->add($command);
         $application->call('artisan');
@@ -66,9 +66,9 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         */
 
         $events = m::mock(Dispatcher::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
-        $command = m::mock(new Artisan());
+        $command = m::mock(new ArtisanCommand());
 
         /*
         |------------------------------------------------------------
@@ -95,7 +95,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $application = new Application($app, $events, 'testing');
+        $application = new Artisan($app, $events, 'testing');
         $application->resolveCommands([]);
         $application->add($command);
         $application->call('artisan');
@@ -113,7 +113,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         */
 
         $events = m::mock(Dispatcher::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);
         $output = m::mock(OutputInterface::class);
@@ -147,7 +147,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $application = new Application($app, $events, 'testing');
+        $application = new Artisan($app, $events, 'testing');
         $application->run($input, $output);
     }
 
@@ -163,7 +163,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         */
 
         $events = m::mock(Dispatcher::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);
         $output = m::mock(OutputInterface::class);
@@ -197,7 +197,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $application = new Application($app, $events, 'testing');
+        $application = new Artisan($app, $events, 'testing');
         $application->run($input, $output);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Application;
+use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
 
 class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
@@ -16,8 +16,8 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
 
     protected function getArtisan()
     {
-        $events = m::mock(DispatcherContract::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $events = m::mock(Dispatcher::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
 
         $request->shouldReceive('ajax')->andReturn(true);
@@ -28,7 +28,7 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('basePath')->andReturn(__DIR__)
             ->shouldReceive('storagePath')->andReturn(__DIR__);
 
-        return new Application($app, $events, 'testing');
+        return new Artisan($app, $events, 'testing');
     }
 
     public function test_handle()

@@ -44,6 +44,15 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
+        $this->app->singleton(Application::class, function($app) {
+            $config = $app['config'];
+            $commands = Arr::get($config, 'terminal.commands');
+            $artisan = new Application($app, $app['events'], $app->version());
+            $artisan->resolveCommands($commands);
+            return $artisan;
+        });
+
+        $this->app->singleton(Kernel::class, Kernel::class);
     }
 
     /**
