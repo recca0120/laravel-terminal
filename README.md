@@ -16,7 +16,7 @@ Add Presenter to your composer.json file:
 
 ```js
 "require": {
-    "recca0120/terminal": "^1.5.1"
+    "recca0120/terminal": "^1.6.0"
 }
 ```
 Now, run a composer update on the command line from the root of your project:
@@ -54,10 +54,20 @@ http://localhost/path/to/terminal
 return [
     'enabled'    => true,
     'whitelists' => ['127.0.0.1', 'your ip'],
-    'router'     => [
+    'route'     => [
         'prefix'     => 'terminal',
         'as'         => 'terminal.',
         'middleware' => ['web'], // if you use laravel 5.1 remove web
+    ],
+    'commands' => [
+        \Recca0120\Terminal\Console\Commands\Artisan::class,
+        \Recca0120\Terminal\Console\Commands\ArtisanTinker::class,
+        \Recca0120\Terminal\Console\Commands\Cleanup::class,
+        \Recca0120\Terminal\Console\Commands\Find::class,
+        \Recca0120\Terminal\Console\Commands\Mysql::class,
+        \Recca0120\Terminal\Console\Commands\Tail::class,
+        \Recca0120\Terminal\Console\Commands\Vi::class,
+        // add your command
     ],
 ];
 
@@ -117,26 +127,6 @@ class Inspire extends Command
 }
 ```
 
-### Add Command
-```php
-// src/Console/Kernel.php
-namespace Recca0120\Terminal\Console;
-
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Recca0120\Terminal\Console\Application as Artisan;
-
-class Kernel extends ConsoleKernel
-{
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        Commands\Inspire::class,
-    ];
-}
-
 ```
 ## ScreenShot
 
@@ -163,6 +153,13 @@ $ artisan migrate --seed
 $ artisan tinker
 ```
 ![Tinker](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/artisan-tinker.png)
+
+### MySQL
+```bash
+$ mysql
+mysql> select * from users;
+```
+![MySQL Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/mysql-command.png)
 
 ### Find Command
 ```bash

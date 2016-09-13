@@ -50,7 +50,8 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('get')->with('terminal', [])->twice()->andReturn([
                 'whitelists' => ['127.0.0.1'],
             ])
-            ->shouldReceive('set')->with('terminal', m::any())->once();
+            ->shouldReceive('set')->with('terminal', m::any())->once()
+            ->shouldReceive('get')->with('terminal.commands')->once()->andReturn([]);
 
         $request
             ->shouldReceive('getClientIp')->once()->andReturn('127.0.0.1');

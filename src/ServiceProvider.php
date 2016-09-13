@@ -46,7 +46,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
         $this->app->singleton(Application::class, function ($app) {
             $config = $app['config'];
-            $commands = Arr::get($config, 'terminal.commands');
+            $commands = $config->get('terminal.commands');
             $artisan = new Application($app, $app['events'], $app->version());
             $artisan->resolveCommands($commands);
 
