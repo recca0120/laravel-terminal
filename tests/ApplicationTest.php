@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Contracts\Events\Dispatcher as Dispatcher;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Http\Request;
 use Mockery as m;
@@ -25,7 +25,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(DispatcherContract::class);
+        $events = m::mock(Dispatcher::class);
         $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $command = m::mock(new Artisan());
@@ -65,7 +65,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(DispatcherContract::class);
+        $events = m::mock(Dispatcher::class);
         $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $command = m::mock(new Artisan());
@@ -112,7 +112,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(DispatcherContract::class);
+        $events = m::mock(Dispatcher::class);
         $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);
@@ -162,7 +162,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(DispatcherContract::class);
+        $events = m::mock(Dispatcher::class);
         $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);

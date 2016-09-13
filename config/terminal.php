@@ -8,4 +8,7 @@ return [
         'as' => 'terminal.',
         'middleware' => ['web'],
     ],
+    'commands' => [
+        
+    ]
 ];

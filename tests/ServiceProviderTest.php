@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Mockery as m;
 use Recca0120\Terminal\ServiceProvider;
+use Recca0120\Terminal\Kernel;
+use Recca0120\Terminal\Application;
 
 class ServiceProviderTest extends PHPUnit_Framework_TestCase
 {
@@ -56,7 +58,9 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('basePath')
             ->shouldReceive('publicPath')
             ->shouldReceive('offsetGet')->with('view')->andReturn($view)
-            ->shouldReceive('routesAreCached')->andReturn(false);
+            ->shouldReceive('routesAreCached')->andReturn(false)
+            ->shouldReceive('singleton')->with(Kernel::class, Kernel::class)
+            ->shouldReceive('singleton')->with(Application::class, m::type(Closure::class));
 
         /*
         |------------------------------------------------------------

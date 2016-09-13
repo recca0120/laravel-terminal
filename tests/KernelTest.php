@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Mockery as m;
 use Recca0120\Terminal\Console\Kernel;
@@ -23,8 +23,8 @@ class KernelTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(DispatcherContract::class);
-        $app = m::mock(ApplicationContract::class.','.ArrayAccess::class);
+        $events = m::mock(Dispatcher::class);
+        $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
         $input = m::mock(InputInterface::class);
         $output = new NullOutput();

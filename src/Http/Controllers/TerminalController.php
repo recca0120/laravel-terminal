@@ -2,9 +2,9 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Contracts\Foundation\Application as ApplicationContract;
-use Illuminate\Contracts\Routing\ResponseFactory as ResponseFactoryContract;
-use Illuminate\Contracts\Routing\UrlGenerator as UrlGeneratorContract;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -54,7 +54,7 @@ class TerminalController extends Controller
      */
     public function __construct(
         ConsoleKernel $consoleKernel,
-        ApplicationContract $app,
+        Application $app,
         SessionManager $sessionManager,
         Request $request
     ) {
@@ -73,7 +73,7 @@ class TerminalController extends Controller
      *
      * @return mixed
      */
-    public function index(ResponseFactoryContract $responseFactory, UrlGeneratorContract $urlGenerator, $view = 'index')
+    public function index(ResponseFactory $responseFactory, UrlGenerator $urlGenerator, $view = 'index')
     {
         $this->consoleKernel->call('--ansi');
         $options = json_encode([
@@ -111,11 +111,10 @@ class TerminalController extends Controller
      * rpc response.
      *
      * @param \Illuminate\Contracts\Response\Factory $responseFactory
-     * @param \Illuminate\Http\Request               $request
      *
      * @return mixed
      */
-    public function endpoint(ResponseFactoryContract $responseFactory)
+    public function endpoint(ResponseFactory $responseFactory)
     {
         $command = $this->request->get('command');
         $status = $this->consoleKernel->call($command);
@@ -131,15 +130,15 @@ class TerminalController extends Controller
     /**
      * media.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
-     * @param \Illuminate\Http\Request          $request
-     * @param string                            $file
+     * @param \Illuminate\Filesystem\Filesystem             $filesystem
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $request
+     * @param string                                        $file
      *
      * @return \Illuminate\Http\Response
      */
     public function media(
         Filesystem $filesystem,
-        ResponseFactoryContract $responseFactory,
+        ResponseFactory $responseFactory,
         $file
     ) {
         $filename = __DIR__.'/../../../public/'.$file;
