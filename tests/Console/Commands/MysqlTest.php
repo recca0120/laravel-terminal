@@ -2,6 +2,7 @@
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\DatabaseManager;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Mysql;
 use Symfony\Component\Console\Input\StringInput;
@@ -22,8 +23,9 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
+        $databaseManager = m::mock(DatabaseManager::class);
         $connection = m::mock(ConnectionInterface::class);
-        $command = new Mysql($connection);
+        $command = new Mysql($databaseManager);
         $laravel = m::mock(Application::class);
         $command->setLaravel($laravel);
 
@@ -32,6 +34,8 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
+
+        $databaseManager->shouldReceive('connection')->andReturn($connection);
 
         $connection
             ->shouldReceive('setFetchMode')->once()

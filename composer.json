@@ -11,10 +11,10 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/console": "~5.2",
-        "illuminate/database": "~5.2",
-        "illuminate/filesystem": "~5.2",
-        "illuminate/routing": "~5.2",
+        "illuminate/console": "~5.1",
+        "illuminate/database": "~5.1",
+        "illuminate/filesystem": "~5.1",
+        "illuminate/routing": "~5.1",
         "symfony/finder": "2.7.*|2.8.*|3.0.*|3.1.*"
     },
     "require-dev": {
@@ -28,12 +28,6 @@
         ],
         "psr-4": {
             "Recca0120\\Terminal\\": "src/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.6.x-dev",
-            "dev-laravel50": "1.4.x-dev"
         }
     },
     "config": {
