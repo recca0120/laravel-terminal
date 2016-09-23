@@ -55,15 +55,16 @@ class Tail extends Command
             $path = $this->laravel->basePath().'/'.$path;
         } else {
             $path = $this->laravel->storagePath();
-            $files = array_filter($this->filesystem->glob($path.'/logs/*.log'), function($file) {
+            $files = array_filter($this->filesystem->glob($path.'/logs/*.log'), function ($file) {
                 return is_file($file);
             });
-            usort($files, function($a, $b) {
+            usort($files, function ($a, $b) {
                 $aTime = filectime($a);
                 $bTime = filectime($b);
                 if ($aTime == $bTime) {
                     return 0;
                 }
+
                 return ($aTime < $bTime) ? -1 : 1;
             });
             $path = $files[0];
