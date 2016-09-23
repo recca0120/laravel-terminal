@@ -4,15 +4,17 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class Vi extends Command
 {
     /**
-     * The name and signature of the console command.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'vi {path} {--text=}';
+    protected $name = 'vi';
 
     /**
      * The console command description.
@@ -22,22 +24,64 @@ class Vi extends Command
     protected $description = 'Vi Editor';
 
     /**
-     * handle.
+     * $filesystem.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $filesystem;
+
+    /**
+     * __construct.
      *
      * @param \Illuminate\Filesystem\Filesystem $filesystem
+     */
+    public function __construct(Filesystem $filesystem)
+    {
+        parent::__construct();
+        $this->filesystem = $filesystem;
+    }
+
+    /**
+     * fire.
+     *
+     * @method fire
      *
      * @return void
      */
-    public function handle(Filesystem $filesystem)
+    public function fire()
     {
         $path = $this->argument('path');
         $text = $this->option('text');
         $root = $this->laravel->basePath();
         $path = realpath($root.'/'.$path);
         if (is_null($text) === false) {
-            $filesystem->put($path, $text);
+            $this->filesystem->put($path, $text);
         } else {
-            $this->line($filesystem->get($path));
+            $this->line($this->filesystem->get($path));
         }
+    }
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['path', InputArgument::REQUIRED, 'path'],
+        ];
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['text', null, InputOption::VALUE_OPTIONAL],
+        ];
     }
 }

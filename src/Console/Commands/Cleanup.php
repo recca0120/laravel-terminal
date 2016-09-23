@@ -10,11 +10,11 @@ use Symfony\Component\Finder\Finder;
 class Cleanup extends Command
 {
     /**
-     * The name and signature of the console command.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'cleanup';
+    protected $name = 'cleanup';
 
     /**
      * The console command description.
@@ -31,15 +31,23 @@ class Cleanup extends Command
     protected $filesystem;
 
     /**
-     * handle.
+     * __construct.
      *
      * @param \Illuminate\Filesystem\Filesystem $filesystem
+     */
+    public function __construct(Filesystem $filesystem)
+    {
+        parent::__construct();
+        $this->filesystem = $filesystem;
+    }
+
+    /**
+     * fire.
      *
      * @return void
      */
-    public function handle(Filesystem $filesystem)
+    public function fire()
     {
-        $this->filesystem = $filesystem;
         $root = $this->laravel->basePath();
 
         $this->deleteDirectory([

@@ -4,17 +4,18 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 class Tail extends Command
 {
     /**
-     * The console command name.
+     * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'tail';
+    protected $signature = 'tail
+        {path?}
+        {--lines=50 : output the last K lines, instead of the last 50}
+    ';
 
     /**
      * The console command description.
@@ -100,29 +101,5 @@ class Tail extends Command
         fclose($fp);
 
         $this->line(implode('', $result));
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['path', InputArgument::OPTIONAL, 'path'],
-        ];
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['lines', null, InputOption::VALUE_OPTIONAL, 'output the last K lines, instead of the last 50', 50],
-        ];
     }
 }

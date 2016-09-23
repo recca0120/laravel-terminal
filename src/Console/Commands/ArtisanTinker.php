@@ -3,15 +3,16 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
 
 class ArtisanTinker extends Command
 {
     /**
-     * The name and signature of the console command.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'tinker {--command=}';
+    protected $name = 'tinker';
 
     /**
      * The console command description.
@@ -21,11 +22,11 @@ class ArtisanTinker extends Command
     protected $description = 'artisn tinker';
 
     /**
-     * handle.
+     * fire.
      *
      * @return void
      */
-    public function handle()
+    public function fire()
     {
         $command = $this->option('command');
         $code = trim(trim($command), ';').';';
@@ -57,5 +58,17 @@ class ArtisanTinker extends Command
                 $this->line($result);
                 break;
         }
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['command', null, InputOption::VALUE_OPTIONAL],
+        ];
     }
 }

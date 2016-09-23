@@ -1,12 +1,11 @@
 <?php
 
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Application as Artisan;
-use Recca0120\Terminal\Console\Commands\Artisan as ArtisanCommand;
+use Recca0120\Terminal\Console\Commands\Artisan;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ArtisanTest extends PHPUnit_Framework_TestCase
@@ -14,23 +13,6 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         m::close();
-    }
-
-    protected function getArtisan()
-    {
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('ajax')->andReturn(true);
-        $events->shouldReceive('fire');
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->andReturn($request)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__);
-
-        return new Artisan($app, $events, 'testing');
     }
 
     public function test_handle()
@@ -41,8 +23,10 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
-        $command = new ArtisanCommand();
+        $kernel = m::mock(Kernel::class);
+        $command = new Artisan($kernel);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -50,7 +34,14 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
+        $kernel->shouldReceive('handle')->with(m::on(function ($input) {
+            return (string) $input === 'migrate --force';
+        }), m::type(OutputInterface::class))->once();
+
+        $laravel
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
 
         /*
         |------------------------------------------------------------
@@ -58,16 +49,12 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $artisan = m::mock(Kernel::class);
-            $artisan->shouldReceive('handle')->with(m::on(function ($input) {
-                return (string) $input === 'migrate --force';
-            }), m::type(OutputInterface::class))->once();
-            $command->handle($artisan);
-        })->once();
-        $artisan->call('artisan --command=migrate');
+        $command->run(new StringInput('--command=migrate'), new NullOutput);
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function test_down()
     {
         /*
@@ -76,8 +63,10 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
-        $command = new ArtisanCommand();
+        $kernel = m::mock(Kernel::class);
+        $command = new Artisan($kernel);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -85,7 +74,10 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
+        $laravel
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
 
         /*
         |------------------------------------------------------------
@@ -93,11 +85,6 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $artisan = m::mock(Kernel::class);
-            $command->handle($artisan);
-        })->once();
-
-        $artisan->call('artisan --command=down');
+        $command->run(new StringInput('--command=down'), new NullOutput);
     }
 }

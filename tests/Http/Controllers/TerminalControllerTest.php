@@ -6,8 +6,8 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Session\SessionManager;
 use Mockery as m;
-use Recca0120\Terminal\Kernel;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
+use Recca0120\Terminal\Kernel;
 
 class TerminalControllerTest extends PHPUnit_Framework_TestCase
 {

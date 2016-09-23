@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Mockery as m;
-use Recca0120\Terminal\ServiceProvider;
-use Recca0120\Terminal\Kernel;
 use Recca0120\Terminal\Application as Artisan;
+use Recca0120\Terminal\Kernel;
+use Recca0120\Terminal\ServiceProvider;
 use Symfony\Component\Console\Command\Command;
 
 class ServiceProviderTest extends PHPUnit_Framework_TestCase

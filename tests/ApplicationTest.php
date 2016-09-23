@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Console\Events\ArtisanStarting;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -28,7 +29,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $events = m::mock(Dispatcher::class);
         $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
-        $command = m::mock(new ArtisanCommand());
+        $kernel = m::mock(Kernel::class);
+        $command = m::mock(new ArtisanCommand($kernel));
 
         /*
         |------------------------------------------------------------
@@ -68,7 +70,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $events = m::mock(Dispatcher::class);
         $app = m::mock(Application::class.','.ArrayAccess::class);
         $request = m::mock(Request::class);
-        $command = m::mock(new ArtisanCommand());
+        $kernel = m::mock(Kernel::class);
+        $command = m::mock(new ArtisanCommand($kernel));
 
         /*
         |------------------------------------------------------------

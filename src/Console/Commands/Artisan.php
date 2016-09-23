@@ -5,16 +5,17 @@ namespace Recca0120\Terminal\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ArtisanContract;
 use InvalidArgumentException;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 
 class Artisan extends Command
 {
     /**
-     * The name and signature of the console command.
+     * The console command name.
      *
      * @var string
      */
-    protected $signature = 'artisan {--command=}';
+    protected $name = 'artisan';
 
     /**
      * The console command description.
@@ -34,15 +35,31 @@ class Artisan extends Command
     ];
 
     /**
-     * handle.
+     * $artisan.
+     *
+     * @var \Illuminate\Contracts\Console\Kernel
+     */
+    protected $artisan;
+
+    /**
+     * __construct.
      *
      * @param \Illuminate\Contracts\Console\Kernel $artisan
+     */
+    public function __construct(ArtisanContract $artisan)
+    {
+        parent::__construct();
+        $this->artisan = $artisan;
+    }
+
+    /**
+     * handle.
      *
      * @throws \InvalidArgumentException
      *
      * @return void
      */
-    public function handle(ArtisanContract $artisan)
+    public function fire()
     {
         $command = $this->option('command');
 
@@ -54,7 +71,7 @@ class Artisan extends Command
         if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
             throw new InvalidArgumentException('Command "'.$command.'" is not supported');
         }
-        $artisan->handle($input, $this->getOutput());
+        $this->artisan->handle($input, $this->getOutput());
     }
 
     /**
@@ -72,5 +89,17 @@ class Artisan extends Command
             ) ||
             starts_with($command, 'db:seed') === true
         ) && strpos('command', '--force') === false;
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['command', null, InputOption::VALUE_OPTIONAL],
+        ];
     }
 }

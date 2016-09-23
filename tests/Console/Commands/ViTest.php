@@ -1,35 +1,17 @@
 <?php
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Console\Commands\Vi;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class ViTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
         m::close();
-    }
-
-    protected function getArtisan()
-    {
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('ajax')->andReturn(true);
-        $events->shouldReceive('fire');
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->andReturn($request)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__);
-
-        return new Artisan($app, $events, 'testing');
     }
 
     public function test_handle()
@@ -40,8 +22,10 @@ class ViTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
-        $command = new Vi();
+        $filesystem = m::mock(Filesystem::class);
+        $command = new Vi($filesystem);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -49,7 +33,15 @@ class ViTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
+        $filesystem
+            ->shouldReceive('get')->with(realpath(__DIR__.'/ViTest.php'))
+            ->mock();
+
+        $laravel
+            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
 
         /*
         |------------------------------------------------------------
@@ -57,14 +49,7 @@ class ViTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $filesystem = m::mock(Filesystem::class)
-                ->shouldReceive('get')->with(realpath(__DIR__.'/ViTest.php'))
-                ->mock();
-            $command->handle($filesystem);
-        })->once();
-
-        $artisan->call('vi ViTest.php');
+        $command->run(new StringInput('ViTest.php'), new NullOutput);
     }
 
     public function test_handle_write()
@@ -75,8 +60,10 @@ class ViTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
-        $command = new Vi();
+        $filesystem = m::mock(Filesystem::class);
+        $command = new Vi($filesystem);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -84,7 +71,15 @@ class ViTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
+        $filesystem
+            ->shouldReceive('put')->with(realpath(__DIR__.'/ViTest.php'), 'abc')
+            ->mock();
+
+        $laravel
+            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
 
         /*
         |------------------------------------------------------------
@@ -92,13 +87,6 @@ class ViTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command) {
-            $filesystem = m::mock(Filesystem::class)
-                ->shouldReceive('put')->with(realpath(__DIR__.'/ViTest.php'), 'abc')
-                ->mock();
-            $command->handle($filesystem);
-        })->once();
-
-        $artisan->call('vi ViTest.php --text="abc"');
+        $command->run(new StringInput('ViTest.php --text="abc"'), new NullOutput);
     }
 }

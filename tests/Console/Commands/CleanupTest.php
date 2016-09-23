@@ -1,35 +1,17 @@
 <?php
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Request;
 use Mockery as m;
-use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Console\Commands\Cleanup;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class CleanupTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
         m::close();
-    }
-
-    protected function getArtisan()
-    {
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('ajax')->andReturn(true);
-        $events->shouldReceive('fire');
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->andReturn($request)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__);
-
-        return new Artisan($app, $events, 'testing');
     }
 
     public function test_handle_cleanup_directory()
@@ -40,9 +22,10 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
         $filesystem = m::mock(Filesystem::class);
-        $command = new Cleanup();
+        $command = new Cleanup($filesystem);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -50,7 +33,6 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
         $filesystem
             ->shouldReceive('glob')->andReturn([
                 'Foo.php',
@@ -59,16 +41,19 @@ class CleanupTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('isDirectory')->andReturn(true)
             ->shouldReceive('deleteDirectory');
 
+        $laravel
+            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
+
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command, $filesystem) {
-            $command->handle($filesystem);
-        })->once();
-        $artisan->call('cleanup');
+        $command->run(new StringInput(''), new NullOutput);
     }
 
     public function test_handle_cleanup_file()
@@ -79,9 +64,10 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
         $filesystem = m::mock(Filesystem::class);
-        $command = new Cleanup();
+        $command = new Cleanup($filesystem);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -89,7 +75,6 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
         $filesystem
             ->shouldReceive('glob')->andReturn([
                 'Foo.php',
@@ -97,16 +82,19 @@ class CleanupTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('isDirectory')->andReturn(false)
             ->shouldReceive('deleteDirectory');
 
+        $laravel
+            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
+
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command, $filesystem) {
-            $command->handle($filesystem);
-        })->once();
-        $artisan->call('cleanup');
+        $command->run(new StringInput(''), new NullOutput);
     }
 
     public function test_handle_file_not_exists()
@@ -117,9 +105,10 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan = $this->getArtisan();
         $filesystem = m::mock(Filesystem::class);
-        $command = new Cleanup();
+        $command = new Cleanup($filesystem);
+        $laravel = m::mock(Application::class);
+        $command->setLaravel($laravel);
 
         /*
         |------------------------------------------------------------
@@ -127,11 +116,16 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->add($command);
         $filesystem
             ->shouldReceive('glob')->andReturn([])
             ->shouldReceive('isDirectory')->andReturn(false)
             ->shouldReceive('deleteDirectory');
+
+        $laravel
+            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+                call_user_func($command);
+            });
 
         /*
         |------------------------------------------------------------
@@ -139,9 +133,6 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $artisan->getLaravel()->shouldReceive('call')->andReturnUsing(function () use ($command, $filesystem) {
-            $command->handle($filesystem);
-        })->once();
-        $artisan->call('cleanup');
+        $command->run(new StringInput(''), new NullOutput);
     }
 }
