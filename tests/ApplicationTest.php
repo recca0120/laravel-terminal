@@ -1,15 +1,9 @@
 <?php
 
-use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Mockery as m;
 use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Console\Commands\Artisan as ArtisanCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class ApplicationTest extends PHPUnit_Framework_TestCase
 {
@@ -26,10 +20,10 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-        $kernel = m::mock(Kernel::class);
+        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $request = m::mock('Illuminate\Http\Request');
+        $kernel = m::mock('Illuminate\Contracts\Console\Kernel');
         $command = m::mock(new ArtisanCommand($kernel));
 
         /*
@@ -67,10 +61,10 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-        $kernel = m::mock(Kernel::class);
+        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $request = m::mock('Illuminate\Http\Request');
+        $kernel = m::mock('Illuminate\Contracts\Console\Kernel');
         $command = m::mock(new ArtisanCommand($kernel));
 
         /*
@@ -81,7 +75,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn(ArtisanStarting::class);
+            ->shouldReceive('firing')->andReturn('Illuminate\Console\Events\ArtisanStarting');
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
@@ -115,12 +109,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-        $input = m::mock(InputInterface::class);
-        $output = m::mock(OutputInterface::class);
-        $exception = m::mock(Exception::class);
+        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $request = m::mock('Illuminate\Http\Request');
+        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
+        $output = m::mock('Symfony\Component\Console\Output\OutputInterface');
+        $exception = m::mock('Exception');
 
         /*
         |------------------------------------------------------------
@@ -130,7 +124,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn(ArtisanStarting::class);
+            ->shouldReceive('firing')->andReturn('Illuminate\Console\Events\ArtisanStarting');
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
@@ -165,12 +159,12 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $events = m::mock(Dispatcher::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $request = m::mock(Request::class);
-        $input = m::mock(InputInterface::class);
-        $output = m::mock(OutputInterface::class);
-        $exception = m::mock(Exception::class);
+        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $request = m::mock('Illuminate\Http\Request');
+        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
+        $output = m::mock('Symfony\Component\Console\Output\OutputInterface');
+        $exception = m::mock('Exception');
 
         /*
         |------------------------------------------------------------
@@ -180,7 +174,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn(ArtisanStarting::class);
+            ->shouldReceive('firing')->andReturn('Illuminate\Console\Events\ArtisanStarting');
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)

@@ -1,15 +1,7 @@
 <?php
 
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Mockery as m;
-use Recca0120\Terminal\Application as Artisan;
-use Recca0120\Terminal\Kernel;
 use Recca0120\Terminal\ServiceProvider;
-use Symfony\Component\Console\Command\Command;
 
 class ServiceProviderTest extends PHPUnit_Framework_TestCase
 {
@@ -26,12 +18,12 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $config = m::mock(Repository::class);
-        $request = m::mock(Request::class);
-        $router = m::mock(Router::class);
-        $view = m::mock(stdClass::class);
-        $events = m::mock(Dispatcher::class);
+        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $config = m::mock('Illuminate\Contracts\Config\Repository');
+        $request = m::mock('Illuminate\Http\Request');
+        $router = m::mock('Illuminate\Routing\Router');
+        $view = m::mock('stdClass');
+        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
 
         /*
         |------------------------------------------------------------
@@ -39,7 +31,7 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $router->shouldReceive('group')->with(m::any(), m::type(Closure::class))->andReturnUsing(function ($options, $closure) use ($router) {
+        $router->shouldReceive('group')->with(m::any(), m::type('Closure'))->andReturnUsing(function ($options, $closure) use ($router) {
             // $closure($router);
         });
 
@@ -65,12 +57,12 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('routesAreCached')->once()->andReturn(false)
             ->shouldReceive('offsetGet')->with('events')->times(3)->andReturn($events)
             ->shouldReceive('version')->andReturn('testing')->once()
-            ->shouldReceive('singleton')->with(Kernel::class, Kernel::class)
-            ->shouldReceive('singleton')->with(Artisan::class, m::type(Closure::class))->andReturnUsing(function ($className, $closure) use ($app) {
+            ->shouldReceive('singleton')->with('Recca0120\Terminal\Kernel', 'Recca0120\Terminal\Kernel')
+            ->shouldReceive('singleton')->with('Recca0120\Terminal\Application', m::type('Closure'))->andReturnUsing(function ($className, $closure) use ($app) {
                 return $closure($app);
             })
             ->shouldReceive('make')->andReturnUsing(function () {
-                $command = m::mock(Command::class);
+                $command = m::mock('Symfony\Component\Console\Command\Command');
 
                 $command->shouldReceive('setApplication')
                     ->shouldReceive('isEnabled')->andReturn(false);

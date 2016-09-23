@@ -1,13 +1,8 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Queue\Queue;
-use Illuminate\Foundation\Console\QueuedJob;
 use Mockery as m;
-use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Kernel;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class KernelTest extends PHPUnit_Framework_TestCase
 {
@@ -24,12 +19,12 @@ class KernelTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $input = m::mock(InputInterface::class);
-        $output = m::mock(OutputInterface::class);
-        $app = m::mock(Application::class.','.ArrayAccess::class);
-        $artisan = m::mock(Artisan::class);
+        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
+        $output = m::mock('Symfony\Component\Console\Output\OutputInterface');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $artisan = m::mock('Recca0120\Terminal\Application');
         $kernel = new Kernel($artisan);
-        $queue = m::mock(Queue::class);
+        $queue = m::mock('Illuminate\Contracts\Queue\Queue');
 
         /*
         |------------------------------------------------------------
@@ -44,9 +39,9 @@ class KernelTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('run')->with($input, $output)->once()
             ->shouldReceive('getLaravel')->andReturn($app)->once();
 
-        $app->shouldReceive('offsetGet')->with(Queue::class)->once()->andReturn($queue);
+        $app->shouldReceive('offsetGet')->with('Illuminate\Contracts\Queue\Queue')->once()->andReturn($queue);
 
-        $queue->shouldReceive('push')->with(QueuedJob::class, ['foo', ['bar']])->once();
+        $queue->shouldReceive('push')->with('Illuminate\Foundation\Console\QueuedJob', ['foo', ['bar']])->once();
 
         /*
         |------------------------------------------------------------

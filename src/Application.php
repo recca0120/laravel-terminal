@@ -5,7 +5,6 @@ namespace Recca0120\Terminal;
 use Exception;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
-use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Http\Request;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatter;
@@ -154,7 +153,7 @@ class Application extends ConsoleApplication
     {
         // Illuminate\Console\Events\ArtisanStarting
         if (is_null($this->laravel['events']) === false) {
-            return $this->laravel['events']->firing() === ArtisanStarting::class;
+            return $this->laravel['events']->firing() === 'Illuminate\Console\Events\ArtisanStarting';
         }
 
         return false;

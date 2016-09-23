@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - 5.5.9
+  - 5.4
 
 # This triggers builds to run on the new TravisCI infrastructure.
 # See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
@@ -14,7 +14,7 @@ cache:
 
 matrix:
   include:
-    - php: 5.5.9
+    - php: 5.4
       env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
 
 before_script:

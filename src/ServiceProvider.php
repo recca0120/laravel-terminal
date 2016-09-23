@@ -44,7 +44,7 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
-        $this->app->singleton(Application::class, function ($app) {
+        $this->app->singleton('Recca0120\Terminal\Application', function ($app) {
             $config = $app['config'];
             $commands = $config->get('terminal.commands');
             $artisan = new Application($app, $app['events'], $app->version());
@@ -53,7 +53,7 @@ class ServiceProvider extends BaseServiceProvider
             return $artisan;
         });
 
-        $this->app->singleton(Kernel::class, Kernel::class);
+        $this->app->singleton('Recca0120\Terminal\Kernel', 'Recca0120\Terminal\Kernel');
     }
 
     /**

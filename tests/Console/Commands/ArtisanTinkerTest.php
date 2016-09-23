@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
 use Symfony\Component\Console\Input\StringInput;
@@ -22,7 +21,7 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
         */
 
         $command = new ArtisanTinker();
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*
