@@ -30,6 +30,12 @@
             "Recca0120\\Terminal\\": "src/"
         }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.6.x-dev",
+            "dev-laravel50": "1.4.x-dev"
+        }
+    },
     "config": {
         "preferred-install": "dist"
     }
