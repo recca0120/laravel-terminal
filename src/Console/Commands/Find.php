@@ -41,6 +41,7 @@ class Find extends Command
      * @var \Illuminate\Filesystem\Filesystem
      */
     protected $filesystem;
+
     /**
      * __construct.
      *
