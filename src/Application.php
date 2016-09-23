@@ -153,9 +153,22 @@ class Application extends ConsoleApplication
     {
         // Illuminate\Console\Events\ArtisanStarting
         if (is_null($this->laravel['events']) === false) {
-            return $this->laravel['events']->firing() === 'Illuminate\Console\Events\ArtisanStarting';
+            return $this->laravel['events']->firing() === $this->getArtisanString();
         }
 
         return false;
+    }
+
+    /**
+     * getArtisanString.
+     *
+     * @method getArtisanString
+     *
+     * @return string
+     */
+    private function getArtisanString()
+    {
+        return (version_compare($this->laravel->version(), 5.2, '>=') === true) ?
+            'Illuminate\Console\Events\ArtisanStarting' : 'artisan.start';
     }
 }

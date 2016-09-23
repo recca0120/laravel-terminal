@@ -82,6 +82,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('offsetGet')->with('events')->twice()->andReturn($events)
             ->shouldReceive('basePath')->andReturn(__DIR__)
             ->shouldReceive('storagePath')->andReturn(__DIR__)
+            ->shouldReceive('version')->andReturn(5.0)
             ->shouldReceive('call');
 
         $request->shouldReceive('ajax')->andReturn(true);

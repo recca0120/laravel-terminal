@@ -16,7 +16,7 @@
         "illuminate/encryption": "~5.0",
         "illuminate/filesystem": "~5.0",
         "illuminate/routing": "~5.0",
-        "symfony/finder": "2.7.*|2.8.*|3.0.*|3.1.*"
+        "symfony/finder": "2.6.*|2.7.*|2.8.*|3.0.*|3.1.*"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.4",
