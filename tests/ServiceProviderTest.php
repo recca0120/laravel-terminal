@@ -64,7 +64,7 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('offsetGet')->with('view')->once()->andReturn($view)
             ->shouldReceive('routesAreCached')->once()->andReturn(false)
             ->shouldReceive('offsetGet')->with('events')->times(3)->andReturn($events)
-            ->shouldReceive('version')->andReturn('testing')->once()
+            ->shouldReceive('version')->andReturn('testing')
             ->shouldReceive('singleton')->with(Kernel::class, Kernel::class)
             ->shouldReceive('singleton')->with(Artisan::class, m::type(Closure::class))->andReturnUsing(function ($className, $closure) use ($app) {
                 return $closure($app);

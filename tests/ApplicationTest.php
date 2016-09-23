@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
@@ -45,6 +44,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('offsetGet')->with('events')->once()->andReturn(null)
             ->shouldReceive('basePath')->andReturn(__DIR__)
             ->shouldReceive('storagePath')->andReturn(__DIR__)
+            ->shouldReceive('version')->andReturn('testing')
             ->shouldReceive('call');
 
         /*
@@ -81,14 +81,14 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn(ArtisanStarting::class);
+            ->shouldReceive('firing')->andReturn($this->getArtisanString());
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
             ->shouldReceive('offsetGet')->with('events')->twice()->andReturn($events)
             ->shouldReceive('basePath')->andReturn(__DIR__)
             ->shouldReceive('storagePath')->andReturn(__DIR__)
-            ->shouldReceive('version')->andReturn(5.2)
+            ->shouldReceive('version')->andReturn('testing')
             ->shouldReceive('call');
 
         $request->shouldReceive('ajax')->andReturn(true);
@@ -131,7 +131,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn(ArtisanStarting::class);
+            ->shouldReceive('firing')->andReturn($this->getArtisanString());
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
@@ -181,7 +181,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn(ArtisanStarting::class);
+            ->shouldReceive('firing')->andReturn($this->getArtisanString());
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
@@ -203,5 +203,10 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $application = new Artisan($app, $events, 'testing');
         $application->run($input, $output);
+    }
+
+    protected function getArtisanString()
+    {
+        return class_exists('Illuminate\Console\Events\ArtisanStarting') === false ? 'artisan.start' : 'Illuminate\Console\Events\ArtisanStarting';
     }
 }

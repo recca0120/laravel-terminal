@@ -3,7 +3,7 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\DatabaseManager;
 use PDO;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -26,19 +26,19 @@ class Mysql extends Command
     /**
      * $connection.
      *
-     * @var \Illuminate\Database\ConnectionInterface
+     * @var \Illuminate\Database\DatabaseManager
      */
-    protected $connection;
+    protected $databaseManager;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Database\ConnectionInterface $connection
+     * @param \Illuminate\Database\DatabaseManager $databaseManager
      */
-    public function __construct(ConnectionInterface $connection)
+    public function __construct(DatabaseManager $databaseManager)
     {
         parent::__construct();
-        $this->connection = $connection;
+        $this->databaseManager = $databaseManager;
     }
 
     /**
@@ -50,9 +50,10 @@ class Mysql extends Command
      */
     public function fire()
     {
-        $this->connection->setFetchMode(PDO::FETCH_ASSOC);
+        $connection = $this->databaseManager->connection();
+        $connection->setFetchMode(PDO::FETCH_ASSOC);
         $query = $this->option('command');
-        $rows = $this->connection->select($query);
+        $rows = $connection->select($query);
         $headers = array_keys(array_get($rows, 0, []));
         $this->table($headers, $rows);
     }
