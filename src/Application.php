@@ -154,7 +154,7 @@ class Application extends ConsoleApplication
         if (is_null($this->laravel['events']) === false) {
             return in_array($this->laravel['events']->firing(), [
                 'Illuminate\Console\Events\ArtisanStarting',
-                'artisan.start'
+                'artisan.start',
             ], true) === true;
         }
 
