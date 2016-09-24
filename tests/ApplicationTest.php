@@ -126,7 +126,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn('Illuminate\Console\Events\ArtisanStarting');
+            ->shouldReceive('firing')->andReturn($this->getArtisanString());
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
@@ -176,7 +176,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
 
         $events
             ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn('Illuminate\Console\Events\ArtisanStarting');
+            ->shouldReceive('firing')->andReturn($this->getArtisanString());
 
         $app
             ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
@@ -200,7 +200,8 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $application->run($input, $output);
     }
 
-    protected function getArtisanString() {
-        return class_exists('Illuminate\Console\Events\ArtisanStarting') === false?'artisan.start':'Illuminate\Console\Events\ArtisanStarting';
+    protected function getArtisanString()
+    {
+        return class_exists('Illuminate\Console\Events\ArtisanStarting') === false ? 'artisan.start' : 'Illuminate\Console\Events\ArtisanStarting';
     }
 }

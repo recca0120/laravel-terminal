@@ -152,7 +152,10 @@ class Application extends ConsoleApplication
     private function isFromArtisanStartingEvent()
     {
         if (is_null($this->laravel['events']) === false) {
-            return in_array($this->laravel['events']->firing(), ['Illuminate\Console\Events\ArtisanStarting', 'artisan.start'], true) === true;
+            return in_array($this->laravel['events']->firing(), [
+                'Illuminate\Console\Events\ArtisanStarting',
+                'artisan.start',
+            ], true) === true;
         }
 
         return false;
