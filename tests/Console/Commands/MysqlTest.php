@@ -20,6 +20,8 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
+
+        $databaseManager = m::mock('Illuminate\Database\DatabaseManager');
         $connection = m::mock('Illuminate\Database\ConnectionInterface');
         $command = new Mysql($connection);
         $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
@@ -30,6 +32,8 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
+
+        $databaseManager->shouldReceive('connection')->andReturn($connection);
 
         $connection
             ->shouldReceive('setFetchMode')->once()
