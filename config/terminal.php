@@ -5,8 +5,7 @@ return [
     'whitelists' => [],
     'route' => [
         'prefix' => 'terminal',
-        'as' => 'terminal.',
-        'middleware' => ['web'],
+        'middleware' => [],
     ],
     'commands' => [
         'Recca0120\Terminal\Console\Commands\Artisan',
