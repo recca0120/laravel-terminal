@@ -160,4 +160,17 @@ class Application extends ConsoleApplication
 
         return false;
     }
+
+    /**
+     * getArtisanString.
+     *
+     * @method getArtisanString
+     *
+     * @return string
+     */
+    private function getArtisanString()
+    {
+        return (version_compare($this->laravel->version(), 5.2, '>=') === true) ?
+            'Illuminate\Console\Events\ArtisanStarting' : 'artisan.start';
+    }
 }

@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\DatabaseManager;
+
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Mysql;
 use Symfony\Component\Console\Input\StringInput;
@@ -23,10 +21,10 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $databaseManager = m::mock(DatabaseManager::class);
-        $connection = m::mock(ConnectionInterface::class);
+        $databaseManager = m::mock('Illuminate\Database\DatabaseManager');
+        $connection = m::mock('Illuminate\Database\ConnectionInterface');
         $command = new Mysql($databaseManager);
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*

@@ -4,7 +4,6 @@ namespace Recca0120\Terminal;
 
 use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Contracts\Queue\Queue;
-use Illuminate\Foundation\Console\QueuedJob;
 use Recca0120\Terminal\Application as Artisan;
 
 class Kernel implements KernelContract
@@ -73,8 +72,8 @@ class Kernel implements KernelContract
     public function queue($command, array $parameters = [])
     {
         $app = $this->artisan->getLaravel();
-        $app[Queue::class]->push(
-            QueuedJob::class, func_get_args()
+        $app['Illuminate\Contracts\Queue\Queue']->push(
+            'Illuminate\Foundation\Console\QueuedJob', func_get_args()
         );
     }
 

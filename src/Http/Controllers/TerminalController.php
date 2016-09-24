@@ -84,7 +84,7 @@ class TerminalController extends Controller
             'basePath' => $this->app->basePath(),
             'environment' => $this->app->environment(),
             'version' => $this->app->version(),
-            'endpoint' => $urlGenerator->action('\\'.static::class.'@endpoint'),
+            'endpoint' => $urlGenerator->action('\Recca0120\Terminal\Http\Controllers\TerminalController@endpoint'),
             'helpInfo' => $this->consoleKernel->output(),
             'interpreters' => [
                 'mysql' => 'mysql',
