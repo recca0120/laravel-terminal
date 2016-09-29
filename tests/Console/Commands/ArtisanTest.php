@@ -1,12 +1,9 @@
 <?php
 
-use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Contracts\Foundation\Application;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class ArtisanTest extends PHPUnit_Framework_TestCase
 {
@@ -23,9 +20,9 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $kernel = m::mock(Kernel::class);
+        $kernel = m::mock('Illuminate\Contracts\Console\Kernel');
         $command = new Artisan($kernel);
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*
@@ -36,7 +33,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
 
         $kernel->shouldReceive('handle')->with(m::on(function ($input) {
             return (string) $input === 'migrate --force';
-        }), m::type(OutputInterface::class))->once();
+        }), m::type('Symfony\Component\Console\Output\OutputInterface'))->once();
 
         $laravel
             ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
@@ -63,9 +60,9 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $kernel = m::mock(Kernel::class);
+        $kernel = m::mock('Illuminate\Contracts\Console\Kernel');
         $command = new Artisan($kernel);
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*

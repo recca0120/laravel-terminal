@@ -1,13 +1,7 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Http\Request;
-use Illuminate\Session\SessionManager;
 use Mockery as m;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
-use Recca0120\Terminal\Kernel;
 
 class TerminalControllerTest extends PHPUnit_Framework_TestCase
 {
@@ -24,12 +18,12 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $consoleKernel = m::mock(Kernel::class);
-        $app = m::mock(Application::class);
-        $sessionManager = m::mock(SessionManager::class);
-        $request = m::mock(Request::class);
-        $responseFactory = m::mock(ResponseFactory::class);
-        $urlGenerator = m::mock(UrlGenerator::class);
+        $consoleKernel = m::mock('Recca0120\Terminal\Kernel');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application');
+        $sessionManager = m::mock('Illuminate\Session\SessionManager');
+        $request = m::mock('Illuminate\Http\Request');
+        $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory');
+        $urlGenerator = m::mock('Illuminate\Contracts\Routing\UrlGenerator');
         /*
         |------------------------------------------------------------
         | Expectation
@@ -49,7 +43,7 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('environment')->andReturn('testing')
             ->shouldReceive('version')->andReturn('testing');
 
-        $urlGenerator->shouldReceive('action')->with('\\'.TerminalController::class.'@endpoint')->once();
+        $urlGenerator->shouldReceive('action')->with('\Recca0120\Terminal\Http\Controllers\TerminalController@endpoint')->once();
 
         $responseFactory->shouldReceive('view')->once();
         /*
@@ -70,12 +64,12 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $consoleKernel = m::mock(Kernel::class);
-        $app = m::mock(Application::class);
-        $sessionManager = m::mock(SessionManager::class);
-        $request = m::mock(Request::class);
-        $responseFactory = m::mock(ResponseFactory::class);
-        $urlGenerator = m::mock(UrlGenerator::class);
+        $consoleKernel = m::mock('Recca0120\Terminal\Kernel');
+        $app = m::mock('Illuminate\Contracts\Foundation\Application');
+        $sessionManager = m::mock('Illuminate\Session\SessionManager');
+        $request = m::mock('Illuminate\Http\Request');
+        $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory');
+        $urlGenerator = m::mock('Illuminate\Contracts\Routing\UrlGenerator');
         /*
         |------------------------------------------------------------
         | Expectation

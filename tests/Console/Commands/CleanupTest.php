@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Filesystem\Filesystem;
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Cleanup;
 use Symfony\Component\Console\Input\StringInput;
@@ -22,9 +20,9 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $filesystem = m::mock(Filesystem::class);
+        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
         $command = new Cleanup($filesystem);
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*
@@ -64,9 +62,9 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $filesystem = m::mock(Filesystem::class);
+        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
         $command = new Cleanup($filesystem);
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*
@@ -105,9 +103,9 @@ class CleanupTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $filesystem = m::mock(Filesystem::class);
+        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
         $command = new Cleanup($filesystem);
-        $laravel = m::mock(Application::class);
+        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
         $command->setLaravel($laravel);
 
         /*
