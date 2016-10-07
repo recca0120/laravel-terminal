@@ -16,7 +16,7 @@ Add Presenter to your composer.json file:
 
 ```js
 "require": {
-    "recca0120/terminal": "^2.0"
+    "recca0120/terminal": "^1.6"
 }
 ```
 Now, run a composer update on the command line from the root of your project:
@@ -127,7 +127,6 @@ class Inspire extends Command
 }
 ```
 
-```
 ## ScreenShot
 
 ### Available Commands

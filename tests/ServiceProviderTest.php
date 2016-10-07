@@ -50,6 +50,7 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
 
         $app
             ->shouldReceive('offsetGet')->with('config')->andReturn($config)
+            ->shouldReceive('resourcePath')
             ->shouldReceive('configPath')
             ->shouldReceive('basePath')
             ->shouldReceive('publicPath')
