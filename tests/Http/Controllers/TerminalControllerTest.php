@@ -18,42 +18,46 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $consoleKernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel = m::mock('Recca0120\Terminal\Kernel');
         $app = m::mock('Illuminate\Contracts\Foundation\Application');
-        $sessionManager = m::mock('Illuminate\Session\SessionManager');
         $request = m::mock('Illuminate\Http\Request');
         $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory');
         $urlGenerator = m::mock('Illuminate\Contracts\Routing\UrlGenerator');
+        $session = m::mock('stdClass');
+
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
 
-        $consoleKernel
+        $kernel
             ->shouldReceive('call')->with('--ansi')->once()
             ->shouldReceive('output')->once();
 
-        $sessionManager
-            ->shouldReceive('driver')->andReturnSelf()
-            ->shouldReceive('token')->andReturn('fooToken');
-
         $app
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('environment')->andReturn('testing')
-            ->shouldReceive('version')->andReturn('testing');
+            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+            ->shouldReceive('environment')->once()->andReturn('testing')
+            ->shouldReceive('version')->once()->andReturn('testing');
+
+        $request
+            ->shouldReceive('hasSession')->once()->andReturn(true)
+            ->shouldReceive('session')->once()->andReturn($session);
+
+        $session->shouldReceive('token')->andReturn('fooToken');
 
         $urlGenerator->shouldReceive('action')->with('\Recca0120\Terminal\Http\Controllers\TerminalController@endpoint')->once();
 
         $responseFactory->shouldReceive('view')->once();
+
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
 
-        $controller = new TerminalController($consoleKernel, $app, $sessionManager, $request);
-        $controller->index($responseFactory, $urlGenerator);
+        $controller = new TerminalController();
+        $controller->index($app, $kernel, $request, $responseFactory, $urlGenerator);
     }
 
     public function test_endpoint()
@@ -64,38 +68,43 @@ class TerminalControllerTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $consoleKernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel = m::mock('Recca0120\Terminal\Kernel');
         $app = m::mock('Illuminate\Contracts\Foundation\Application');
-        $sessionManager = m::mock('Illuminate\Session\SessionManager');
         $request = m::mock('Illuminate\Http\Request');
         $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory');
         $urlGenerator = m::mock('Illuminate\Contracts\Routing\UrlGenerator');
+        $session = m::mock('stdClass');
+
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
 
-        $consoleKernel
+        $kernel
             ->shouldReceive('call')->once()->andReturn(1)
             ->shouldReceive('output')->once();
 
-        $sessionManager
-            ->shouldReceive('driver')->andReturnSelf();
-
         $request
+            ->shouldReceive('hasSession')->once()->andReturn(true)
+            ->shouldReceive('session')->once()->andReturn($session)
             ->shouldReceive('get')->with('command')->andReturn('command')
             ->shouldReceive('get')->with('jsonrpc')
             ->shouldReceive('get')->with('id');
 
+        $session
+            ->shouldReceive('isStarted')->andReturn(true)
+            ->shouldReceive('save');
+
         $responseFactory->shouldReceive('json')->once();
+
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
 
-        $controller = new TerminalController($consoleKernel, $app, $sessionManager, $request);
-        $controller->endpoint($responseFactory);
+        $controller = new TerminalController();
+        $controller->endpoint($kernel, $request, $responseFactory);
     }
 }

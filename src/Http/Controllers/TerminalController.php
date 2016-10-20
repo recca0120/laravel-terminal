@@ -8,84 +8,40 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Session\SessionManager;
 use Illuminate\Support\Str;
 use Recca0120\Terminal\Kernel;
 
 class TerminalController extends Controller
 {
     /**
-     * $kernel.
-     *
-     * @var \Recca0120\Terminal\Kernel
-     */
-    protected $kernel;
-
-    /**
-     * $app.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * $request.
-     *
-     * @var \Illuminate\Http\Request
-     */
-    protected $request;
-
-    /**
-     * $session.
-     *
-     * @var \Illuminate\Session\SessionInterface
-     */
-    protected $session;
-
-    /**
-     * __construct.
-     *
-     * @method __construct
-     *
-     * @param \Recca0120\Terminal\Kernel                   $kernel
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Illuminate\Session\SessionManager           $sessionManager
-     * @param \Illuminate\Http\Request                     $request
-     */
-    public function __construct(
-        Kernel $kernel,
-        Application $app,
-        SessionManager $sessionManager,
-        Request $request
-    ) {
-        $this->consoleKernel = $kernel;
-        $this->app = $app;
-        $this->request = $request;
-        $this->session = $sessionManager->driver();
-    }
-
-    /**
      * index.
      *
-     * @param \Illuminate\Contracts\Response\Factory     $responseFactory
-     * @param \Illuminate\Contracts\Routing\UrlGenerator $urlGenerator
-     * @param string                                     $view
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Recca0120\Terminal\Kernel                   $kernel
+     * @param \Illuminate\Http\Request                     $request
+     * @param \Illuminate\Contracts\Response\Factory       $responseFactory
+     * @param \Illuminate\Contracts\Routing\UrlGenerator   $urlGenerator
+     * @param string                                       $view
      *
      * @return mixed
      */
-    public function index(ResponseFactory $responseFactory, UrlGenerator $urlGenerator, $view = 'index')
+    public function index(Application $app, Kernel $kernel, Request $request, ResponseFactory $responseFactory, UrlGenerator $urlGenerator, $view = 'index')
     {
-        $this->consoleKernel->call('--ansi');
+        $kernel->call('--ansi');
+        $csrfToken = null;
+        if ($request->hasSession() === true) {
+            $csrfToken = $request->session()->token();
+        }
         $options = json_encode([
-            'csrfToken' => $this->session->token(),
+            'csrfToken' => $csrfToken,
             'username' => 'LARAVEL',
             'hostname' => php_uname('n'),
             'os' => PHP_OS,
-            'basePath' => $this->app->basePath(),
-            'environment' => $this->app->environment(),
-            'version' => $this->app->version(),
+            'basePath' => $app->basePath(),
+            'environment' => $app->environment(),
+            'version' => $app->version(),
             'endpoint' => $urlGenerator->action('\\'.static::class.'@endpoint'),
-            'helpInfo' => $this->consoleKernel->output(),
+            'helpInfo' => $kernel->output(),
             'interpreters' => [
                 'mysql' => 'mysql',
                 'artisan tinker' => 'tinker',
@@ -110,19 +66,28 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
+     * @param \Recca0120\Terminal\Kernel             $kernel
+     * @param \Illuminate\Http\Request               $request
      * @param \Illuminate\Contracts\Response\Factory $responseFactory
      *
      * @return mixed
      */
-    public function endpoint(ResponseFactory $responseFactory)
+    public function endpoint(Kernel $kernel, Request $request, ResponseFactory $responseFactory)
     {
-        $command = $this->request->get('command');
-        $status = $this->consoleKernel->call($command);
+        if ($request->hasSession() === true) {
+            $session = $request->session();
+            if ($session->isStarted() === true) {
+                $session->save();
+            }
+        }
+
+        $command = $request->get('command');
+        $status = $kernel->call($command);
 
         return $responseFactory->json([
-            'jsonrpc' => $this->request->get('jsonrpc'),
-            'id' => $this->request->get('id'),
-            'result' => $this->consoleKernel->output(),
+            'jsonrpc' => $request->get('jsonrpc'),
+            'id' => $request->get('id'),
+            'result' => $kernel->output(),
             'error' => $status,
         ]);
     }
@@ -130,6 +95,7 @@ class TerminalController extends Controller
     /**
      * media.
      *
+     * @param \Illuminate\Http\Request                      $request
      * @param \Illuminate\Filesystem\Filesystem             $filesystem
      * @param \Illuminate\Contracts\Routing\ResponseFactory $request
      * @param string                                        $file
@@ -137,6 +103,7 @@ class TerminalController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function media(
+        Request $request,
         Filesystem $filesystem,
         ResponseFactory $responseFactory,
         $file
@@ -150,8 +117,8 @@ class TerminalController extends Controller
             'last-modified' => date('D, d M Y H:i:s ', $lastModified).'GMT',
         ];
 
-        if (@strtotime($this->request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
-            trim($this->request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
+        if (@strtotime($request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
+            trim($request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
         ) {
             $response = $responseFactory->make(null, 304, $headers);
         } else {

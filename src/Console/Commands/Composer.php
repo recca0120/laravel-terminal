@@ -3,7 +3,6 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Phar;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,25 +25,11 @@ class Composer extends Command
     protected $description = 'composer';
 
     /**
-     * $application.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $application;
-
-    /**
      * $filesystem.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
     protected $filesystem;
-
-    /**
-     * $composerPath.
-     *
-     * @var string
-     */
-    protected $composerPath;
 
     /**
      * __construct.
@@ -76,7 +61,9 @@ class Composer extends Command
             unset($composerPhar);
             $this->filesystem->delete($composerPath.'/composer.phar');
         }
-        putenv('COMPOSER_HOME='.$composerPath);
+        if (empty(getenv('COMPOSER_HOME')) === true) {
+            putenv('COMPOSER_HOME='.$composerPath);
+        }
         $this->filesystem->getRequire($composerPath.'/vendor/autoload.php');
         $this->init();
     }
@@ -118,6 +105,13 @@ class Composer extends Command
             }
             unset($memoryInBytes, $memoryLimit);
         }
+
+        if (defined('STDIN') === false) {
+            define('STDIN', fopen('php://stdin', 'r'));
+        }
+
+        $basePath = $this->getLaravel()->basePath();
+        chdir($basePath);
     }
 
     /**
@@ -125,19 +119,18 @@ class Composer extends Command
      */
     public function fire()
     {
-        $basePath = $this->getLaravel()->basePath();
+        $this->install();
 
-        chdir($basePath);
         $command = trim($this->option('command'));
         if (empty($command) === true) {
             $command = 'help';
         }
-        $input = new StringInput($command);
 
-        $this->install();
+        $input = new StringInput($command);
+        $output = $this->getOutput();
         $application = new \Composer\Console\Application();
         $application->setAutoExit(false);
-        $application->run($input, $this->getOutput());
+        $application->run($input, $output);
     }
 
     /**
