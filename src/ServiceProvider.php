@@ -21,8 +21,6 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @param \Illuminate\Http\Request   $Request
      * @param \Illuminate\Routing\Router $router
-     *
-     * @return void
      */
     public function boot(Request $request, Router $router)
     {
@@ -38,8 +36,6 @@ class ServiceProvider extends BaseServiceProvider
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -61,8 +57,6 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @param Illuminate\Routing\Router $router
      * @param array                     $config
-     *
-     * @return void
      */
     public function handleRoutes(Router $router, $config = [])
     {
@@ -77,8 +71,6 @@ class ServiceProvider extends BaseServiceProvider
 
     /**
      * handle publishes.
-     *
-     * @return void
      */
     protected function handlePublishes()
     {

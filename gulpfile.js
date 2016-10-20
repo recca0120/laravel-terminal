@@ -15,6 +15,16 @@ const elixir = require('laravel-elixir');
  */
 
 elixir((mix) => {
+    let webpackConfig = {
+        resolve: {
+            alias: {
+                jquery: 'jquery/dist/jquery.js',
+                $: 'jquery/dist/jquery.js',
+                'jquery-ui/sortable': 'jquery-ui/ui/widgets/sortable.js',
+                moment: 'moment/moment.js'
+            }
+        }
+    };
     let publicPath = elixir.config.publicPath;
     let cssOutputFolder = elixir.config.get('public.css.outputFolder');
     let jsOutputFolder = elixir.config.get('public.js.outputFolder');
@@ -24,7 +34,7 @@ elixir((mix) => {
         .sass([
             'bundle.scss'
         ], `${cssOutputFolder}/bundle.css`)
-        .webpack('bundle.js', `${jsOutputFolder}/bundle.js`)
+        .webpack('bundle.js', jsOutputFolder, null, webpackConfig)
         .browserSync({
             files: [
                 'src/**/*.php',

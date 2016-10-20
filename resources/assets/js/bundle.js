@@ -10,6 +10,7 @@ import OutputFormatter from './output-formatter';
 import Loading from './loading';
 
 import Artisan from './commands/artisan';
+import Composer from './commands/composer';
 import Default from './commands/default';
 import Help from './commands/help';
 import Mysql from './commands/mysql';
@@ -42,6 +43,7 @@ class Terminal {
                 this.commands = [
                     new Help(this, options),
                     new Artisan(this, options),
+                    new Composer(this, options),
                     new Mysql(this, options),
                     new Tinker(this, options),
                     new Vi(this, options),

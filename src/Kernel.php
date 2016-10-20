@@ -26,10 +26,8 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param \Illuminate\Contracts\Foundation\Application    $app
-     * @param \Illuminate\Contracts\Events\Dispatcher $events
-     *
-     * @return void
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Contracts\Events\Dispatcher      $events
      */
     public function __construct(Artisan $artisan)
     {

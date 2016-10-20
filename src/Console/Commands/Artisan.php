@@ -56,8 +56,6 @@ class Artisan extends Command
      * handle.
      *
      * @throws \InvalidArgumentException
-     *
-     * @return void
      */
     public function fire()
     {

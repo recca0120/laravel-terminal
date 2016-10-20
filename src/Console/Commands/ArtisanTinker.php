@@ -23,8 +23,6 @@ class ArtisanTinker extends Command
 
     /**
      * fire.
-     *
-     * @return void
      */
     public function fire()
     {

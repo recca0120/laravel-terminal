@@ -78,8 +78,6 @@ class Find extends Command
 
     /**
      * fire.
-     *
-     * @return void
      */
     public function fire()
     {
