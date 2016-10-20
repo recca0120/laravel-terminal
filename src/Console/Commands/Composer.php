@@ -23,7 +23,7 @@ class Composer extends Command
      *
      * @var string
      */
-    protected $description = 'Composer is a tool for dependency management in PHP. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.';
+    protected $description = 'composer';
 
     /**
      * $application.
@@ -78,6 +78,7 @@ class Composer extends Command
             unset($composerPhar);
             $this->filesystem->delete($this->composerPath.'/composer.phar');
         }
+        putenv('COMPOSER_HOME='.$this->composerPath);
         $this->filesystem->getRequire($this->composerPath.'/vendor/autoload.php');
         $this->init();
     }
@@ -128,6 +129,9 @@ class Composer extends Command
     {
         chdir($this->application->basePath());
         $command = trim($this->option('command'));
+        if (empty($command) === true) {
+            $command = 'help';
+        }
         $input = new StringInput($command);
 
         $this->install();
