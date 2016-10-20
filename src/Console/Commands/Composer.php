@@ -49,16 +49,12 @@ class Composer extends Command
     /**
      * __construct.
      *
-     * @param \Illuminate\Contracts\Foundation\Application
      * @param \Illuminate\Filesystem\Filesystem $filesystem
      */
-    public function __construct(Application $application, Filesystem $filesystem)
+    public function __construct(Filesystem $filesystem)
     {
         parent::__construct();
-        $this->application = $application;
         $this->filesystem = $filesystem;
-        $storagePath = $this->application->storagePath();
-        $this->composerPath = $storagePath.'/composer';
     }
 
     /**
@@ -68,18 +64,20 @@ class Composer extends Command
      */
     protected function install()
     {
-        if ($this->filesystem->exists($this->composerPath.'/vendor/autoload.php') === false) {
-            if ($this->filesystem->isDirectory($this->composerPath) === false) {
-                $this->filesystem->makeDirectory($this->composerPath, 0777);
+        $storagePath = $this->getLaravel()->storagePath();
+        $composerPath = $storagePath.'/composer';
+        if ($this->filesystem->exists($composerPath.'/vendor/autoload.php') === false) {
+            if ($this->filesystem->isDirectory($composerPath) === false) {
+                $this->filesystem->makeDirectory($composerPath, 0777);
             }
-            $this->filesystem->put($this->composerPath.'/composer.phar', file_get_contents('https://getcomposer.org/composer.phar'));
-            $composerPhar = new Phar($this->composerPath.'/composer.phar');
-            $composerPhar->extractTo($this->composerPath);
+            $this->filesystem->put($composerPath.'/composer.phar', file_get_contents('https://getcomposer.org/composer.phar'));
+            $composerPhar = new Phar($composerPath.'/composer.phar');
+            $composerPhar->extractTo($composerPath);
             unset($composerPhar);
-            $this->filesystem->delete($this->composerPath.'/composer.phar');
+            $this->filesystem->delete($composerPath.'/composer.phar');
         }
-        putenv('COMPOSER_HOME='.$this->composerPath);
-        $this->filesystem->getRequire($this->composerPath.'/vendor/autoload.php');
+        putenv('COMPOSER_HOME='.$composerPath);
+        $this->filesystem->getRequire($composerPath.'/vendor/autoload.php');
         $this->init();
     }
 
@@ -127,7 +125,9 @@ class Composer extends Command
      */
     public function fire()
     {
-        chdir($this->application->basePath());
+        $basePath = $this->getLaravel()->basePath();
+
+        chdir($basePath);
         $command = trim($this->option('command'));
         if (empty($command) === true) {
             $command = 'help';

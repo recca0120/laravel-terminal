@@ -50,9 +50,9 @@ class Tail extends Command
         $lines = $this->option('lines');
 
         if (empty($path) === false) {
-            $path = $this->laravel->basePath().'/'.$path;
+            $path = $this->getLaravel()->basePath().'/'.$path;
         } else {
-            $path = $this->laravel->storagePath();
+            $path = $this->getLaravel()->storagePath();
             $files = array_filter($this->filesystem->glob($path.'/logs/*.log'), function ($file) {
                 return is_file($file);
             });

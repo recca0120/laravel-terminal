@@ -46,7 +46,7 @@ class Cleanup extends Command
      */
     public function fire()
     {
-        $root = $this->laravel->basePath();
+        $root = $this->getLaravel()->basePath();
 
         $this->deleteDirectory([
             $root.'/node_modules',

@@ -89,7 +89,7 @@ class Find extends Command
         $maxDepth = $this->option('maxdepth');
         $delete = $this->option('delete');
 
-        $root = $this->laravel->basePath();
+        $root = $this->getLaravel()->basePath();
         $path = realpath($root.'/'.$path);
 
         $this->finder->in($path);
