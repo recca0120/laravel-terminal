@@ -50,21 +50,21 @@ class Composer extends Command
     protected function install()
     {
         $storagePath = $this->getLaravel()->storagePath();
-        $composerPath = $storagePath.'/composer';
-        if ($this->filesystem->exists($composerPath.'/vendor/autoload.php') === false) {
+        $composerPath = $storagePath.'/app/composer/';
+        if ($this->filesystem->exists($composerPath.'vendor/autoload.php') === false) {
             if ($this->filesystem->isDirectory($composerPath) === false) {
                 $this->filesystem->makeDirectory($composerPath, 0777);
             }
-            $this->filesystem->put($composerPath.'/composer.phar', file_get_contents('https://getcomposer.org/composer.phar'));
-            $composerPhar = new Phar($composerPath.'/composer.phar');
+            $this->filesystem->put($composerPath.'composer.phar', file_get_contents('https://getcomposer.org/composer.phar'));
+            $composerPhar = new Phar($composerPath.'composer.phar');
             $composerPhar->extractTo($composerPath);
             unset($composerPhar);
-            $this->filesystem->delete($composerPath.'/composer.phar');
+            $this->filesystem->delete($composerPath.'composer.phar');
         }
         if (empty(getenv('COMPOSER_HOME')) === true) {
             putenv('COMPOSER_HOME='.$composerPath);
         }
-        $this->filesystem->getRequire($composerPath.'/vendor/autoload.php');
+        $this->filesystem->getRequire($composerPath.'vendor/autoload.php');
         $this->init();
     }
 
