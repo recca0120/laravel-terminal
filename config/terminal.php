@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enabled' => true,
+    'enabled' => null,
     'whitelists' => [],
     'route' => [
         'prefix' => 'terminal',

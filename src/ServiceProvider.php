@@ -26,9 +26,12 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->handlePublishes();
         $config = $this->app['config']->get('terminal', []);
-        $enabled = $this->app['config']->get('app.debug', false);
-        $enabled = $enabled === false ? Arr::get($config, 'enabled', false) : $enabled;
-        if ($enabled === true || in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true) {
+        $enabled = Arr::get($config, 'enabled');
+        if (is_null($enabled) === true) {
+            $enabled = $this->app['config']->get('app.debug') === true;
+        }
+
+        if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || $enabled === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
         }
