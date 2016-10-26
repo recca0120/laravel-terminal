@@ -19,10 +19,10 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         */
 
         $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $config = m::mock('Illuminate\Contracts\Config\Repository');
+        $config = m::mock('Illuminate\Contracts\Config\Repository, ArrayAccess');
         $request = m::mock('Illuminate\Http\Request');
         $router = m::mock('Illuminate\Routing\Router');
-        $view = m::mock('stdClass');
+        $view = m::mock('Illuminate\Contracts\View\Factory');
         $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
 
         /*
@@ -38,12 +38,16 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         $view->shouldReceive('addNamespace')->with('terminal', m::any());
 
         $config
-            ->shouldReceive('get')->with('app.debug')->once()->andReturn(true)
-            ->shouldReceive('get')->with('terminal', [])->twice()->andReturn([
+            ->shouldReceive('get')->with('terminal', [])->once()->andReturn([
                 'whitelists' => ['127.0.0.1'],
             ])
             ->shouldReceive('set')->with('terminal', m::any())->once()
-            ->shouldReceive('get')->with('terminal.commands')->once()->andReturn([]);
+            ->shouldReceive('offsetExists')->with('terminal')->andReturn(true)
+            ->shouldReceive('offsetGet')->with('terminal')->once()->andReturn([
+                'enabled' => true,
+                'whitelists' => ['127.0.0.1'],
+            ])
+            ->shouldReceive('offsetGet')->with('terminal.commands')->once()->andReturn([]);
 
         $request
             ->shouldReceive('getClientIp')->once()->andReturn('127.0.0.1');
@@ -84,5 +88,20 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         $serviceProvider = new ServiceProvider($app);
         $serviceProvider->register();
         $serviceProvider->boot($request, $router, $config);
+    }
+}
+
+if (function_exists('env') === false) {
+    function env($env)
+    {
+        switch ($env) {
+            case 'APP_ENV':
+                return 'local';
+                break;
+
+            case 'APP_DEBUG':
+                return true;
+                break;
+        }
     }
 }

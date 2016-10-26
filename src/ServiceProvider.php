@@ -25,13 +25,8 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(Request $request, Router $router)
     {
         $this->handlePublishes();
-        $config = $this->app['config']->get('terminal', []);
-        $enabled = Arr::get($config, 'enabled');
-        if (is_null($enabled) === true) {
-            $enabled = $this->app['config']->get('app.debug') === true;
-        }
-
-        if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || $enabled === true) {
+        $config = $this->app['config']['terminal'];
+        if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || Arr::get($config, 'enabled') === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
         }
@@ -45,7 +40,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
         $this->app->singleton(Application::class, function ($app) {
             $config = $app['config'];
-            $commands = $config->get('terminal.commands');
+            $commands = $config['terminal.commands'];
             $artisan = new Application($app, $app['events'], $app->version());
             $artisan->resolveCommands($commands);
 

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enabled' => null,
+    'enabled' => env('APP_DEBUG') === true,
     'whitelists' => [],
     'route' => [
         'prefix' => 'terminal',

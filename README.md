@@ -52,7 +52,7 @@ http://localhost/path/to/terminal
 
 ```php
 return [
-    'enabled'    => true,
+    'enabled'    => env('APP_DEBUG'),
     'whitelists' => ['127.0.0.1', 'your ip'],
     'route'     => [
         'prefix'     => 'terminal',
