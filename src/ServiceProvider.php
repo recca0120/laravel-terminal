@@ -23,7 +23,10 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot(Request $request, Router $router)
     {
-        $this->handlePublishes();
+        if ($this->app->runningInConsole() === true) {
+            $this->handlePublishes();
+        }
+
         $config = $this->app['config']['terminal'];
         if (in_array($request->getClientIp(), array_get($config, 'whitelists', [])) === true || array_get($config, 'enabled') === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');

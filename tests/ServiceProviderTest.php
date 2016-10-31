@@ -73,7 +73,8 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
                     ->shouldReceive('isEnabled')->andReturn(false);
 
                 return $command;
-            });
+            })
+            ->shouldReceive('runningInConsole')->andReturn(true);
 
         $events
             ->shouldReceive('fire')->once()
