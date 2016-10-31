@@ -58,7 +58,7 @@ class ServiceProvider extends BaseServiceProvider
      * @param Illuminate\Routing\Router $router
      * @param array                     $config
      */
-    public function handleRoutes(Router $router, $config = [])
+    protected function handleRoutes(Router $router, $config = [])
     {
         if ($this->app->routesAreCached() === false) {
             $router->group(array_merge([
