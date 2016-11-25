@@ -1,9 +1,9 @@
 <?php
 
 use Mockery as m;
-use Recca0120\Terminal\ServiceProvider;
+use Recca0120\Terminal\TerminalServiceProvider;
 
-class ServiceProviderTest extends PHPUnit_Framework_TestCase
+class TerminalServiceProviderTest extends PHPUnit_Framework_TestCase
 {
     public function tearDown()
     {
@@ -86,7 +86,7 @@ class ServiceProviderTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $serviceProvider = new ServiceProvider($app);
+        $serviceProvider = new TerminalServiceProvider($app);
         $serviceProvider->register();
         $serviceProvider->boot($request, $router, $config);
     }
