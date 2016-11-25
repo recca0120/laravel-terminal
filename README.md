@@ -16,7 +16,7 @@ Add Presenter to your composer.json file:
 
 ```js
 "require": {
-    "recca0120/terminal": "^1.6"
+    "recca0120/terminal": "^1.6.3"
 }
 ```
 Now, run a composer update on the command line from the root of your project:
@@ -32,7 +32,7 @@ Include the service provider within `app/config/app.php`. The service povider is
 ```php
 'providers' => [
     ...
-    Recca0120\Terminal\ServiceProvider::class,
+    Recca0120\Terminal\TerminalServiceProvider::class,
     ...
 ];
 ```
@@ -40,7 +40,7 @@ Include the service provider within `app/config/app.php`. The service povider is
 publish
 
 ```php
-artisan vendor:publish --provider="Recca0120\Terminal\ServiceProvider"
+artisan vendor:publish --provider="Recca0120\Terminal\TerminalServiceProvider"
 ```
 
 

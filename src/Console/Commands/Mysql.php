@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
 use PDO;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Support\Arr;
 
 class Mysql extends Command
 {
@@ -52,7 +53,7 @@ class Mysql extends Command
         $connection->setFetchMode(PDO::FETCH_ASSOC);
         $query = $this->option('command');
         $rows = $connection->select($query);
-        $headers = array_keys(array_get($rows, 0, []));
+        $headers = array_keys(Arr::get($rows, 0, []));
         $this->table($headers, $rows);
     }
 

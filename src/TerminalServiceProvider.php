@@ -5,6 +5,7 @@ namespace Recca0120\Terminal;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Arr;
 
 class TerminalServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,7 @@ class TerminalServiceProvider extends ServiceProvider
     public function boot(Request $request, Router $router)
     {
         $config = $this->app['config']['terminal'];
-        if (in_array($request->getClientIp(), array_get($config, 'whitelists', [])) === true || array_get($config, 'enabled') === true) {
+        if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || Arr::get($config, 'enabled') === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
         }
@@ -63,7 +64,7 @@ class TerminalServiceProvider extends ServiceProvider
         if ($this->app->routesAreCached() === false) {
             $router->group(array_merge([
                 'namespace' => $this->namespace,
-            ], array_get($config, 'route', [])), function (Router $router) {
+            ], Arr::get($config, 'route', [])), function (Router $router) {
                 require __DIR__.'/Http/routes.php';
             });
         }
