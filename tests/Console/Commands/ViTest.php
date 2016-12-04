@@ -12,79 +12,167 @@ class ViTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function test_handle()
+    public function test_handle_read()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
-        $command = new Vi($filesystem);
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
-        $command->setLaravel($laravel);
+        $filesystem = m::spy('Illuminate\Filesystem\Filesystem');
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
+        $output
+            ->shouldReceive('getFormatter')->andReturn($formatter);
 
-        $filesystem
-            ->shouldReceive('get')->with(realpath(__DIR__.'/ViTest.php'))
-            ->mock();
+        $input
+            ->shouldReceive('getArgument')->with('path')->andReturn('foo.path')
+            ->shouldReceive('getOption')->with('text')->andReturn(null);
 
         $laravel
-            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
-            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
+            ->shouldReceive('basePath')->andReturn('foo.basepath');
+
+        $command = new Vi($filesystem);
+        $command->setLaravel($laravel);
+        $command->run($input, $output);
+        $command->fire();
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $command->run(new StringInput('ViTest.php'), new NullOutput);
+        $laravel->shouldHaveReceived('basePath')->once();
+        $filesystem->shouldHaveReceived('get')->with('foo.basepath/foo.path')->once();
     }
 
     public function test_handle_write()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
-        $command = new Vi($filesystem);
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
-        $command->setLaravel($laravel);
+        $filesystem = m::spy('Illuminate\Filesystem\Filesystem');
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
+        $output
+            ->shouldReceive('getFormatter')->andReturn($formatter);
 
-        $filesystem
-            ->shouldReceive('put')->with(realpath(__DIR__.'/ViTest.php'), 'abc')
-            ->mock();
+        $input
+            ->shouldReceive('getArgument')->with('path')->andReturn('foo.path')
+            ->shouldReceive('getOption')->with('text')->andReturn('foo.text');
 
         $laravel
-            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
-            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
+            ->shouldReceive('basePath')->andReturn('foo.basepath');
+
+        $command = new Vi($filesystem);
+        $command->setLaravel($laravel);
+        $command->run($input, $output);
+        $command->fire();
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $command->run(new StringInput('ViTest.php --text="abc"'), new NullOutput);
+        $laravel->shouldHaveReceived('basePath')->once();
+        $filesystem->shouldHaveReceived('put')->with('foo.basepath/foo.path', 'foo.text')->once();
     }
+
+    // public function test_handle()
+    // {
+    //     /*
+    //     |------------------------------------------------------------
+    //     | Set
+    //     |------------------------------------------------------------
+    //     */
+    //
+    //     $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
+    //     $command = new Vi($filesystem);
+    //     $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
+    //     $command->setLaravel($laravel);
+    //
+    //     /*
+    //     |------------------------------------------------------------
+    //     | Expectation
+    //     |------------------------------------------------------------
+    //     */
+    //
+    //     $filesystem
+    //         ->shouldReceive('get')->with(realpath(__DIR__.'/ViTest.php'))
+    //         ->mock();
+    //
+    //     $laravel
+    //         ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+    //         ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+    //             call_user_func($command);
+    //         });
+    //
+    //     /*
+    //     |------------------------------------------------------------
+    //     | Assertion
+    //     |------------------------------------------------------------
+    //     */
+    //
+    //     $command->run(new StringInput('ViTest.php'), new NullOutput);
+    // }
+    //
+    // public function test_handle_write()
+    // {
+    //     /*
+    //     |------------------------------------------------------------
+    //     | Set
+    //     |------------------------------------------------------------
+    //     */
+    //
+    //     $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
+    //     $command = new Vi($filesystem);
+    //     $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
+    //     $command->setLaravel($laravel);
+    //
+    //     /*
+    //     |------------------------------------------------------------
+    //     | Expectation
+    //     |------------------------------------------------------------
+    //     */
+    //
+    //     $filesystem
+    //         ->shouldReceive('put')->with(realpath(__DIR__.'/ViTest.php'), 'abc')
+    //         ->mock();
+    //
+    //     $laravel
+    //         ->shouldReceive('basePath')->once()->andReturn(__DIR__)
+    //         ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
+    //             call_user_func($command);
+    //         });
+    //
+    //     /*
+    //     |------------------------------------------------------------
+    //     | Assertion
+    //     |------------------------------------------------------------
+    //     */
+    //
+    //     $command->run(new StringInput('ViTest.php --text="abc"'), new NullOutput);
+    // }
 }

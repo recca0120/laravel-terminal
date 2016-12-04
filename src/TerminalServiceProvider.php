@@ -4,8 +4,8 @@ namespace Recca0120\Terminal;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Arr;
+use Illuminate\Support\ServiceProvider;
 
 class TerminalServiceProvider extends ServiceProvider
 {
@@ -24,14 +24,16 @@ class TerminalServiceProvider extends ServiceProvider
      */
     public function boot(Request $request, Router $router)
     {
+        if ($this->app->runningInConsole() === true) {
+            $this->handlePublishes();
+
+            return;
+        }
+
         $config = $this->app['config']['terminal'];
         if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || Arr::get($config, 'enabled') === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
-        }
-
-        if ($this->app->runningInConsole() === true) {
-            $this->handlePublishes();
         }
     }
 
@@ -41,9 +43,10 @@ class TerminalServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
+
         $this->app->singleton(Application::class, function ($app) {
-            $config = $app['config'];
-            $commands = $config['terminal.commands'];
+            $config = $app['config']['terminal'];
+            $commands = $config['commands'];
             $artisan = new Application($app, $app['events'], $app->version());
             $artisan->resolveCommands($commands);
 
@@ -51,6 +54,18 @@ class TerminalServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(Kernel::class, Kernel::class);
+
+        $this->app->singleton(TerminalManager::class, function ($app) {
+            $config = Arr::get($app['config'], 'terminal', []);
+            $config = array_merge($config, [
+                'basePath' => $app->basePath(),
+                'environment' => $app->environment(),
+                'version' => $app->version(),
+                'endpoint' => $app['url']->route(Arr::get($config, 'route.as').'endpoint'),
+            ]);
+
+            return new TerminalManager($app->make(Kernel::class), $config);
+        });
     }
 
     /**

@@ -15,6 +15,7 @@
         "illuminate/database": "~5.1",
         "illuminate/filesystem": "~5.1",
         "illuminate/routing": "~5.1",
+        "illuminate/view": "~5.1",
         "symfony/finder": "2.7.*|2.8.*|3.0.*|3.1.*"
     },
     "require-dev": {

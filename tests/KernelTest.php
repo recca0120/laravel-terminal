@@ -11,48 +11,164 @@ class KernelTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function test_kernel()
+    public function test_handle()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
-        $output = m::mock('Symfony\Component\Console\Output\OutputInterface');
-        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $artisan = m::mock('Recca0120\Terminal\Application');
-        $kernel = new Kernel($artisan);
-        $queue = m::mock('Illuminate\Contracts\Queue\Queue');
+        $artisan = m::spy('Recca0120\Terminal\Application');
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
 
         $artisan
-            ->shouldReceive('call')->with('list', [])->once()
-            ->shouldReceive('output')->once()
-            ->shouldReceive('all')->once()
-            ->shouldReceive('run')->with($input, $output)->once()
-            ->shouldReceive('getLaravel')->andReturn($app)->once();
+            ->shouldReceive('run')->with($input, $output)->andReturn(1);
 
-        $app->shouldReceive('offsetGet')->with('Illuminate\Contracts\Queue\Queue')->once()->andReturn($queue);
-
-        $queue->shouldReceive('push')->with('Illuminate\Foundation\Console\QueuedJob', ['foo', ['bar']])->once();
+        $kernel = new Kernel($artisan);
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $kernel->call('list');
-        $kernel->output();
+        $this->assertSame(1, $kernel->handle($input, $output));
+        $artisan->shouldHaveReceived('run')->with($input, $output)->once();
+    }
+
+    public function test_call()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $artisan = m::spy('Recca0120\Terminal\Application');
+        $command = 'foo.command';
+        $parameters = [];
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $artisan
+            ->shouldReceive('call')->with($command, $parameters)->andReturn(1);
+
+        $kernel = new Kernel($artisan);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $this->assertSame(1, $kernel->call($command, $parameters));
+        $artisan->shouldHaveReceived('call')->with($command, $parameters)->once();
+    }
+
+    public function test_queue()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $artisan = m::spy('Recca0120\Terminal\Application');
+        $command = 'foo.command';
+        $parameters = [];
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $queue = m::spy('Illuminate\Contracts\Queue\Queue');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $artisan
+            ->shouldReceive('getLaravel')->andReturn($app);
+
+        $app
+            ->shouldReceive('offsetGet')->with('Illuminate\Contracts\Queue\Queue')->andReturn($queue);
+
+        $kernel = new Kernel($artisan);
+        $kernel->queue($command, $parameters);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $artisan->shouldHaveReceived('getLaravel')->once();
+        $queue->shouldHaveReceived('push')->with('Illuminate\Foundation\Console\QueuedJob', [$command, $parameters]);
+    }
+
+    public function test_all()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $artisan = m::spy('Recca0120\Terminal\Application');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $kernel = new Kernel($artisan);
         $kernel->all();
-        $kernel->queue('foo', ['bar']);
-        $kernel->handle($input, $output);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $artisan->shouldHaveReceived('all')->once();
+    }
+
+    public function test_output()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $artisan = m::spy('Recca0120\Terminal\Application');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $kernel = new Kernel($artisan);
+        $kernel->output();
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $artisan->shouldHaveReceived('output')->once();
     }
 }

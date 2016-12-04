@@ -12,195 +12,376 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
+    public function test_run()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $artisan = new Artisan($app, $events, $version);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $this->assertSame(0, $artisan->run($input, $output));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function test_run_when_throw_exception()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $request = m::spy('Illuminate\Http\Request');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input->shouldReceive('hasParameterOption')->andThrow('Exception');
+
+        $app
+            ->shouldReceive('offsetGet')->with('request')->andReturn($request);
+
+        $request
+            ->shouldReceive('ajax')->andReturn(false);
+
+        $artisan = new Artisan($app, $events, $version);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $artisan->run($input, $output);
+
+        $request->shouldHaveReceived('ajax')->once();
+    }
+
+    public function test_run_when_throw_exception_and_request_is_ajax()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $request = m::spy('Illuminate\Http\Request');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input->shouldReceive('hasParameterOption')->andThrow(new Exception('test', 0, new Exception));
+
+        $app
+            ->shouldReceive('offsetGet')->with('request')->andReturn($request);
+
+        $request
+            ->shouldReceive('ajax')->andReturn(true);
+
+        $output->shouldReceive('getFormatter')->andReturn($formatter);
+
+        $artisan = new Artisan($app, $events, $version);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $artisan->run($input, $output);
+
+        $request->shouldHaveReceived('ajax')->once();
+    }
+
+    /**
+     * @requires PHP 7
+     */
+    public function test_run_when_throw_throwable()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $request = m::spy('Illuminate\Http\Request');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input->shouldReceive('hasParameterOption')->andReturnUsing(function () {
+            function_not_exists();
+        });
+
+        $app
+            ->shouldReceive('offsetGet')->with('request')->andReturn($request);
+
+        $request
+            ->shouldReceive('ajax')->andReturn(false);
+
+        $output->shouldReceive('getFormatter')->andReturn($formatter);
+
+        $artisan = new Artisan($app, $events, $version);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        try {
+            $artisan->run($input, $output);
+        } catch (Throwable $e) {
+        }
+
+        $this->assertInstanceOf('Throwable', $e);
+
+        $request->shouldHaveReceived('ajax')->once();
+    }
+
+    /**
+     * @requires PHP 7
+     */
+    public function test_run_when_throw_throwable_and_request_is_ajax()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $request = m::spy('Illuminate\Http\Request');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input->shouldReceive('hasParameterOption')->andReturnUsing(function () {
+            function_not_exists();
+        });
+
+        $app
+            ->shouldReceive('offsetGet')->with('request')->andReturn($request);
+
+        $request
+            ->shouldReceive('ajax')->andReturn(true);
+
+        $output->shouldReceive('getFormatter')->andReturn($formatter);
+
+        $artisan = new Artisan($app, $events, $version);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $this->assertSame(1, $artisan->run($input, $output));
+
+        $request->shouldHaveReceived('ajax')->once();
+    }
+
+    public function test_resolve_commands()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $eventString = $this->getArtisanEventString();
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $artisan = new Artisan($app, $events, $version);
+        $artisan->resolveCommands([]);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+    }
+
+    public function test_resolve_commands_and_receive_artisan_event_string()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $eventString = $this->getArtisanEventString();
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $app
+            ->shouldReceive('offsetGet')->with('events')->andReturn($events);
+
+        $events
+            ->shouldReceive('firing')->andReturn($eventString);
+
+        $artisan = new Artisan($app, $events, $version);
+        $artisan->resolveCommands([]);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $events->shouldHaveReceived('firing')->once();
+    }
+
     public function test_call()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $request = m::mock('Illuminate\Http\Request');
-        $kernel = m::mock('Illuminate\Contracts\Console\Kernel');
-        $command = m::mock(new ArtisanCommand($kernel));
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $kernel = m::spy('Illuminate\Contracts\Console\Kernel');
+        $command = new ArtisanCommand($kernel);
+        $commandString = 'artisan';
+        $parameters = [];
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
 
-        $events->shouldReceive('fire')->once();
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->once()->andReturn(null)
-            ->shouldReceive('offsetGet')->with('events')->once()->andReturn(null)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__)
-            ->shouldReceive('version')->andReturn('testing')
-            ->shouldReceive('call');
+        $artisan = new Artisan($app, $events, $version);
+        $artisan->add($command);
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $application = new Artisan($app, $events, 'testing');
-        $application->resolveCommands([]);
-        $application->add($command);
-        $application->call('artisan');
+        $this->assertSame(0, $artisan->call($commandString));
     }
 
-    public function test_artisan_string()
+    public function test_call_when_request_is_ajax()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $request = m::mock('Illuminate\Http\Request');
-        $kernel = m::mock('Illuminate\Contracts\Console\Kernel');
-        $command = m::mock(new ArtisanCommand($kernel));
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $version = 'testing';
+        $request = m::spy('Illuminate\Http\Request');
+        $kernel = m::spy('Illuminate\Contracts\Console\Kernel');
+        $command = new ArtisanCommand($kernel);
+        $commandString = 'artisan';
+        $parameters = [];
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
-
-        $events
-            ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn($this->getArtisanString());
 
         $app
-            ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
-            ->shouldReceive('offsetGet')->with('events')->twice()->andReturn($events)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__)
-            ->shouldReceive('version')->andReturn('testing')
-            ->shouldReceive('call');
+            ->shouldReceive('offsetGet')->with('request')->andReturn($request);
 
-        $request->shouldReceive('ajax')->andReturn(true);
+        $request
+            ->shouldReceive('ajax')->andReturn(true);
+
+        $artisan = new Artisan($app, $events, $version);
+        $artisan->add($command);
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $application = new Artisan($app, $events, 'testing');
-        $application->resolveCommands([]);
-        $application->add($command);
-        $application->call('artisan');
+        $this->assertSame(0, $artisan->call($commandString));
+
+        $request->shouldHaveReceived('ajax')->once();
     }
 
-    /**
-     * @expectedException Exception
-     */
-    public function test_exception()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $request = m::mock('Illuminate\Http\Request');
-        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
-        $output = m::mock('Symfony\Component\Console\Output\OutputInterface');
-        $exception = m::mock('Exception');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-
-        $events
-            ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn($this->getArtisanString());
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
-            // ->shouldReceive('offsetGet')->with('events')->twice()->andReturn($events)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__);
-
-        $request->shouldReceive('ajax')->andReturn(false);
-
-        $output->shouldReceive('writeln')->andReturnUsing(function () use ($exception) {
-            throw $exception;
-        });
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-
-        $application = new Artisan($app, $events, 'testing');
-        $application->run($input, $output);
-    }
-
-    /**
-     * @expectedException Exception
-     */
-    public function test_exception_with_ajax()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $request = m::mock('Illuminate\Http\Request');
-        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
-        $output = m::mock('Symfony\Component\Console\Output\OutputInterface');
-        $exception = m::mock('Exception');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-
-        $events
-            ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->andReturn($this->getArtisanString());
-
-        $app
-            ->shouldReceive('offsetGet')->with('request')->twice()->andReturn($request)
-            // ->shouldReceive('offsetGet')->with('events')->twice()->andReturn($events)
-            ->shouldReceive('basePath')->andReturn(__DIR__)
-            ->shouldReceive('storagePath')->andReturn(__DIR__);
-
-        $request->shouldReceive('ajax')->once()->andReturn(true);
-
-        $output->shouldReceive('writeln')->andReturnUsing(function () use ($exception) {
-            throw $exception;
-        });
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-
-        $application = new Artisan($app, $events, 'testing');
-        $application->run($input, $output);
-    }
-
-    protected function getArtisanString()
+    protected function getArtisanEventString()
     {
         return class_exists('Illuminate\Console\Events\ArtisanStarting') === false ? 'artisan.start' : 'Illuminate\Console\Events\ArtisanStarting';
     }

@@ -2,8 +2,6 @@
 
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\NullOutput;
 
 class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
 {
@@ -12,38 +10,112 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function test_handle()
+    public function test_handle_echo()
     {
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $command = $this->getCommand($input);
+
         /*
         |------------------------------------------------------------
-        | Set
+        | Act
         |------------------------------------------------------------
         */
 
-        $command = new ArtisanTinker();
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
+        $input
+            ->shouldReceive('getOption')->with('command')->andReturn('echo 123;');
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $command->fire();
+    }
+
+    public function test_handle_number()
+    {
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $command = $this->getCommand($input);
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input
+            ->shouldReceive('getOption')->with('command')->andReturn('123;');
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $command->fire();
+    }
+
+    public function test_handle_array()
+    {
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $command = $this->getCommand($input);
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input
+            ->shouldReceive('getOption')->with('command')->andReturn('[];');
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $command->fire();
+    }
+
+    public function test_handle_string()
+    {
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $command = $this->getCommand($input);
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $input
+            ->shouldReceive('getOption')->with('command')->andReturn('\'abc\';');
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $command->fire();
+    }
+
+    protected function getCommand($input)
+    {
+        $kernel = m::spy('Illuminate\Contracts\Console\Kernel');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+
+        $output
+            ->shouldReceive('getFormatter')->andReturn($formatter);
+
+        $command = new ArtisanTinker($kernel);
         $command->setLaravel($laravel);
+        $command->run($input, $output);
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-
-        $laravel
-            ->shouldReceive('call')->times(4)->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-
-        $command->run(new StringInput('--command="echo 123;"'), new NullOutput);
-        $command->run(new StringInput('--command="123;"'), new NullOutput);
-        $command->run(new StringInput('--command="[];"'), new NullOutput);
-        $command->run(new StringInput('--command="\'abc\'"'), new NullOutput);
+        return $command;
     }
 }

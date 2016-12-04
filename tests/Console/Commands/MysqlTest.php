@@ -2,8 +2,6 @@
 
 use Mockery as m;
 use Recca0120\Terminal\Console\Commands\Mysql;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\NullOutput;
 
 class MysqlTest extends PHPUnit_Framework_TestCase
 {
@@ -12,44 +10,53 @@ class MysqlTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function test_handle()
+    public function test_handler()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $databaseManager = m::mock('Illuminate\Database\DatabaseManager');
-        $connection = m::mock('Illuminate\Database\ConnectionInterface');
-        $command = new Mysql($databaseManager);
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
-        $command->setLaravel($laravel);
+        $databaseManager = m::spy('Illuminate\Database\DatabaseManager');
+        $connection = m::spy('Illuminate\Database\ConnectionInterface');
+        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
+        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
+        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
+        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+        $query = 'SELECT * FROM users;';
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
 
-        $databaseManager->shouldReceive('connection')->andReturn($connection);
+        $output
+            ->shouldReceive('getFormatter')->andReturn($formatter);
+
+        $input
+            ->shouldReceive('getOption')->with('command')->andReturn($query);
+
+        $databaseManager
+            ->shouldReceive('connection')->andReturn($connection);
 
         $connection
-            ->shouldReceive('setFetchMode')->once()
-            ->shouldReceive('select')->with('select * from users;')->andReturn([])->once()
-            ->mock();
+            ->shouldReceive('select')->andReturn([]);
 
-        $laravel
-            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
+        $command = new Mysql($databaseManager);
+        $command->setLaravel($laravel);
+        $command->run($input, $output);
+        $command->fire();
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $command->run(new StringInput('--command="select * from users;"'), new NullOutput);
+        $databaseManager->shouldHaveReceived('connection')->once();
+        $connection->shouldHaveReceived('setFetchMode')->with(PDO::FETCH_ASSOC)->once();
+        $connection->shouldHaveReceived('select')->with($query)->once();
     }
 }

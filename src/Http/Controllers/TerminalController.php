@@ -4,89 +4,69 @@ namespace Recca0120\Terminal\Http\Controllers;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
-use Recca0120\Terminal\Kernel;
+use Recca0120\Terminal\TerminalManager;
 
 class TerminalController extends Controller
 {
-    /**
-     * index.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param \Recca0120\Terminal\Kernel                   $kernel
-     * @param \Illuminate\Http\Request                     $request
-     * @param \Illuminate\Contracts\Response\Factory       $responseFactory
-     * @param \Illuminate\Contracts\Routing\UrlGenerator   $urlGenerator
-     * @param string                                       $view
-     *
-     * @return mixed
-     */
-    public function index(Application $app, Kernel $kernel, Request $request, ResponseFactory $responseFactory, UrlGenerator $urlGenerator, $view = 'index')
+    protected $request;
+    protected $responseFactory;
+    public function __construct(Request $request, ResponseFactory $responseFactory)
     {
-        $kernel->call('--ansi');
-        $csrfToken = null;
-        if ($request->hasSession() === true) {
-            $csrfToken = $request->session()->token();
-        }
-        $options = json_encode([
-            'csrfToken' => $csrfToken,
-            'username' => 'LARAVEL',
-            'hostname' => php_uname('n'),
-            'os' => PHP_OS,
-            'basePath' => $app->basePath(),
-            'environment' => $app->environment(),
-            'version' => $app->version(),
-            'endpoint' => $urlGenerator->action('\\'.static::class.'@endpoint'),
-            'helpInfo' => $kernel->output(),
-            'interpreters' => [
-                'mysql' => 'mysql',
-                'artisan tinker' => 'tinker',
-                'tinker' => 'tinker',
-            ],
-            'confirmToProceed' => [
-                'artisan' => [
-                    'migrate',
-                    'migrate:install',
-                    'migrate:refresh',
-                    'migrate:reset',
-                    'migrate:rollback',
-                    'db:seed',
-                ],
-            ],
-        ]);
-        $id = ($view === 'panel') ? Str::random(30) : null;
-
-        return $responseFactory->view('terminal::'.$view, compact('options', 'resources', 'id'));
+        $this->request = $request;
+        $this->responseFactory = $responseFactory;
     }
+
+     /**
+      * index.
+      *
+      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
+      * @param string                                $view
+      *
+      * @return mixed
+      */
+     public function index(TerminalManager $terminalManger, $view = 'index')
+     {
+         $csrfToken = null;
+         if ($this->request->hasSession() === true) {
+             $csrfToken = $this->request->session()->token();
+         }
+
+         $options = json_encode(array_merge($terminalManger->getOptions(), [
+            'csrfToken' => $csrfToken,
+        ]));
+
+         $id = ($view === 'panel') ? Str::random(30) : null;
+
+         return $this->responseFactory->view('terminal::'.$view, compact('options', 'id'));
+     }
 
     /**
      * rpc response.
      *
-     * @param \Recca0120\Terminal\Kernel             $kernel
-     * @param \Illuminate\Http\Request               $request
-     * @param \Illuminate\Contracts\Response\Factory $responseFactory
+     * @param \Recca0120\Terminal\TerminalManager   $terminalManger
      *
      * @return mixed
      */
-    public function endpoint(Kernel $kernel, Request $request, ResponseFactory $responseFactory)
+    public function endpoint(TerminalManager $terminalManger)
     {
-        if ($request->hasSession() === true) {
-            $session = $request->session();
+        if ($this->request->hasSession() === true) {
+            $session = $this->request->session();
             if ($session->isStarted() === true) {
                 $session->save();
             }
         }
 
-        $command = $request->get('command');
+        $kernel = $terminalManger->getKernel();
+        $command = $this->request->get('command');
         $status = $kernel->call($command);
 
-        return $responseFactory->json([
-            'jsonrpc' => $request->get('jsonrpc'),
-            'id' => $request->get('id'),
+        return $this->responseFactory->json([
+            'jsonrpc' => $this->request->get('jsonrpc'),
+            'id' => $this->request->get('id'),
             'result' => $kernel->output(),
             'error' => $status,
         ]);
@@ -95,19 +75,13 @@ class TerminalController extends Controller
     /**
      * media.
      *
-     * @param \Illuminate\Http\Request                      $request
-     * @param \Illuminate\Filesystem\Filesystem             $filesystem
-     * @param \Illuminate\Contracts\Routing\ResponseFactory $request
-     * @param string                                        $file
+     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param string                            $file
      *
      * @return \Illuminate\Http\Response
      */
-    public function media(
-        Request $request,
-        Filesystem $filesystem,
-        ResponseFactory $responseFactory,
-        $file
-    ) {
+    public function media(Filesystem $filesystem, $file)
+    {
         $filename = __DIR__.'/../../../public/'.$file;
         $mimeType = strpos($filename, '.css') !== false ? 'text/css' : 'application/javascript';
         $lastModified = $filesystem->lastModified($filename);
@@ -117,12 +91,12 @@ class TerminalController extends Controller
             'last-modified' => date('D, d M Y H:i:s ', $lastModified).'GMT',
         ];
 
-        if (@strtotime($request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
-            trim($request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
+        if (@strtotime($this->request->server('HTTP_IF_MODIFIED_SINCE')) === $lastModified ||
+            trim($this->request->server('HTTP_IF_NONE_MATCH'), '"') === $eTag
         ) {
-            $response = $responseFactory->make(null, 304, $headers);
+            $response = $this->responseFactory->make(null, 304, $headers);
         } else {
-            $response = $responseFactory->stream(function () use ($filename) {
+            $response = $this->responseFactory->stream(function () use ($filename) {
                 $out = fopen('php://output', 'wb');
                 $file = fopen($filename, 'rb');
                 stream_copy_to_stream($file, $out, filesize($filename));

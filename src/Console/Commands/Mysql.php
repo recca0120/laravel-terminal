@@ -4,9 +4,9 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Arr;
 use PDO;
 use Symfony\Component\Console\Input\InputOption;
-use Illuminate\Support\Arr;
 
 class Mysql extends Command
 {

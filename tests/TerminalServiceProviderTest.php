@@ -10,85 +10,146 @@ class TerminalServiceProviderTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
+    public function test_register()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $config = m::spy('Illuminate\Contracts\Config\Repository, ArrayAccess');
+        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
+        $urlGenerator = m::spy('Illuminate\Contracts\Routing\UrlGenerator');
+        $kernel = m::spy('Recca0120\Terminal\Kernel');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $app
+            ->shouldReceive('offsetGet')->with('config')->andReturn($config)
+            ->shouldReceive('offsetGet')->with('events')->andReturn($events)
+            ->shouldReceive('offsetGet')->with('url')->andReturn($urlGenerator)
+            ->shouldReceive('singleton')->with('Recca0120\Terminal\Application', m::type('Closure'))->andReturnUsing(function ($className, $closure) use ($app) {
+                $closure($app);
+            })
+            ->shouldReceive('singleton')->with('Recca0120\Terminal\TerminalManager', m::type('Closure'))->andReturnUsing(function ($className, $closure) use ($app) {
+                $closure($app);
+            })
+            ->shouldReceive('make')->with('Recca0120\Terminal\Kernel')->andReturn($kernel);
+
+        $config
+            ->shouldReceive('get')->andReturn([])
+            ->shouldReceive('offsetGet')->with('terminal')->andReturn(['commands' => []]);
+
+        $serviceProvider = new TerminalServiceProvider($app);
+        $serviceProvider->register();
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $app->shouldHaveReceived('singleton')->with('Recca0120\Terminal\Application', m::type('Closure'))->once();
+        $app->shouldHaveReceived('singleton')->with('Recca0120\Terminal\Kernel', 'Recca0120\Terminal\Kernel')->once();
+        $app->shouldHaveReceived('singleton')->with('Recca0120\Terminal\TerminalManager', m::type('Closure'))->once();
+        $app->shouldHaveReceived('make')->with('Recca0120\Terminal\Kernel')->once();
+        $app->shouldHaveReceived('version')->twice();
+        $app->shouldHaveReceived('basePath')->once();
+        $app->shouldHaveReceived('environment')->once();
+    }
+
+    public function test_boot_and_running_in_console()
+    {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $request = m::spy('Illuminate\Http\Request');
+        $router = m::spy('Illuminate\Routing\Router');
+
+        /*
+        |------------------------------------------------------------
+        | Act
+        |------------------------------------------------------------
+        */
+
+        $app
+            ->shouldReceive('runningInConsole')->andReturn(true);
+
+        $serviceProvider = new TerminalServiceProvider($app);
+        $serviceProvider->boot($request, $router);
+
+        /*
+        |------------------------------------------------------------
+        | Assert
+        |------------------------------------------------------------
+        */
+
+        $app->shouldHaveReceived('runningInConsole')->once();
+        $app->shouldHaveReceived('configPath')->once();
+        $app->shouldHaveReceived('basePath')->once();
+        $app->shouldHaveReceived('publicPath')->once();
+    }
+
     public function test_boot()
     {
         /*
         |------------------------------------------------------------
-        | Set
+        | Arrange
         |------------------------------------------------------------
         */
 
-        $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $config = m::mock('Illuminate\Contracts\Config\Repository, ArrayAccess');
-        $request = m::mock('Illuminate\Http\Request');
-        $router = m::mock('Illuminate\Routing\Router');
-        $view = m::mock('Illuminate\Contracts\View\Factory');
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $request = m::spy('Illuminate\Http\Request');
+        $router = m::spy('Illuminate\Routing\Router');
+        $view = m::spy('Illuminate\Contracts\View\Factory');
+        $clientIp = '127.0.0.1';
+        $config = [
+            'terminal' => [
+                'whitelists' => [$clientIp],
+            ],
+        ];
 
         /*
         |------------------------------------------------------------
-        | Expectation
+        | Act
         |------------------------------------------------------------
         */
-
-        $router->shouldReceive('group')->with(m::any(), m::type('Closure'))->andReturnUsing(function ($options, $closure) use ($router) {
-            // $closure($router);
-        });
-
-        $view->shouldReceive('addNamespace')->with('terminal', m::any());
-
-        $config
-            ->shouldReceive('get')->with('terminal', [])->once()->andReturn([
-                'whitelists' => ['127.0.0.1'],
-            ])
-            ->shouldReceive('set')->with('terminal', m::any())->once()
-            ->shouldReceive('offsetExists')->with('terminal')->andReturn(true)
-            ->shouldReceive('offsetGet')->with('terminal')->once()->andReturn([
-                'enabled' => true,
-                'whitelists' => ['127.0.0.1'],
-            ])
-            ->shouldReceive('offsetGet')->with('terminal.commands')->once()->andReturn([]);
-
-        $request
-            ->shouldReceive('getClientIp')->once()->andReturn('127.0.0.1');
 
         $app
+            ->shouldReceive('runningInConsole')->andReturn(false)
             ->shouldReceive('offsetGet')->with('config')->andReturn($config)
-            ->shouldReceive('resourcePath')
-            ->shouldReceive('configPath')
-            ->shouldReceive('basePath')
-            ->shouldReceive('publicPath')
-            ->shouldReceive('offsetGet')->with('view')->once()->andReturn($view)
-            ->shouldReceive('routesAreCached')->once()->andReturn(false)
-            ->shouldReceive('offsetGet')->with('events')->times(3)->andReturn($events)
-            ->shouldReceive('version')->andReturn('testing')
-            ->shouldReceive('singleton')->with('Recca0120\Terminal\Kernel', 'Recca0120\Terminal\Kernel')
-            ->shouldReceive('singleton')->with('Recca0120\Terminal\Application', m::type('Closure'))->andReturnUsing(function ($className, $closure) use ($app) {
-                return $closure($app);
-            })
-            ->shouldReceive('make')->andReturnUsing(function () {
-                $command = m::mock('Symfony\Component\Console\Command\Command');
+            ->shouldReceive('offsetGet')->with('view')->andReturn($view)
+            ->shouldReceive('routesAreCached')->andReturn(false);
 
-                $command->shouldReceive('setApplication')
-                    ->shouldReceive('isEnabled')->andReturn(false);
+        $request
+            ->shouldReceive('getClientIp')->andReturn($clientIp);
 
-                return $command;
-            })
-            ->shouldReceive('runningInConsole')->andReturn(true);
+        $router->shouldReceive('group')->with(['namespace' => 'Recca0120\Terminal\Http\Controllers'], m::type('Closure'))->andReturnUsing(function ($config, $closure) use ($router) {
+            $closure($router);
+        });
 
-        $events
-            ->shouldReceive('fire')->once()
-            ->shouldReceive('firing')->once();
+        $serviceProvider = new TerminalServiceProvider($app);
+        $serviceProvider->boot($request, $router);
 
         /*
         |------------------------------------------------------------
-        | Assertion
+        | Assert
         |------------------------------------------------------------
         */
 
-        $serviceProvider = new TerminalServiceProvider($app);
-        $serviceProvider->register();
-        $serviceProvider->boot($request, $router, $config);
+        $app->shouldHaveReceived('runningInConsole')->once();
+        $app->shouldHaveReceived('routesAreCached')->once();
+        $router->shouldHaveReceived('group')->with(['namespace' => 'Recca0120\Terminal\Http\Controllers'], m::type('Closure'))->once();
     }
 }
 
@@ -103,6 +164,19 @@ if (function_exists('env') === false) {
             case 'APP_DEBUG':
                 return true;
                 break;
+        }
+    }
+}
+
+if (class_exists('Route') === false) {
+    class Route
+    {
+        public static function __callStatic($method, $arguments)
+        {
+            return new static;
+        }
+        public function __call($method, $arguments)
+        {
         }
     }
 }

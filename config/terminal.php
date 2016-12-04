@@ -8,6 +8,21 @@ return [
         'as' => 'terminal.',
         'middleware' => ['web'],
     ],
+    'interpreters' => [
+        'mysql' => 'mysql',
+        'artisan tinker' => 'tinker',
+        'tinker' => 'tinker',
+    ],
+    'confirmToProceed' => [
+        'artisan' => [
+            'migrate',
+            'migrate:install',
+            'migrate:refresh',
+            'migrate:reset',
+            'migrate:rollback',
+            'db:seed',
+        ],
+    ],
     'commands' => [
         \Recca0120\Terminal\Console\Commands\Artisan::class,
         \Recca0120\Terminal\Console\Commands\ArtisanTinker::class,
