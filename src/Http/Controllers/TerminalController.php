@@ -2,18 +2,19 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Str;
+use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\TerminalManager;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class TerminalController extends Controller
 {
     protected $request;
     protected $responseFactory;
+
     public function __construct(Request $request, ResponseFactory $responseFactory)
     {
         $this->request = $request;

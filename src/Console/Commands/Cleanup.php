@@ -4,9 +4,9 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Filesystem\Filesystem;
 
 class Cleanup extends Command
 {

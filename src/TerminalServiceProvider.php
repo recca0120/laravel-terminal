@@ -2,9 +2,9 @@
 
 namespace Recca0120\Terminal;
 
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class TerminalServiceProvider extends ServiceProvider

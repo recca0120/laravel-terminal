@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Mockery as m;
+use Illuminate\Http\Request;
 use Recca0120\Terminal\Application as Artisan;
 use Recca0120\Terminal\Console\Commands\Artisan as ArtisanCommand;
 

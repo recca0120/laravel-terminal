@@ -2,11 +2,11 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Contracts\Console\Kernel as ArtisanContract;
 use InvalidArgumentException;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
+use Illuminate\Contracts\Console\Kernel as ArtisanContract;
 
 class Artisan extends Command
 {

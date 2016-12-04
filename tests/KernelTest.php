@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Contracts\Queue\Queue;
 use Mockery as m;
 use Recca0120\Terminal\Kernel;
+use Illuminate\Contracts\Queue\Queue;
 
 class KernelTest extends PHPUnit_Framework_TestCase
 {

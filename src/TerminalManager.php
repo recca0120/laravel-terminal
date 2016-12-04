@@ -2,9 +2,8 @@
 
 namespace Recca0120\Terminal;
 
-
-use Illuminate\Contracts\Foundation\Application as Laravel;
 use Illuminate\Support\Arr;
+use Illuminate\Contracts\Foundation\Application as Laravel;
 
 class TerminalManager
 {

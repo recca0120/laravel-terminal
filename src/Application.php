@@ -3,17 +3,17 @@
 namespace Recca0120\Terminal;
 
 use Exception;
-use Illuminate\Console\Application as ConsoleApplication;
-use Illuminate\Console\Command;
+use Throwable;
 use Illuminate\Http\Request;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
-use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Input\InputInterface;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Illuminate\Console\Application as ConsoleApplication;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
-use Throwable;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class Application extends ConsoleApplication
 {
