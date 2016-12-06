@@ -12,6 +12,12 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
 
     public function test_handle_echo()
     {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
         $input = m::spy('Symfony\Component\Console\Input\InputInterface');
         $command = $this->getCommand($input);
 
@@ -35,6 +41,12 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
 
     public function test_handle_number()
     {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
         $input = m::spy('Symfony\Component\Console\Input\InputInterface');
         $command = $this->getCommand($input);
 
@@ -58,6 +70,12 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
 
     public function test_handle_array()
     {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
         $input = m::spy('Symfony\Component\Console\Input\InputInterface');
         $command = $this->getCommand($input);
 
@@ -81,6 +99,12 @@ class ArtisanTinkerTest extends PHPUnit_Framework_TestCase
 
     public function test_handle_string()
     {
+        /*
+        |------------------------------------------------------------
+        | Arrange
+        |------------------------------------------------------------
+        */
+
         $input = m::spy('Symfony\Component\Console\Input\InputInterface');
         $command = $this->getCommand($input);
 
