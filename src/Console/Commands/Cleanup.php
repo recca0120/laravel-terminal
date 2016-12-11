@@ -70,7 +70,7 @@ class Cleanup extends Command
             ->collapse()
             ->each(function ($directory) {
                 $this->filesystem->deleteDirectory($directory);
-                $this->warning('delete directory: '.$directory);
+                $this->error('delete directory: '.$directory);
             });
     }
 
