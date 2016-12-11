@@ -57,6 +57,10 @@ class Cleanup extends Command
             'vendor/**/**/.git',
             'vendor/**/**/node_modules',
             'vendor/**/**/vendor',
+            'vendor/**/**/Tests',
+            'vendor/**/**/tests',
+            'vendor/**/**/Test',
+            'vendor/**/**/test',
         ];
 
         (new Collection($directories))
@@ -66,6 +70,7 @@ class Cleanup extends Command
             ->collapse()
             ->each(function ($directory) {
                 $this->filesystem->deleteDirectory($directory);
+                $this->warning('delete directory: '.$directory);
             });
     }
 
