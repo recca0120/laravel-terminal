@@ -49,7 +49,7 @@ class ArtisanTest extends PHPUnit_Framework_TestCase
 
         $input->shouldHaveReceived('getOption')->with('command')->once();
         $kernel->shouldHaveReceived('handle')->with(m::on(function ($input) {
-            return preg_match('/[\'"]db:seed[\'"] --force/', (string) $input) !== false;
+            return (bool) preg_match('/[\'"]db:seed[\'"] --force/', (string) $input);
         }), m::type('Symfony\Component\Console\Output\OutputInterface'))->once();
     }
 
