@@ -49,9 +49,9 @@
         }
     }
 
-    loadStyle('css', "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/bundle.css']) }}");
+    loadStyle('css', "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/terminal.css']) }}");
     var scripts = {
-        terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/bundle.js']) }}",
+        terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}",
     };
 
     loadScript('terminal' ,scripts.terminal, function () {

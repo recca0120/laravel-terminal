@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Terminal</title>
-    <link href="{{ asset('vendor/terminal/css/bundle.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('vendor/terminal/css/terminal.css') }}" rel="stylesheet"/>
     <style>
     html, body{
         width: 100%;
@@ -20,7 +20,7 @@
 </head>
 <body>
     <div id="terminal-shell"></div>
-    <script src="{{ asset('vendor/terminal/js/bundle.js') }}"></script>
+    <script src="{{ asset('vendor/terminal/js/terminal.js') }}"></script>
     <script>
     (function() {
         new Terminal("#terminal-shell", {!! $options !!});

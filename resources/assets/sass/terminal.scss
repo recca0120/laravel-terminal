@@ -18,13 +18,17 @@
     font-variant: normal !important;
     font-weight: normal !important;
     font-size: 12px;
-    overflow-x: hidden;
+    overflow: hidden;
     a {
         color: #0f60ff !important;
         &:hover {
             color: red !important;
             text-decoration: underline !important;
         }
+    }
+
+    .prompt {
+        display: inline;
     }
 }
 

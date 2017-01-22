@@ -1,18 +1,19 @@
 {
   "private": true,
   "scripts": {
-    "prod": "gulp --production",
-    "dev": "gulp watch"
+    "dev": "cross-env NODE_ENV=development webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "cross-env NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
+    "axios": "^0.15.2",
     "codemirror": "^5.19.0",
-    "gulp": "^3.9.1",
     "jquery": "^3.1.1",
     "jquery-migrate": "^3.0.0",
     "jquery-mousewheel": "^3.1.13",
     "jquery.terminal": "^0.11.11",
-    "laravel-elixir": "^6.0.0-11",
-    "laravel-elixir-browsersync-official": "^1.0.0",
-    "laravel-elixir-webpack-official": "^1.0.8"
+    "laravel-mix": "^0.5.0",
+    "lodash": "^4.16.2"
   }
 }
