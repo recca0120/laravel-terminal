@@ -42,38 +42,6 @@ class Application extends ConsoleApplication
     }
 
     /**
-     * Resolve an array of commands through the application.
-     *
-     * @param array|mixed $commands
-     *
-     * @return $this
-     */
-    public function resolveCommands($commands)
-    {
-        if ($this->isFromArtisanStartingEvent() === true) {
-            return $this;
-        }
-
-        return parent::resolveCommands($commands);
-    }
-
-    /**
-     * Add a command to the console.
-     *
-     * @param \Symfony\Component\Console\Command\Command $command
-     *
-     * @return \Symfony\Component\Console\Command\Command
-     */
-    public function add(SymfonyCommand $command)
-    {
-        if ($command instanceof Command) {
-            $command->setLaravel($this->laravel);
-        }
-
-        return parent::addToParent($command);
-    }
-
-    /**
      * Runs the current application.
      *
      * @param InputInterface  $input  An Input instance
@@ -140,24 +108,5 @@ class Application extends ConsoleApplication
         }
 
         return Request::capture()->ajax();
-    }
-
-    /**
-     * isFromArtisanStartingEvent.
-     *
-     * @method isFromArtisanStartingEvent
-     *
-     * @return bool
-     */
-    private function isFromArtisanStartingEvent()
-    {
-        if (is_null($this->laravel['events']) === false) {
-            return in_array($this->laravel['events']->firing(), [
-                'Illuminate\Console\Events\ArtisanStarting',
-                'artisan.start',
-            ], true) === true;
-        }
-
-        return false;
     }
 }

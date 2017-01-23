@@ -238,72 +238,6 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $request->shouldHaveReceived('ajax')->once();
     }
 
-    public function test_resolve_commands()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
-        $version = 'testing';
-        $eventString = $this->getArtisanEventString();
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $artisan = new Artisan($app, $events, $version);
-        $artisan->resolveCommands([]);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-    }
-
-    public function test_resolve_commands_and_receive_artisan_event_string()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $events = m::spy('Illuminate\Contracts\Events\Dispatcher');
-        $version = 'testing';
-        $eventString = $this->getArtisanEventString();
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $app
-            ->shouldReceive('offsetGet')->with('events')->andReturn($events);
-
-        $events
-            ->shouldReceive('firing')->andReturn($eventString);
-
-        $artisan = new Artisan($app, $events, $version);
-        $artisan->resolveCommands([]);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $events->shouldHaveReceived('firing')->once();
-    }
-
     public function test_call()
     {
         /*
@@ -379,10 +313,5 @@ class ApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $artisan->call($commandString));
 
         $request->shouldHaveReceived('ajax')->once();
-    }
-
-    protected function getArtisanEventString()
-    {
-        return class_exists('Illuminate\Console\Events\ArtisanStarting') === false ? 'artisan.start' : 'Illuminate\Console\Events\ArtisanStarting';
     }
 }
