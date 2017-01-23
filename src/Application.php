@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Illuminate\Console\Application as ConsoleApplication;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
 
 class Application extends ConsoleApplication
 {
@@ -39,6 +38,23 @@ class Application extends ConsoleApplication
         $this->setCatchExceptions(true);
 
         return $result;
+    }
+
+    /**
+     * Resolve an array of commands through the application.
+     *
+     * @param array|mixed $commands
+     * @param bool $web
+     *
+     * @return $this
+     */
+    public function resolveCommands($commands, $web = false)
+    {
+        if ($web === false) {
+            return;
+        }
+
+        return parent::resolveCommands($commands);
     }
 
     /**

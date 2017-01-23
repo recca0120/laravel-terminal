@@ -48,7 +48,7 @@ class TerminalServiceProvider extends ServiceProvider
             $config = $app['config']['terminal'];
             $commands = $config['commands'];
             $artisan = new Application($app, $app['events'], $app->version());
-            $artisan->resolveCommands($commands);
+            $artisan->resolveCommands($commands, true);
 
             return $artisan;
         });
