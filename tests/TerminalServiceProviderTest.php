@@ -64,42 +64,6 @@ class TerminalServiceProviderTest extends PHPUnit_Framework_TestCase
         $app->shouldHaveReceived('environment')->once();
     }
 
-    public function test_boot_and_running_in_console()
-    {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $request = m::spy('Illuminate\Http\Request');
-        $router = m::spy('Illuminate\Routing\Router');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $app
-            ->shouldReceive('runningInConsole')->andReturn(true);
-
-        $serviceProvider = new TerminalServiceProvider($app);
-        $serviceProvider->boot($request, $router);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $app->shouldHaveReceived('runningInConsole')->once();
-        $app->shouldHaveReceived('configPath')->once();
-        $app->shouldHaveReceived('basePath')->once();
-        $app->shouldHaveReceived('publicPath')->once();
-    }
-
     public function test_boot()
     {
         /*
@@ -126,7 +90,7 @@ class TerminalServiceProviderTest extends PHPUnit_Framework_TestCase
         */
 
         $app
-            ->shouldReceive('runningInConsole')->andReturn(false)
+            ->shouldReceive('runningInConsole')->andReturn(true)
             ->shouldReceive('offsetGet')->with('config')->andReturn($config)
             ->shouldReceive('offsetGet')->with('view')->andReturn($view)
             ->shouldReceive('routesAreCached')->andReturn(false);
@@ -147,9 +111,12 @@ class TerminalServiceProviderTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
 
-        $app->shouldHaveReceived('runningInConsole')->once();
         $app->shouldHaveReceived('routesAreCached')->once();
         $router->shouldHaveReceived('group')->with(['namespace' => 'Recca0120\Terminal\Http\Controllers'], m::type('Closure'))->once();
+        $app->shouldHaveReceived('runningInConsole')->once();
+        $app->shouldHaveReceived('configPath')->once();
+        $app->shouldHaveReceived('basePath')->once();
+        $app->shouldHaveReceived('publicPath')->once();
     }
 }
 

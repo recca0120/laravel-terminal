@@ -24,16 +24,14 @@ class TerminalServiceProvider extends ServiceProvider
      */
     public function boot(Request $request, Router $router)
     {
-        if ($this->app->runningInConsole() === true) {
-            $this->handlePublishes();
-
-            return;
-        }
-
         $config = $this->app['config']['terminal'];
         if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || Arr::get($config, 'enabled') === true) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
+        }
+
+        if ($this->app->runningInConsole() === true) {
+            $this->handlePublishes();
         }
     }
 
