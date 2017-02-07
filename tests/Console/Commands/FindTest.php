@@ -279,6 +279,6 @@ class FindTest extends TestCase
 
         $property = $reflectionClass->getProperty('input');
         $property->setAccessible(true);
-        $this->assertSame('"./" -N "*" -T d -M 0 -d true', (string) $property->getValue($command));
+        $this->assertSame("'./' -N '*' -T d -M 0 -d true", (string) $property->getValue($command));
     }
 }

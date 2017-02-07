@@ -89,7 +89,6 @@ class TerminalServiceProviderTest extends TestCase
         $router = m::mock('Illuminate\Routing\Router');
 
         $request->shouldReceive('getClientIp')->once()->andReturn($ip);
-        $app->shouldReceive('resourcePath')->once();
         $app->shouldReceive('offsetGet')->once()->with('view')->andReturn(
             $view = m::mock('Illuminate\Contracts\View\Factory')
         );
@@ -104,9 +103,9 @@ class TerminalServiceProviderTest extends TestCase
         }));
 
         $app->shouldReceive('runningInConsole')->once()->andReturn(true);
-        $app->shouldReceive('configPath')->once();
-        $app->shouldReceive('basePath')->once();
-        $app->shouldReceive('publicPath')->once();
+        $app->shouldReceive('configPath');
+        $app->shouldReceive('basePath');
+        $app->shouldReceive('publicPath');
 
         $serviceProvider->boot($request, $router);
     }
