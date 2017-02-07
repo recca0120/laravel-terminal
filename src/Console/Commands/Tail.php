@@ -60,9 +60,9 @@ class Tail extends Command
             $path = rtrim($path, '/').'/';
 
             $file = (new Collection($this->filesystem->glob($path.'logs/*.log')))
-                ->filter(function($file) {
+                ->filter(function ($file) {
                     return is_file($file);
-                })->sortByDesc(function($file) {
+                })->sortByDesc(function ($file) {
                     return filectime($file);
                 })->first();
         }

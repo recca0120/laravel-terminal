@@ -24,7 +24,7 @@ class ArtisanTest extends TestCase
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'foo');
-        $kernel->shouldReceive('handle')->with(m::on(function($input) use ($cmd) {
+        $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
             return (string) $input === $cmd;
         }), $output);
 
@@ -40,7 +40,7 @@ class ArtisanTest extends TestCase
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'migrate');
-        $kernel->shouldReceive('handle')->with(m::on(function($input) use ($cmd) {
+        $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
             return (string) $input === $cmd.' --force';
         }), $output);
 

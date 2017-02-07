@@ -3,15 +3,13 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
-use Recca0120\Terminal\Console\Commands\Tail;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\NullOutput;
 use MockingHelpers;
-use Symfony\Component\Console\Output\BufferedOutput;
-use org\bovigo\vfs\vfsStream;
-use Illuminate\Filesystem\Filesystem;
 use Webmozart\Glob\Glob;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use Illuminate\Filesystem\Filesystem;
+use Recca0120\Terminal\Console\Commands\Tail;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class TailTest extends TestCase
 {
@@ -19,7 +17,7 @@ class TailTest extends TestCase
     {
         $structure = [
             'logs' => [
-                '1.log' => "
+                '1.log' => '
                     1.log
                     1.log
                     1.log
@@ -30,8 +28,8 @@ class TailTest extends TestCase
                     1.log
                     1.log
                     1.log
-                ",
-                '2.log' => "
+                ',
+                '2.log' => '
                     2.log
                     2.log
                     2.log
@@ -42,8 +40,8 @@ class TailTest extends TestCase
                     2.log
                     2.log
                     2.log
-                ",
-                '3.log' => "
+                ',
+                '3.log' => '
                     3.log
                     3.log
                     3.log
@@ -54,8 +52,8 @@ class TailTest extends TestCase
                     3.log
                     3.log
                     3.log
-                ",
-                '4.log' => "
+                ',
+                '4.log' => '
                     4.log
                     4.log
                     4.log
@@ -66,8 +64,8 @@ class TailTest extends TestCase
                     4.log
                     4.log
                     4.log
-                ",
-                '5.log' => "
+                ',
+                '5.log' => '
                     5.log
                     5.log
                     5.log
@@ -78,8 +76,8 @@ class TailTest extends TestCase
                     5.log
                     5.log
                     5.log
-                ",
-            ]
+                ',
+            ],
         ];
         $this->root = vfsStream::setup('root', null, $structure);
     }
@@ -103,7 +101,7 @@ class TailTest extends TestCase
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
         $laravel->shouldReceive('storagePath')->once()->andReturn($storagePath = $this->root->url());
-        $filesystem->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function($path) {
+        $filesystem->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
             return Glob::glob($path);
         });
 

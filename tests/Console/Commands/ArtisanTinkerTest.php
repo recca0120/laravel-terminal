@@ -79,7 +79,7 @@ class ArtisanTinkerTest extends TestCase
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "123");
+        $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = '123');
         $command->fire();
 
         $this->assertSame("=> 123\n", $output->fetch());

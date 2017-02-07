@@ -51,7 +51,7 @@ class KernelTest extends TestCase
         );
         $queue->shouldReceive('push')->once()->with('Illuminate\Foundation\Console\QueuedJob', [
             $command = 'foo',
-            $parameters = ['foo' => 'bar']
+            $parameters = ['foo' => 'bar'],
         ]);
         $kernel->queue($command, $parameters);
     }

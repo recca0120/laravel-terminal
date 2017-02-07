@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use PDO;
 use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;

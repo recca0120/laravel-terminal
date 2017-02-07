@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
-use PDO;
 use stdClass;
 use Mockery as m;
 use MockingHelpers;
@@ -30,7 +29,7 @@ class MysqlTest extends TestCase
             $connection = m::mock('Illuminate\Database\ConnectionInterface')
         );
         $connection->shouldReceive('select')->once()->with($query)->andReturn($rows = [
-            new stdClass
+            new stdClass,
         ]);
 
         $command->fire();

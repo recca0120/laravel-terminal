@@ -25,7 +25,7 @@ class TerminalServiceProviderTest extends TestCase
         $config->shouldReceive('set')->once()->with('terminal', m::type('array'));
 
         $app->shouldReceive('singleton')->once()->with(
-            'Recca0120\Terminal\Application', m::on(function($closure) use ($app) {
+            'Recca0120\Terminal\Application', m::on(function ($closure) use ($app) {
                 $app->shouldReceive('offsetGet')->once()->with('config')->andReturn(
                     $config = ['terminal' => ['commands' => []]]
                 );
@@ -46,7 +46,7 @@ class TerminalServiceProviderTest extends TestCase
         );
 
         $app->shouldReceive('singleton')->once()->with(
-            'Recca0120\Terminal\TerminalManager', m::on(function($closure) use ($app) {
+            'Recca0120\Terminal\TerminalManager', m::on(function ($closure) use ($app) {
                 $app->shouldReceive('offsetGet')->once()->with('config')->andReturn(
                     $config = ['terminal' => ['route' => ['as' => 'foo.']]]
                 );
@@ -77,12 +77,12 @@ class TerminalServiceProviderTest extends TestCase
             $config = [
                 'terminal' => [
                     'route' => [
-                        'prefix' => 'terminal.'
+                        'prefix' => 'terminal.',
                     ],
                     'whitelists' => [
                         $ip = '127.0.0.1',
-                    ]
-                ]
+                    ],
+                ],
             ]
         );
         $request = m::mock('Illuminate\Http\Request');
@@ -98,8 +98,8 @@ class TerminalServiceProviderTest extends TestCase
         $app->shouldReceive('routesAreCached')->once()->andReturn(false);
         $router->shouldReceive('group')->once()->with([
             'namespace' => 'Recca0120\Terminal\Http\Controllers',
-            'prefix' => 'terminal.'
-        ], m::on(function($closure) use ($router) {
+            'prefix' => 'terminal.',
+        ], m::on(function ($closure) use ($router) {
             return true;
         }));
 

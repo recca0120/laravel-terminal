@@ -65,7 +65,7 @@ class CleanupTest extends TestCase
                         'tests' => [],
                         'Test' => [],
                         'Tests' => [],
-                    ]
+                    ],
                 ],
                 'vendor' => [
                     'package' => [
@@ -105,9 +105,9 @@ class CleanupTest extends TestCase
                         'tests' => [],
                         'Test' => [],
                         'Tests' => [],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $root = vfsStream::setup('root', null, $structure);
 
@@ -121,7 +121,7 @@ class CleanupTest extends TestCase
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $root->url());
-        $filesystem->shouldReceive('glob')->andReturnUsing(function($item) {
+        $filesystem->shouldReceive('glob')->andReturnUsing(function ($item) {
             return Glob::glob($item);
         });
 
@@ -132,13 +132,13 @@ class CleanupTest extends TestCase
                 'test' => 'test',
                 'vendor' => [
                     'recca0120' => [
-                        'terminal' => []
+                        'terminal' => [],
                     ],
                     'vendor' => [
-                        'package' => []
+                        'package' => [],
                     ],
-                ]
-            ]
+                ],
+            ],
         ], vfsStream::inspect(new vfsStreamStructureVisitor())->getStructure());
     }
 }

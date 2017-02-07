@@ -16,7 +16,7 @@ class TerminalControllerTest extends TestCase
     public function testIndex()
     {
         $controller = new TerminalController(
-            $request =  m::mock('Illuminate\Http\Request'),
+            $request = m::mock('Illuminate\Http\Request'),
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
         $request->shouldReceive('hasSession')->once()->andReturn(true);
@@ -33,7 +33,7 @@ class TerminalControllerTest extends TestCase
     public function testEndpoint()
     {
         $controller = new TerminalController(
-            $request =  m::mock('Illuminate\Http\Request'),
+            $request = m::mock('Illuminate\Http\Request'),
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
 

@@ -2,10 +2,8 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Symfony\Component\Finder\Finder;
 use Illuminate\Filesystem\Filesystem;
 
 class Cleanup extends Command
@@ -58,23 +56,23 @@ class Cleanup extends Command
         $others = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg', 'node_modules'];
 
         (new Collection(array_merge($others, $docs, $tests)))
-            ->map(function($item) use ($root) {
+            ->map(function ($item) use ($root) {
                 return $root.'vendor/*/*/'.$item;
             })
             ->merge(
                 (new Collection($others))
-                    ->map(function($item) use ($root) {
+                    ->map(function ($item) use ($root) {
                         return $root.$item;
                     })
             )
-            ->map(function($item) {
+            ->map(function ($item) {
                 return $this->filesystem->glob($item);
             })
             ->collapse()
-            ->filter(function($item) {
+            ->filter(function ($item) {
                 return empty($item) === false;
             })
-            ->each(function($item) {
+            ->each(function ($item) {
                 if ($this->filesystem->isDirectory($item) === true) {
                     $this->filesystem->deleteDirectory($item);
                     $this->error('delete directory: '.$item);

@@ -35,7 +35,7 @@ Carbon::setTestNow(Carbon::now());
 
 class MockingHelpers
 {
-    public static function mockProperty($object, string $propertyName, $value)
+    public static function mockProperty($object, $propertyName, $value)
     {
         $reflectionClass = new \ReflectionClass($object);
 

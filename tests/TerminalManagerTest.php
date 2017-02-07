@@ -25,7 +25,7 @@ class TerminalManagerTest extends TestCase
             'username' => 'LARAVEL',
             'hostname' => php_uname('n'),
             'os' => PHP_OS,
-            'helpInfo' => $output
+            'helpInfo' => $output,
         ], $terminalManager->getOptions());
     }
 }

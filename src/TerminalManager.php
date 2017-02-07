@@ -20,14 +20,12 @@ class TerminalManager
     {
         $this->call('--ansi');
 
-        return Arr::except(
-            array_merge([
-                'username' => 'LARAVEL',
-                'hostname' => php_uname('n'),
-                'os' => PHP_OS,
-                'helpInfo' => $this->output(),
-            ], $this->config)
-        , [
+        return Arr::except(array_merge([
+            'username' => 'LARAVEL',
+            'hostname' => php_uname('n'),
+            'os' => PHP_OS,
+            'helpInfo' => $this->output(),
+        ], $this->config), [
             'enabled',
             'whitelists',
             'route',

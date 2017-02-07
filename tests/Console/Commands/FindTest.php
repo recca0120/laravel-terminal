@@ -2,19 +2,17 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
+use Exception;
+use SplFileInfo;
 use Mockery as m;
 use MockingHelpers;
-use AppendIterator;
-use SplFileInfo;
+use Webmozart\Glob\Glob;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Find;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
-use org\bovigo\vfs\vfsStream;
-use Webmozart\Glob\Glob;
-use Illuminate\Filesystem\Filesystem;
-use Exception;
 
 class FindTest extends TestCase
 {
@@ -24,7 +22,7 @@ class FindTest extends TestCase
             'foo' => [
                 'foo' => 'foo',
                 'bar' => [],
-            ]
+            ],
         ];
         $this->root = vfsStream::setup('root', null, $structure);
     }
@@ -56,10 +54,11 @@ class FindTest extends TestCase
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function() use ($basePath) {
+        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
             return array_map(function ($file) {
                 $fileinfo = m::mock('SplFileInfo');
                 $fileinfo->shouldReceive('getRealPath')->andReturn($file);
+
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
@@ -89,10 +88,11 @@ class FindTest extends TestCase
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
         $finder->shouldReceive('directories')->once();
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function() use ($basePath) {
+        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
             return array_map(function ($file) {
                 $fileinfo = m::mock('SplFileInfo');
                 $fileinfo->shouldReceive('getRealPath')->andReturn($file);
+
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
@@ -122,10 +122,11 @@ class FindTest extends TestCase
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
         $finder->shouldReceive('files')->once();
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function() use ($basePath) {
+        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
             return array_map(function ($file) {
                 $fileinfo = m::mock('SplFileInfo');
                 $fileinfo->shouldReceive('getRealPath')->andReturn($file);
+
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
@@ -181,10 +182,11 @@ class FindTest extends TestCase
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
         $finder->shouldReceive('depth')->once()->with('<1');
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function() use ($basePath) {
+        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
             return array_map(function ($file) {
                 $fileinfo = m::mock('SplFileInfo');
                 $fileinfo->shouldReceive('getRealPath')->andReturn($file);
+
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
@@ -213,10 +215,11 @@ class FindTest extends TestCase
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function() use ($basePath, $path) {
+        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath, $path) {
             return array_map(function ($file) {
                 $fileinfo = m::mock('SplFileInfo');
                 $fileinfo->shouldReceive('getRealPath')->andReturn($file);
+
                 return $fileinfo;
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
@@ -245,17 +248,17 @@ class FindTest extends TestCase
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function() use ($basePath, $path) {
+        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath, $path) {
             return array_map(function ($file) {
                 $fileinfo = m::mock('SplFileInfo');
                 $fileinfo->shouldReceive('getRealPath')->andReturn($file);
+
                 return $fileinfo;
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
         $filesystem->shouldReceive('isDirectory')->andThrow(new Exception());
         $command->fire();
     }
-
 
     public function testRun()
     {

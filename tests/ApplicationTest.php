@@ -3,11 +3,9 @@
 namespace Recca0120\Terminal\Tests;
 
 use Mockery as m;
-use Exception;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Application;
-use Recca0120\Terminal\Console\Commands\Artisan;
 use Symfony\Component\Console\Command\HelpCommand;
 
 class ApplicationTest extends TestCase
@@ -78,7 +76,7 @@ class ApplicationTest extends TestCase
         $application->resolveCommands($command, true);
     }
 
-    public function testRun($value='')
+    public function testRun()
     {
         $laravel = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
 
