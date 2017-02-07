@@ -18,25 +18,30 @@ class TerminalManager
 
     public function getOptions()
     {
-        $this->getKernel()->call('--ansi');
+        $this->call('--ansi');
 
-        $defaults = [
-            'username' => 'LARAVEL',
-            'hostname' => php_uname('n'),
-            'os' => PHP_OS,
-            'helpInfo' => $this->getKernel()->output(),
-        ];
-
-        return array_merge($defaults, Arr::except($this->config, [
+        return Arr::except(
+            array_merge([
+                'username' => 'LARAVEL',
+                'hostname' => php_uname('n'),
+                'os' => PHP_OS,
+                'helpInfo' => $this->output(),
+            ], $this->config)
+        , [
             'enabled',
             'whitelists',
             'route',
             'commands',
-        ]));
+        ]);
     }
 
-    public function getKernel()
+    public function call($command)
     {
-        return $this->kernel;
+        return $this->kernel->call($command);
+    }
+
+    public function output()
+    {
+        return $this->kernel->output();
     }
 }

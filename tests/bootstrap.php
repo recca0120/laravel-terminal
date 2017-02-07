@@ -10,9 +10,14 @@
 | loading of any our classes "manually". Feels great to relax.
 |
 */
+
 require __DIR__.'/../vendor/autoload.php';
 
 use Carbon\Carbon;
+
+if (class_exists('PHPUnit\Framework\TestCase') === false) {
+    class_alias('PHPUnit_Framework_TestCase', 'PHPUnit\Framework\TestCase');
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -24,5 +29,48 @@ use Carbon\Carbon;
 | the PHP date and date-time functions throughout the application.
 |
 */
+
 date_default_timezone_set('UTC');
 Carbon::setTestNow(Carbon::now());
+
+class MockingHelpers
+{
+    public static function mockProperty($object, string $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
+    }
+}
+
+if (function_exists('env') === false) {
+    function env($env)
+    {
+        switch ($env) {
+            case 'APP_ENV':
+                return 'local';
+                break;
+
+            case 'APP_DEBUG':
+                return true;
+                break;
+        }
+    }
+}
+
+if (class_exists('Route') === false) {
+    class Route
+    {
+        public static function __callStatic($method, $arguments)
+        {
+            return new static;
+        }
+
+        public function __call($method, $arguments)
+        {
+        }
+    }
+}

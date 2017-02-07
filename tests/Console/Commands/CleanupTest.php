@@ -1,64 +1,144 @@
 <?php
 
-use Mockery as m;
-use Recca0120\Terminal\Console\Commands\Cleanup;
+namespace Recca0120\Terminal\Tests\Console\Commands;
 
-class CleanupTest extends PHPUnit_Framework_TestCase
+use Mockery as m;
+use MockingHelpers;
+use Webmozart\Glob\Glob;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use Illuminate\Filesystem\Filesystem;
+use Recca0120\Terminal\Console\Commands\Cleanup;
+use Symfony\Component\Console\Output\BufferedOutput;
+use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
+
+class CleanupTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_handler()
+    public function testFire()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $structure = [
+            '.git' => [],
+            '.svn' => [],
+            'node_modules' => [],
+            'test' => 'test',
+            'vendor' => [
+                'recca0120' => [
+                    'terminal' => [
+                        // others
+                        '.git' => [],
+                        '.svn' => [],
+                        'node_modules' => [],
+                        // docs
+                        'readme' => 'readme',
+                        'readme.md' => 'readme.md',
+                        'README' => 'README',
+                        'README.md' => 'README.md',
+                        'CHANGELOG' => 'CHANGELOG',
+                        'CHANGELOG.md' => 'CHANGELOG.md',
+                        'FAQ' => 'FAQ',
+                        'FAQ.md' => 'FAQ.md',
+                        'CONTRIBUTING' => 'CONTRIBUTING',
+                        'CONTRIBUTING.md' => 'CONTRIBUTING.md',
+                        'HISTORY' => 'HISTORY',
+                        'HISTORY.md' => 'HISTORY.md',
+                        'UPGRADING' => 'UPGRADING',
+                        'UPGRADING.md' => 'UPGRADING.md',
+                        'UPGRADE' => 'UPGRADE',
+                        'UPGRADE.md' => 'UPGRADE.md',
+                        'package' => [],
+                        'demo' => [],
+                        'example' => [],
+                        'doc' => [],
+                        'docs' => [],
+                        // tests
+                        '.travis.yml' => '.travis.yml',
+                        '.scrutinizer.yml' => '.scrutinizer.yml',
+                        'phpunit.xml' => 'phpunit.xml',
+                        'phpunit.xml.dist' => 'phpunit.xml.dist',
+                        'phpunit.php' => 'phpunit.php',
+                        'test' => [],
+                        'tests' => [],
+                        'Test' => [],
+                        'Tests' => [],
+                    ]
+                ],
+                'vendor' => [
+                    'package' => [
+                        // others
+                        '.git' => [],
+                        '.svn' => [],
+                        'node_modules' => [],
+                        // docs
+                        'readme' => 'readme',
+                        'readme.md' => 'readme.md',
+                        'README' => 'README',
+                        'README.md' => 'README.md',
+                        'CHANGELOG' => 'CHANGELOG',
+                        'CHANGELOG.md' => 'CHANGELOG.md',
+                        'FAQ' => 'FAQ',
+                        'FAQ.md' => 'FAQ.md',
+                        'CONTRIBUTING' => 'CONTRIBUTING',
+                        'CONTRIBUTING.md' => 'CONTRIBUTING.md',
+                        'HISTORY' => 'HISTORY',
+                        'HISTORY.md' => 'HISTORY.md',
+                        'UPGRADING' => 'UPGRADING',
+                        'UPGRADING.md' => 'UPGRADING.md',
+                        'UPGRADE' => 'UPGRADE',
+                        'UPGRADE.md' => 'UPGRADE.md',
+                        'package' => [],
+                        'demo' => [],
+                        'example' => [],
+                        'doc' => [],
+                        'docs' => [],
+                        // tests
+                        '.travis.yml' => '.travis.yml',
+                        '.scrutinizer.yml' => '.scrutinizer.yml',
+                        'phpunit.xml' => 'phpunit.xml',
+                        'phpunit.xml.dist' => 'phpunit.xml.dist',
+                        'phpunit.php' => 'phpunit.php',
+                        'test' => [],
+                        'tests' => [],
+                        'Test' => [],
+                        'Tests' => [],
+                    ]
+                ]
+            ]
+        ];
+        $root = vfsStream::setup('root', null, $structure);
 
-        $filesystem = m::spy('Illuminate\Filesystem\Filesystem');
-        // $filesystem = new Illuminate\Filesystem\Filesystem();
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
-        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+        $command = new Cleanup(
+            $filesystem = m::mock(new Filesystem)
+        );
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
+        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $root->url());
+        $filesystem->shouldReceive('glob')->andReturnUsing(function($item) {
+            return Glob::glob($item);
+        });
 
-        $output
-            ->shouldReceive('getFormatter')->andReturn($formatter);
-
-        $input
-            ->shouldReceive('getArgument')->with('path')->andReturn('foo.path')
-            ->shouldReceive('getOption')->with('text')->andReturn(null);
-
-        $laravel
-            ->shouldReceive('basePath')->andReturn(__DIR__);
-
-        $filesystem
-            ->shouldReceive('glob')->with(m::type('string'), GLOB_ONLYDIR)->andReturn([
-                'foo.directory',
-            ]);
-
-        $command = new Cleanup($filesystem);
-        $command->setLaravel($laravel);
-        $command->run($input, $output);
         $command->fire();
 
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $laravel->shouldHaveReceived('basePath')->once();
-        $filesystem->shouldHaveReceived('glob')->with(m::type('string'), GLOB_ONLYDIR);
-        $filesystem->shouldHaveReceived('deleteDirectory')->with(m::type('string'));
+        $this->assertSame([
+            'root' => [
+                'test' => 'test',
+                'vendor' => [
+                    'recca0120' => [
+                        'terminal' => []
+                    ],
+                    'vendor' => [
+                        'package' => []
+                    ],
+                ]
+            ]
+        ], vfsStream::inspect(new vfsStreamStructureVisitor())->getStructure());
     }
 }

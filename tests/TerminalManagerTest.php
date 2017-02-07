@@ -1,52 +1,31 @@
 <?php
 
+namespace Recca0120\Terminal\Tests;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\TerminalManager;
 
-class TerminalManagerTest extends PHPUnit_Framework_TestCase
+class TerminalManagerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_handle()
+    public function testGetOptions()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $kernel = m::spy('Recca0120\Terminal\Kernel');
-        $helpInfo = 'helpinfo';
-        $config = [
+        $terminalManager = new TerminalManager(
+            $kernel = m::mock('Recca0120\Terminal\Kernel'),
+            $config = ['enabled' => true, 'whitelists' => [], 'route' => [], 'commands' => []]
+        );
+        $kernel->shouldReceive('call')->once()->with('--ansi');
+        $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
+        $this->assertSame([
             'username' => 'LARAVEL',
             'hostname' => php_uname('n'),
             'os' => PHP_OS,
-            'helpInfo' => $helpInfo,
-        ];
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $kernel->shouldReceive('output')->andReturn($helpInfo);
-
-        $terminalManager = new TerminalManager($kernel, $config);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $this->assertSame($config, $terminalManager->getOptions());
-        $this->assertSame($kernel, $terminalManager->getKernel());
-
-        $kernel->shouldHaveReceived('call')->with('--ansi')->once();
-        $kernel->shouldHaveReceived('output')->once();
+            'helpInfo' => $output
+        ], $terminalManager->getOptions());
     }
 }

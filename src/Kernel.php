@@ -64,7 +64,7 @@ class Kernel implements KernelContract
      * @param string $command
      * @param array  $parameters
      *
-     * @return int
+     * @return void
      */
     public function queue($command, array $parameters = [])
     {

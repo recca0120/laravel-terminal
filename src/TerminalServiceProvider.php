@@ -54,15 +54,14 @@ class TerminalServiceProvider extends ServiceProvider
         $this->app->singleton(Kernel::class, Kernel::class);
 
         $this->app->singleton(TerminalManager::class, function ($app) {
-            $config = Arr::get($app['config'], 'terminal', []);
-            $config = array_merge($config, [
+            $config = $app['config']['terminal'];
+
+            return new TerminalManager($app->make(Kernel::class), array_merge($config, [
                 'basePath' => $app->basePath(),
                 'environment' => $app->environment(),
                 'version' => $app->version(),
                 'endpoint' => $app['url']->route(Arr::get($config, 'route.as').'endpoint'),
-            ]);
-
-            return new TerminalManager($app->make(Kernel::class), $config);
+            ]));
         });
     }
 

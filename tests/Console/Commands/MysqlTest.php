@@ -1,62 +1,38 @@
 <?php
 
-use Mockery as m;
-use Recca0120\Terminal\Console\Commands\Mysql;
+namespace Recca0120\Terminal\Tests\Console\Commands;
 
-class MysqlTest extends PHPUnit_Framework_TestCase
+use PDO;
+use stdClass;
+use Mockery as m;
+use MockingHelpers;
+use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Console\Commands\Mysql;
+use Symfony\Component\Console\Output\BufferedOutput;
+
+class MysqlTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_handler()
+    public function testFire()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $command = new Mysql(
+            $databaseManager = m::mock('Illuminate\Database\DatabaseManager')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $databaseManager = m::spy('Illuminate\Database\DatabaseManager');
-        $connection = m::spy('Illuminate\Database\ConnectionInterface');
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
-        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
-        $query = 'SELECT * FROM users;';
+        $input->shouldReceive('getOption')->once()->with('command')->andReturn($query = 'SELECT * FROM users;');
+        $databaseManager->shouldReceive('connection')->once()->andReturn(
+            $connection = m::mock('Illuminate\Database\ConnectionInterface')
+        );
+        $connection->shouldReceive('select')->once()->with($query)->andReturn($rows = [
+            new stdClass
+        ]);
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $output
-            ->shouldReceive('getFormatter')->andReturn($formatter);
-
-        $input
-            ->shouldReceive('getOption')->with('command')->andReturn($query);
-
-        $databaseManager
-            ->shouldReceive('connection')->andReturn($connection);
-
-        $connection
-            ->shouldReceive('select')->andReturn([]);
-
-        $command = new Mysql($databaseManager);
-        $command->setLaravel($laravel);
-        $command->run($input, $output);
         $command->fire();
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $databaseManager->shouldHaveReceived('connection')->once();
-        $connection->shouldHaveReceived('setFetchMode')->with(PDO::FETCH_ASSOC)->once();
-        $connection->shouldHaveReceived('select')->with($query)->once();
     }
 }

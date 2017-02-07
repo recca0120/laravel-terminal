@@ -1,11 +1,14 @@
 <?php
 
+namespace Recca0120\Terminal\Tests\Console\Commands;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Vi;
 
-class ViTest extends PHPUnit_Framework_TestCase
+class ViTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }

@@ -52,7 +52,7 @@ class Find extends Command
     {
         parent::__construct();
         $this->finder = $finder;
-        $this->filesyste = $filesystem;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -87,10 +87,11 @@ class Find extends Command
         $name = $this->option('name');
         $type = $this->option('type');
         $maxDepth = $this->option('maxdepth');
-        $delete = $this->option('delete');
+        $delete = filter_var($this->option('delete'), FILTER_VALIDATE_BOOLEAN);
 
-        $root = $this->getLaravel()->basePath();
-        $path = realpath($root.'/'.$path);
+        $root = is_null($this->getLaravel()) === false ?
+            $this->getLaravel()->basePath() : getcwd();
+        $path = rtrim($root, '/').'/'.$path;
 
         $this->finder->in($path);
 
@@ -106,7 +107,8 @@ class Find extends Command
                 $this->finder->files();
                 break;
         }
-        if ($maxDepth !== null) {
+
+        if (is_null($maxDepth) === false) {
             if ($maxDepth == '0') {
                 $this->line($path);
 
@@ -115,24 +117,22 @@ class Find extends Command
             $this->finder->depth('<'.$maxDepth);
         }
 
-        foreach ($this->finder as $file) {
+        foreach ($this->finder->getIterator() as $file) {
             $realPath = $file->getRealpath();
-            if ($delete === 'true' && $filesystem->exists($realPath) === true) {
+            if ($delete === true && $this->filesystem->exists($realPath) === true) {
+                $removed = false;
                 try {
-                    if ($filesystem->isDirectory($realPath) === true) {
-                        $deleted = $filesystem->deleteDirectory($realPath, true);
+                    if ($this->filesystem->isDirectory($realPath) === true) {
+                        $removed = $this->filesystem->deleteDirectory($realPath);
                     } else {
-                        $deleted = $filesystem->delete($realPath);
+                        $removed = $this->filesystem->delete($realPath);
                     }
                 } catch (Exception $e) {
                 }
-                if ($deleted === true) {
-                    $this->info('removed '.$realPath);
-                } else {
-                    $this->error('removed '.$realPath.' fail');
-                }
+                $removed === true ?
+                    $this->info('removed '.$realPath) : $this->error('removed '.$realPath.' fail');
             } else {
-                $this->line($file->getRealpath());
+                $this->line($realPath);
             }
         }
     }

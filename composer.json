@@ -21,7 +21,9 @@
     "require-dev": {
         "mockery/mockery": "~0.9.4",
         "phpunit/phpunit": "~4.8|~5.4",
-        "nesbot/carbon": "~1.20"
+        "nesbot/carbon": "~1.20",
+        "mikey179/vfsStream": "^1.6",
+        "webmozart/glob": "^4.1"
     },
     "autoload": {
         "files": [
@@ -31,7 +33,13 @@
             "Recca0120\\Terminal\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Recca0120\\Terminal\\Tests\\": "tests/"
+        }
+    },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "sort-packages": true
     }
 }

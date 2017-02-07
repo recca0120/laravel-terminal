@@ -3,6 +3,7 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -50,25 +51,23 @@ class Tail extends Command
         $lines = $this->option('lines');
 
         if (empty($path) === false) {
-            $path = $this->getLaravel()->basePath().'/'.$path;
+            $root = is_null($this->getLaravel()) === false ?
+                $this->getLaravel()->basePath() : getcwd();
+            $file = rtrim($root, '/').'/'.$path;
         } else {
-            $path = $this->getLaravel()->storagePath();
-            $files = array_filter($this->filesystem->glob($path.'/logs/*.log'), function ($file) {
-                return is_file($file);
-            });
-            usort($files, function ($a, $b) {
-                $aTime = filectime($a);
-                $bTime = filectime($b);
-                if ($aTime == $bTime) {
-                    return 0;
-                }
+            $path = is_null($this->getLaravel()) === false ?
+                $this->getLaravel()->storagePath() : getcwd();
+            $path = rtrim($path, '/').'/';
 
-                return ($aTime < $bTime) ? -1 : 1;
-            });
-            $path = $files[0];
+            $file = (new Collection($this->filesystem->glob($path.'logs/*.log')))
+                ->filter(function($file) {
+                    return is_file($file);
+                })->sortByDesc(function($file) {
+                    return filectime($file);
+                })->first();
         }
 
-        $this->readLine($path, $lines);
+        $this->readLine($file, $lines);
     }
 
     /**
@@ -83,7 +82,7 @@ class Tail extends Command
      */
     protected function readLine($file, $lines = 50)
     {
-        if (file_exists($file) === false) {
+        if (is_file($file) === false) {
             $this->error('tail: cannot open ‘'.$file.'’ for reading: No such file or directory');
 
             return;

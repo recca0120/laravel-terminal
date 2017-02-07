@@ -32,8 +32,7 @@ class ArtisanTinker extends Command
         if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
             ob_start();
             eval($code);
-            $output = ob_get_clean();
-            $this->line(trim($output));
+            $this->line(ob_get_clean());
         } else {
             eval('$result = '.$code);
         }
@@ -42,18 +41,14 @@ class ArtisanTinker extends Command
         switch (gettype($result)) {
             case 'object':
             case 'array':
-                    $this->line(var_export($result, true));
+                $this->line(var_export($result, true));
                 break;
             case 'string':
-                    $this->comment($result);
-                break;
-            case 'number':
-            case 'integer':
-            case 'float':
-                $this->info($result);
+                $this->comment($result);
                 break;
             default:
-                $this->line($result);
+                is_numeric($result) === true ?
+                    $this->info($result) : $this->line($result);
                 break;
         }
     }

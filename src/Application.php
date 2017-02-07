@@ -26,13 +26,18 @@ class Application extends ConsoleApplication
      */
     public function call($command, array $parameters = [])
     {
-        $this->lastOutput = $this->getBufferedOutput();
+        if ($this->ajax() === true) {
+            $this->lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
+            $this->setCatchExceptions(true);
+        } else {
+            $this->lastOutput = new BufferedOutput();
+            $this->setCatchExceptions(false);
+        }
 
-        $this->setCatchExceptions(false);
-
-        $command = $command.''.implode(' ', $parameters);
+        $command = $command.' '.implode(' ', $parameters);
         $input = new StringInput($command);
         $input->setInteractive(false);
+
         $result = $this->run($input, $this->lastOutput);
 
         $this->setCatchExceptions(true);
@@ -50,79 +55,20 @@ class Application extends ConsoleApplication
      */
     public function resolveCommands($commands, $web = false)
     {
-        if ($web === false) {
-            return;
-        }
-
-        return parent::resolveCommands($commands);
+        return $web === true ? parent::resolveCommands($commands) : $this;
     }
 
     /**
-     * Runs the current application.
+     * ajax.
      *
-     * @param InputInterface  $input  An Input instance
-     * @param OutputInterface $output An Output instance
-     *
-     * @throws \Exception When doRun returns Exception
-     *
-     * @return int 0 if everything went fine, or an error code
-     */
-    public function run(InputInterface $input = null, OutputInterface $output = null)
-    {
-        try {
-            return parent::run($input, $output);
-        } catch (Exception $e) {
-            if ($this->isAjax() === false) {
-                throw $e;
-            }
-
-            while ($prevException = $e->getPrevious()) {
-                $e = $prevException;
-            }
-
-            $this->renderException($e, $output);
-
-            return 1;
-        } catch (Throwable $e) {
-            if ($this->isAjax() === false) {
-                throw $e;
-            }
-            $e = new FatalThrowableError($e);
-            $this->renderException($e, $output);
-
-            return 1;
-        }
-    }
-
-    /**
-     * getBufferedOutput.
-     *
-     * @method getBufferedOutput
-     *
-     * @return \Symfony\Component\Console\Output\BufferedOutput
-     */
-    private function getBufferedOutput()
-    {
-        if ($this->isAjax() === true) {
-            return new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
-        }
-
-        return new BufferedOutput();
-    }
-
-    /**
-     * isAjax.
-     *
-     * @method isAjax
+     * @method ajax
      *
      * @return bool
      */
-    private function isAjax()
+    private function ajax()
     {
-        if (is_null($this->laravel['request']) === false) {
-            return $this->laravel['request']->ajax();
-        }
+        $request = $this->laravel['request'] ?: Request::capture();
 
-        return Request::capture()->ajax();
+        return $request->ajax();
     }
 }

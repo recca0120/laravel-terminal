@@ -49,10 +49,9 @@ class Mysql extends Command
      */
     public function fire()
     {
-        $connection = $this->databaseManager->connection();
-        $connection->setFetchMode(PDO::FETCH_ASSOC);
         $query = $this->option('command');
-        $rows = $connection->select($query);
+        $connection = $this->databaseManager->connection();
+        $rows = json_decode(json_encode($connection->select($query)), true);
         $headers = array_keys(Arr::get($rows, 0, []));
         $this->table($headers, $rows);
     }

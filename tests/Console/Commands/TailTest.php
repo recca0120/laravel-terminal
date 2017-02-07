@@ -1,119 +1,131 @@
 <?php
 
+namespace Recca0120\Terminal\Tests\Console\Commands;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Tail;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\NullOutput;
+use MockingHelpers;
+use Symfony\Component\Console\Output\BufferedOutput;
+use org\bovigo\vfs\vfsStream;
+use Illuminate\Filesystem\Filesystem;
+use Webmozart\Glob\Glob;
 
-class TailTest extends PHPUnit_Framework_TestCase
+class TailTest extends TestCase
 {
-    public function tearDown()
+    protected function setUp()
+    {
+        $structure = [
+            'logs' => [
+                '1.log' => "
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                ",
+                '2.log' => "
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                ",
+                '3.log' => "
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                ",
+                '4.log' => "
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                ",
+                '5.log' => "
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                ",
+            ]
+        ];
+        $this->root = vfsStream::setup('root', null, $structure);
+    }
+
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_handle()
+    public function testFire()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
+        $command = new Tail(
+            $filesystem = m::mock(new Filesystem)
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
-        $command = new Tail($filesystem);
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
-        $command->setLaravel($laravel);
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
+        $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
+        $laravel->shouldReceive('storagePath')->once()->andReturn($storagePath = $this->root->url());
+        $filesystem->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function($path) {
+            return Glob::glob($path);
+        });
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-
-        $laravel
-            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
-            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-
-        $command->run(new StringInput('TailTest.php --lines 5'), new NullOutput);
+        $command->fire();
     }
 
-    public function test_handle_glob()
+    public function testFirePath()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
+        $command = new Tail(
+            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
-        $command = new Tail($filesystem);
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
-        $command->setLaravel($laravel);
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/1.log');
+        $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
+        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
-        $filesystem->shouldReceive('glob')->once()->andReturn([
-            __FILE__,
-        ]);
-
-        $laravel
-            ->shouldReceive('storagePath')->once()->andReturn(__DIR__)
-            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-
-        $command->run(new StringInput('--lines 5'), new NullOutput);
-    }
-
-    public function test_handle_file_not_found()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-
-        $filesystem = m::mock('Illuminate\Filesystem\Filesystem');
-        $command = new Tail($filesystem);
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application');
-        $command->setLaravel($laravel);
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-
-        $laravel
-            ->shouldReceive('basePath')->once()->andReturn(__DIR__)
-            ->shouldReceive('call')->once()->andReturnUsing(function ($command) {
-                call_user_func($command);
-            });
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-
-        $command->run(new StringInput('TailTest1.php --lines 5'), new NullOutput);
+        $command->fire();
     }
 }

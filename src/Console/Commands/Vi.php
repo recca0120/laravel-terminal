@@ -50,8 +50,10 @@ class Vi extends Command
     {
         $path = $this->argument('path');
         $text = $this->option('text');
-        $root = $this->getLaravel()->basePath();
-        $path = $root.'/'.$path;
+        $root = is_null($this->getLaravel()) === false ?
+            $this->getLaravel()->basePath() : getcwd();
+        $path = trim($root, '/').'/'.$path;
+
         if (is_null($text) === false) {
             $this->filesystem->put($path, $text);
         } else {

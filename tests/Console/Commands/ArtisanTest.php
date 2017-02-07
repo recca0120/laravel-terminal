@@ -1,98 +1,65 @@
 <?php
 
-use Mockery as m;
-use Recca0120\Terminal\Console\Commands\Artisan;
+namespace Recca0120\Terminal\Tests\Console\Commands;
 
-class ArtisanTest extends PHPUnit_Framework_TestCase
+use Mockery as m;
+use MockingHelpers;
+use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Console\Commands\Artisan;
+use Symfony\Component\Console\Output\BufferedOutput;
+
+class ArtisanTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_handle()
+    public function testFire()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $command = new Artisan(
+            $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $kernel = m::spy('Illuminate\Contracts\Console\Kernel');
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
-        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+        $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'foo');
+        $kernel->shouldReceive('handle')->with(m::on(function($input) use ($cmd) {
+            return (string) $input === $cmd;
+        }), $output);
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $output
-            ->shouldReceive('getFormatter')->andReturn($formatter);
-
-        $input
-            ->shouldReceive('getOption')->with('command')->andReturn('db:seed');
-
-        $command = new Artisan($kernel);
-        $command->setLaravel($laravel);
-        $command->run($input, $output);
         $command->fire();
+    }
 
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
+    public function testFireForceCommand()
+    {
+        $command = new Artisan(
+            $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $input->shouldHaveReceived('getOption')->with('command')->once();
-        $kernel->shouldHaveReceived('handle')->with(m::on(function ($input) {
-            return (bool) preg_match('/[\'"]db:seed[\'"] --force/', (string) $input);
-        }), m::type('Symfony\Component\Console\Output\OutputInterface'))->once();
+        $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'migrate');
+        $kernel->shouldReceive('handle')->with(m::on(function($input) use ($cmd) {
+            return (string) $input === $cmd.' --force';
+        }), $output);
+
+        $command->fire();
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    public function test_handle_command_no_support()
+    public function testFireNotSupportCommand()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $command = new Artisan(
+            $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $kernel = m::spy('Illuminate\Contracts\Console\Kernel');
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
-        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+        $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'down');
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $output
-            ->shouldReceive('getFormatter')->andReturn($formatter);
-
-        $input
-            ->shouldReceive('getOption')->with('command')->once()->andReturn('down');
-
-        $command = new Artisan($kernel);
-        $command->setLaravel($laravel);
-        $command->run($input, $output);
         $command->fire();
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $input->shouldHaveReceived('getOption')->with('command')->once();
     }
 }

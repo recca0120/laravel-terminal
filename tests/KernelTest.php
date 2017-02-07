@@ -1,174 +1,80 @@
 <?php
 
+namespace Recca0120\Terminal\Tests;
+
 use Mockery as m;
 use Recca0120\Terminal\Kernel;
+use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Queue\Queue;
 
-class KernelTest extends PHPUnit_Framework_TestCase
+class KernelTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_handle()
+    public function testHandle()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $artisan = m::spy('Recca0120\Terminal\Application');
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $artisan
-            ->shouldReceive('run')->with($input, $output)->andReturn(1);
-
-        $kernel = new Kernel($artisan);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $this->assertSame(1, $kernel->handle($input, $output));
-        $artisan->shouldHaveReceived('run')->with($input, $output)->once();
+        $kernel = new Kernel(
+            $artisan = m::mock('Recca0120\Terminal\Application')
+        );
+        $artisan->shouldReceive('run')->once()->with(
+            $input = m::mock('Symfony\Component\Console\Input\InputInterface'),
+            $output = m::mock('Symfony\Component\Console\Output\OutputInterface')
+        )->andReturn($code = 'foo');
+        $this->assertSame($code, $kernel->handle($input, $output));
     }
 
-    public function test_call()
+    public function testCall()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $artisan = m::spy('Recca0120\Terminal\Application');
-        $command = 'foo.command';
-        $parameters = [];
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $artisan
-            ->shouldReceive('call')->with($command, $parameters)->andReturn(1);
-
-        $kernel = new Kernel($artisan);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $this->assertSame(1, $kernel->call($command, $parameters));
-        $artisan->shouldHaveReceived('call')->with($command, $parameters)->once();
+        $kernel = new Kernel(
+            $artisan = m::mock('Recca0120\Terminal\Application')
+        );
+        $artisan->shouldReceive('call')->once()->with(
+            $command = 'foo',
+            $parameters = ['foo' => 'bar']
+        )->andReturn($code = 'foo');
+        $this->assertSame($code, $kernel->call($command, $parameters));
     }
 
-    public function test_queue()
+    public function testQueue()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $artisan = m::spy('Recca0120\Terminal\Application');
-        $command = 'foo.command';
-        $parameters = [];
-        $app = m::spy('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $queue = m::spy('Illuminate\Contracts\Queue\Queue');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $artisan
-            ->shouldReceive('getLaravel')->andReturn($app);
-
-        $app
-            ->shouldReceive('offsetGet')->with('Illuminate\Contracts\Queue\Queue')->andReturn($queue);
-
-        $kernel = new Kernel($artisan);
+        $kernel = new Kernel(
+            $artisan = m::mock('Recca0120\Terminal\Application')
+        );
+        $artisan->shouldReceive('getLaravel')->once()->andReturn(
+            $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess')
+        );
+        $app->shouldReceive('offsetGet')->once()->with('Illuminate\Contracts\Queue\Queue')->andReturn(
+            $queue = m::mock('Illuminate\Contracts\Queue\Queue')
+        );
+        $queue->shouldReceive('push')->once()->with('Illuminate\Foundation\Console\QueuedJob', [
+            $command = 'foo',
+            $parameters = ['foo' => 'bar']
+        ]);
         $kernel->queue($command, $parameters);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $artisan->shouldHaveReceived('getLaravel')->once();
-        $queue->shouldHaveReceived('push')->with('Illuminate\Foundation\Console\QueuedJob', [$command, $parameters]);
     }
 
-    public function test_all()
+    public function testAll()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $artisan = m::spy('Recca0120\Terminal\Application');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $kernel = new Kernel($artisan);
-        $kernel->all();
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $artisan->shouldHaveReceived('all')->once();
+        $kernel = new Kernel(
+            $artisan = m::mock('Recca0120\Terminal\Application')
+        );
+        $artisan->shouldReceive('all')->once()->andReturn(
+            $commands = ['foo']
+        );
+        $this->assertSame($commands, $kernel->all());
     }
 
-    public function test_output()
+    public function testOutput()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $artisan = m::spy('Recca0120\Terminal\Application');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $kernel = new Kernel($artisan);
-        $kernel->output();
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $artisan->shouldHaveReceived('output')->once();
+        $kernel = new Kernel(
+            $artisan = m::mock('Recca0120\Terminal\Application')
+        );
+        $artisan->shouldReceive('output')->once()->andReturn(
+            $output = 'foo'
+        );
+        $this->assertSame($output, $kernel->output());
     }
 }

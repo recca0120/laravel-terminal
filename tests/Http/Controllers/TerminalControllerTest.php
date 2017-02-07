@@ -1,109 +1,64 @@
 <?php
 
+namespace Recca0120\Terminal\Tests\Http\Controllers;
+
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
 
-class TerminalControllerTest extends PHPUnit_Framework_TestCase
+class TerminalControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }
 
-    public function test_index()
+    public function testIndex()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
-
-        $request = m::spy('Illuminate\Http\Request');
-        $responseFactory = m::spy('Illuminate\Contracts\Routing\ResponseFactory');
-        $terminalManager = m::spy('Recca0120\Terminal\TerminalManager');
-        $view = 'index';
-        $kernel = m::spy('Recca0120\Terminal\Kernel');
-
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-
-        $request
-            ->shouldReceive('hasSession')->andReturn(true)
-            ->shouldReceive('session->token')->andReturn('foo.token');
-
-        $terminalManager
-            ->shouldReceive('getOptions')->andReturn([]);
-
-        $controller = new TerminalController($request, $responseFactory);
-        $controller->index($terminalManager, $view);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $request->shouldHaveReceived('hasSession')->once();
-        $request->shouldHaveReceived('session')->once();
-        $terminalManager->shouldHaveReceived('getOptions')->once();
-        $responseFactory->shouldHaveReceived('view')->once();
+        $controller = new TerminalController(
+            $request =  m::mock('Illuminate\Http\Request'),
+            $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
+        );
+        $request->shouldReceive('hasSession')->once()->andReturn(true);
+        $request->shouldReceive('session->token')->once()->andReturn($token = uniqid());
+        $terminalManager = m::mock('Recca0120\Terminal\TerminalManager');
+        $terminalManager->shouldReceive('getOptions')->once()->andReturn($options = ['foo' => 'bar']);
+        $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
+            'options' => json_encode(array_merge($options, ['csrfToken' => $token])),
+            'id' => null,
+        ]);
+        $controller->index($terminalManager, 'index');
     }
 
-    public function test_endpoint()
+    public function testEndpoint()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $controller = new TerminalController(
+            $request =  m::mock('Illuminate\Http\Request'),
+            $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
+        );
 
-        $request = m::spy('Illuminate\Http\Request');
-        $responseFactory = m::spy('Illuminate\Contracts\Routing\ResponseFactory');
-        $terminalManager = m::spy('Recca0120\Terminal\TerminalManager');
-        $session = m::spy('Illuminate\Session\SessionManager');
-        $kernel = m::spy('Recca0120\Terminal\Kernel');
-        $command = 'foo.command';
+        $request->shouldReceive('hasSession')->once()->andReturn(true);
+        $request->shouldReceive('session')->once()->andReturn(
+            $session = m::mock('Illuminate\Session\SessionManager')
+        );
+        $session->shouldReceive('isStarted')->once()->andReturn(true);
+        $session->shouldReceive('save')->once();
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
+        $request->shouldReceive('get')->once()->with('command')->andReturn($command = 'foo');
 
-        $request
-            ->shouldReceive('hasSession')->andReturn(true)
-            ->shouldReceive('session')->andReturn($session)
-            ->shouldReceive('get')->with('command')->andReturn($command);
+        $terminalManager = m::mock('Recca0120\Terminal\TerminalManager');
+        $terminalManager->shouldReceive('call')->once()->with($command)->andReturn($error = 0);
+        $request->shouldReceive('get')->once()->with('jsonrpc')->andReturn($jsonrpc = 'foo');
+        $request->shouldReceive('get')->once()->with('id')->andReturn($id = 'foo');
+        $terminalManager->shouldReceive('output')->once()->andReturn($output = 'foo');
 
-        $session
-            ->shouldReceive('isStarted')->andReturn(true)
-            ->shouldReceive('save');
+        $responseFactory->shouldReceive('json')->once()->with([
+            'jsonrpc' => $jsonrpc,
+            'id' => $id,
+            'result' => $output,
+            'error' => $error,
+        ])->andReturn($result = 'foo');
 
-        $terminalManager
-            ->shouldReceive('getKernel')->andReturn($kernel);
-
-        $controller = new TerminalController($request, $responseFactory);
-        $controller->endpoint($terminalManager);
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $request->shouldHaveReceived('hasSession')->once();
-        $request->shouldHaveReceived('session')->once();
-        $session->shouldHaveReceived('isStarted')->once();
-        $session->shouldHaveReceived('save')->once();
-        $terminalManager->shouldHaveReceived('getKernel')->once();
-        $request->shouldHaveReceived('get')->with('command')->once();
-        $kernel->shouldHaveReceived('call')->with($command)->once();
-        $request->shouldHaveReceived('get')->with('jsonrpc')->once();
-        $request->shouldHaveReceived('get')->with('id')->once();
-        $kernel->shouldHaveReceived('output')->once();
-        $responseFactory->shouldHaveReceived('json')->once();
+        $this->assertSame($result, $controller->endpoint($terminalManager));
     }
 }

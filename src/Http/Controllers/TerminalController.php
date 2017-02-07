@@ -33,11 +33,11 @@ class TerminalController extends Controller
      {
          $csrfToken = null;
          if ($this->request->hasSession() === true) {
-             $csrfToken = $this->request->session()->token();
+             $token = $this->request->session()->token();
          }
 
          $options = json_encode(array_merge($terminalManger->getOptions(), [
-            'csrfToken' => $csrfToken,
+            'csrfToken' => $token,
         ]));
 
          $id = ($view === 'panel') ? Str::random(30) : null;
@@ -60,16 +60,13 @@ class TerminalController extends Controller
                 $session->save();
             }
         }
-
-        $kernel = $terminalManger->getKernel();
-        $command = $this->request->get('command');
-        $status = $kernel->call($command);
+        $error = $terminalManger->call($this->request->get('command'));
 
         return $this->responseFactory->json([
             'jsonrpc' => $this->request->get('jsonrpc'),
             'id' => $this->request->get('id'),
-            'result' => $kernel->output(),
-            'error' => $status,
+            'result' => $terminalManger->output(),
+            'error' => $error,
         ]);
     }
 

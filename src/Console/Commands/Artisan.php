@@ -59,11 +59,8 @@ class Artisan extends Command
      */
     public function fire()
     {
-        $command = $this->option('command');
+        $command = $this->forceCommand($this->option('command'));
 
-        if ($this->needForce($command) === true) {
-            $command .= ' --force';
-        }
         $input = new StringInput($command);
         $input->setInteractive(false);
         if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
@@ -79,14 +76,13 @@ class Artisan extends Command
      *
      * @return bool
      */
-    protected function needForce($command)
+    protected function forceCommand($command)
     {
         return (
-            (
-                starts_with($command, 'migrate') === true && starts_with($command, 'migrate:status') === false
-            ) ||
+            starts_with($command, 'migrate') === true && starts_with($command, 'migrate:status') === false ||
             starts_with($command, 'db:seed') === true
-        ) && strpos('command', '--force') === false;
+        ) && strpos('command', '--force') === false ?
+            $command .= ' --force' : $command;
     }
 
     /**
