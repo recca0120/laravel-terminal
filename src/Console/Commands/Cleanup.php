@@ -53,14 +53,15 @@ class Cleanup extends Command
 
         $docs = ['README*', 'CHANGELOG*', 'FAQ*', 'CONTRIBUTING*', 'HISTORY*', 'UPGRADING*', 'UPGRADE*', 'package*', 'demo', 'example', 'examples', 'doc', 'docs', 'readme*'];
         $tests = ['.travis.yml', '.scrutinizer.yml', 'phpunit.xml*', 'phpunit.php', 'test', 'Test', 'tests', 'Tests', 'travis'];
-        $others = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg', 'node_modules'];
+        $others = ['vendor'];
+        $common = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg', 'node_modules'];
 
-        (new Collection(array_merge($others, $docs, $tests)))
+        (new Collection(array_merge($common, $others, $docs, $tests)))
             ->map(function ($item) use ($root) {
                 return $root.'vendor/*/*/'.$item;
             })
             ->merge(
-                (new Collection($others))
+                (new Collection($common))
                     ->map(function ($item) use ($root) {
                         return $root.$item;
                     })
@@ -69,9 +70,7 @@ class Cleanup extends Command
                 return $this->filesystem->glob($item);
             })
             ->collapse()
-            ->filter(function ($item) {
-                return empty($item) === false;
-            })
+            ->filter()
             ->each(function ($item) {
                 if ($this->filesystem->isDirectory($item) === true) {
                     $this->filesystem->deleteDirectory($item);

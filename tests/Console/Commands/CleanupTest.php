@@ -65,6 +65,7 @@ class CleanupTest extends TestCase
                         'tests' => [],
                         'Test' => [],
                         'Tests' => [],
+                        'vendor' => [],
                     ],
                 ],
                 'vendor' => [
@@ -105,6 +106,7 @@ class CleanupTest extends TestCase
                         'tests' => [],
                         'Test' => [],
                         'Tests' => [],
+                        'vendor' => [],
                     ],
                 ],
             ],

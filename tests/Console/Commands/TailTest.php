@@ -120,7 +120,7 @@ class TailTest extends TestCase
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
 
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/1.log');
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/5.log');
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
