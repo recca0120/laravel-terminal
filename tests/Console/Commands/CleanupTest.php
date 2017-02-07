@@ -114,13 +114,15 @@ class CleanupTest extends TestCase
         $command = new Cleanup(
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $root->url());
+
         $filesystem->shouldReceive('glob')->andReturnUsing(function ($item) {
             return Glob::glob($item);
         });

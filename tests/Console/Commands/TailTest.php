@@ -95,11 +95,11 @@ class TailTest extends TestCase
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
+        $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
         $laravel->shouldReceive('storagePath')->once()->andReturn($storagePath = $this->root->url());
         $filesystem->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
             return Glob::glob($path);

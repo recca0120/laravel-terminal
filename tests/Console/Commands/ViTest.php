@@ -3,8 +3,10 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
+use MockingHelpers;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Vi;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class ViTest extends TestCase
 {
@@ -13,91 +15,45 @@ class ViTest extends TestCase
         m::close();
     }
 
-    public function test_handle_read()
+    public function testFireRead()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $command = new Vi(
+            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $filesystem = m::spy('Illuminate\Filesystem\Filesystem');
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
-        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
+        $input->shouldReceive('getOption')->once()->with('text')->andReturn($text = null);
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-        $output
-            ->shouldReceive('getFormatter')->andReturn($formatter);
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
+        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = 'foo/');
 
-        $input
-            ->shouldReceive('getArgument')->with('path')->andReturn('foo.path')
-            ->shouldReceive('getOption')->with('text')->andReturn(null);
+        $filesystem->shouldReceive('get')->with($basePath.$path);
 
-        $laravel
-            ->shouldReceive('basePath')->andReturn('foo.basepath');
-
-        $command = new Vi($filesystem);
-        $command->setLaravel($laravel);
-        $command->run($input, $output);
         $command->fire();
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $laravel->shouldHaveReceived('basePath')->once();
-        $filesystem->shouldHaveReceived('get')->with('foo.basepath/foo.path')->once();
     }
 
-    public function test_handle_write()
+    public function testFireWrite()
     {
-        /*
-        |------------------------------------------------------------
-        | Arrange
-        |------------------------------------------------------------
-        */
+        $command = new Vi(
+            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+        );
+        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $filesystem = m::spy('Illuminate\Filesystem\Filesystem');
-        $input = m::spy('Symfony\Component\Console\Input\InputInterface');
-        $output = m::spy('Symfony\Component\Console\Output\OutputInterface');
-        $formatter = m::spy('Symfony\Component\Console\Formatter\OutputFormatterInterface');
-        $laravel = m::spy('Illuminate\Contracts\Foundation\Application');
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
+        $input->shouldReceive('getOption')->once()->with('text')->andReturn($text = 'foo');
 
-        /*
-        |------------------------------------------------------------
-        | Act
-        |------------------------------------------------------------
-        */
-        $output
-            ->shouldReceive('getFormatter')->andReturn($formatter);
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
+        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = 'foo/');
 
-        $input
-            ->shouldReceive('getArgument')->with('path')->andReturn('foo.path')
-            ->shouldReceive('getOption')->with('text')->andReturn('foo.text');
+        $filesystem->shouldReceive('put')->with($basePath.$path, $text);
 
-        $laravel
-            ->shouldReceive('basePath')->andReturn('foo.basepath');
-
-        $command = new Vi($filesystem);
-        $command->setLaravel($laravel);
-        $command->run($input, $output);
         $command->fire();
-
-        /*
-        |------------------------------------------------------------
-        | Assert
-        |------------------------------------------------------------
-        */
-
-        $laravel->shouldHaveReceived('basePath')->once();
-        $filesystem->shouldHaveReceived('put')->with('foo.basepath/foo.path', 'foo.text')->once();
     }
 }

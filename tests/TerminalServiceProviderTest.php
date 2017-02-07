@@ -106,6 +106,7 @@ class TerminalServiceProviderTest extends TestCase
         $app->shouldReceive('configPath');
         $app->shouldReceive('basePath');
         $app->shouldReceive('publicPath');
+        $app->shouldReceive('resourcePath');
 
         $serviceProvider->boot($request, $router);
     }

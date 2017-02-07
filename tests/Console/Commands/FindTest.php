@@ -38,9 +38,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -50,6 +48,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -71,9 +72,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -83,6 +82,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -105,9 +107,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -117,6 +117,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -139,9 +142,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -151,6 +152,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn('0');
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -165,9 +169,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -177,6 +179,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn('1');
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -199,9 +204,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -211,6 +214,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn($delete = 'true');
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -232,9 +238,7 @@ class FindTest extends TestCase
             $finder = m::mock('Symfony\Component\Finder\Finder'),
             $filesystem = m::mock(new Filesystem)
         );
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
+
         MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
 
@@ -244,6 +248,9 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn($delete = 'true');
 
+        $command->setLaravel(
+            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
@@ -270,7 +277,6 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-
         $laravel->shouldReceive('call')->once();
 
         $command->run(new StringInput('./ -name * -type d -maxdepth 0 -delete'), new BufferedOutput);
