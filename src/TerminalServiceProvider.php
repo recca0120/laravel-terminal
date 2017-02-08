@@ -96,7 +96,7 @@ class TerminalServiceProvider extends ServiceProvider
         ], 'views');
 
         $this->publishes([
-            __DIR__.'/../public' => $this->app->publicPath().'/vendor/terminal',
+            __DIR__.'/../public' => $this->app['path.public'].'/vendor/terminal',
         ], 'public');
     }
 }

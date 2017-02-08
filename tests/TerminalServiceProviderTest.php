@@ -105,7 +105,7 @@ class TerminalServiceProviderTest extends TestCase
         $app->shouldReceive('runningInConsole')->once()->andReturn(true);
         $app->shouldReceive('configPath');
         $app->shouldReceive('basePath');
-        $app->shouldReceive('publicPath');
+        $app->shouldReceive('offsetGet')->with('path.public');
         $app->shouldReceive('resourcePath');
 
         $serviceProvider->boot($request, $router);
