@@ -21,30 +21,30 @@ class TerminalController extends Controller
         $this->responseFactory = $responseFactory;
     }
 
-     /**
-      * index.
-      *
-      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
-      * @param string                                $view
-      *
-      * @return mixed
-      */
-     public function index(TerminalManager $terminalManger, $view = 'index')
-     {
-         $token = null;
-         if ($this->request->hasSession() === true) {
-             $token = $this->request->session()->token();
-         }
+    /**
+     * index.
+     *
+     * @param \Recca0120\Terminal\TerminalManager   $terminalManger
+     * @param string                                $view
+     *
+     * @return mixed
+     */
+    public function index(TerminalManager $terminalManger, $view = 'index')
+    {
+        $token = null;
+        if ($this->request->hasSession() === true) {
+            $token = $this->request->session()->token();
+        }
 
-         $terminalManger->call('list --ansi');
-         $options = json_encode(array_merge($terminalManger->getConfig(), [
+        $terminalManger->call('list --ansi');
+        $options = json_encode(array_merge($terminalManger->getConfig(), [
             'csrfToken' => $token,
             'helpInfo' => $terminalManger->output(),
         ]));
         $id = ($view === 'panel') ? Str::random(30) : null;
 
         return $this->responseFactory->view('terminal::'.$view, compact('options', 'id'));
-     }
+    }
 
     /**
      * rpc response.

@@ -15,7 +15,7 @@ class TerminalManager
     protected $kernel;
 
     /**
-     * $config/
+     * $config.
      *
      * @var array
      */
@@ -41,6 +41,7 @@ class TerminalManager
             'commands',
         ]);
     }
+
     /**
      * getConfig.
      *
