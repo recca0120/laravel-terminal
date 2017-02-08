@@ -13,19 +13,16 @@ class TerminalManagerTest extends TestCase
         m::close();
     }
 
-    public function testGetOptions()
+    public function testGetConfig()
     {
         $terminalManager = new TerminalManager(
             $kernel = m::mock('Recca0120\Terminal\Kernel'),
             $config = ['enabled' => true, 'whitelists' => [], 'route' => [], 'commands' => []]
         );
-        $kernel->shouldReceive('call')->once()->with('--ansi');
-        $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
         $this->assertSame([
             'username' => 'LARAVEL',
             'hostname' => php_uname('n'),
             'os' => PHP_OS,
-            'helpInfo' => $output,
-        ], $terminalManager->getOptions());
+        ], $terminalManager->getConfig());
     }
 }

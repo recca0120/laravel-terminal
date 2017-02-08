@@ -31,18 +31,19 @@ class TerminalController extends Controller
       */
      public function index(TerminalManager $terminalManger, $view = 'index')
      {
-         $csrfToken = null;
+         $token = null;
          if ($this->request->hasSession() === true) {
              $token = $this->request->session()->token();
          }
 
-         $options = json_encode(array_merge($terminalManger->getOptions(), [
+         $terminalManger->call('list --ansi');
+         $options = json_encode(array_merge($terminalManger->getConfig(), [
             'csrfToken' => $token,
+            'helpInfo' => $terminalManger->output(),
         ]));
+        $id = ($view === 'panel') ? Str::random(30) : null;
 
-         $id = ($view === 'panel') ? Str::random(30) : null;
-
-         return $this->responseFactory->view('terminal::'.$view, compact('options', 'id'));
+        return $this->responseFactory->view('terminal::'.$view, compact('options', 'id'));
      }
 
     /**
@@ -60,6 +61,7 @@ class TerminalController extends Controller
                 $session->save();
             }
         }
+
         $error = $terminalManger->call($this->request->get('command'));
 
         return $this->responseFactory->json([

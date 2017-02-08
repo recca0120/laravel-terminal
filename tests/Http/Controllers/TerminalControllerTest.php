@@ -22,9 +22,11 @@ class TerminalControllerTest extends TestCase
         $request->shouldReceive('hasSession')->once()->andReturn(true);
         $request->shouldReceive('session->token')->once()->andReturn($token = uniqid());
         $terminalManager = m::mock('Recca0120\Terminal\TerminalManager');
-        $terminalManager->shouldReceive('getOptions')->once()->andReturn($options = ['foo' => 'bar']);
+        $terminalManager->shouldReceive('call')->once()->with('list --ansi');
+        $terminalManager->shouldReceive('output')->once()->andReturn($output = 'foo');
+        $terminalManager->shouldReceive('getConfig')->once()->andReturn($config = ['foo' => 'bar']);
         $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
-            'options' => json_encode(array_merge($options, ['csrfToken' => $token])),
+            'options' => json_encode(array_merge($config, ['csrfToken' => $token, 'helpInfo' => $output])),
             'id' => null,
         ]);
         $controller->index($terminalManager, 'index');
