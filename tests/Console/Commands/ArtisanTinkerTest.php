@@ -3,13 +3,22 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
-use MockingHelpers;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
 
 class ArtisanTinkerTest extends TestCase
 {
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
+    }
+
     protected function tearDown()
     {
         m::close();
@@ -18,8 +27,8 @@ class ArtisanTinkerTest extends TestCase
     public function testFireEcho()
     {
         $command = new ArtisanTinker();
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'echo 123');
         $command->fire();
@@ -29,8 +38,8 @@ class ArtisanTinkerTest extends TestCase
     public function testFireVarDump()
     {
         $command = new ArtisanTinker();
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'var_dump(123)');
         $command->fire();
@@ -40,8 +49,8 @@ class ArtisanTinkerTest extends TestCase
     public function testFireObject()
     {
         $command = new ArtisanTinker();
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'new stdClass;');
         $command->fire();
@@ -52,8 +61,8 @@ class ArtisanTinkerTest extends TestCase
     public function testFireArray()
     {
         $command = new ArtisanTinker();
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "['foo' => 'bar'];");
         $command->fire();
@@ -64,8 +73,8 @@ class ArtisanTinkerTest extends TestCase
     public function testFireString()
     {
         $command = new ArtisanTinker();
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "'abc'");
         $command->fire();
@@ -76,8 +85,8 @@ class ArtisanTinkerTest extends TestCase
     public function testNumeric()
     {
         $command = new ArtisanTinker();
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = '123');
         $command->fire();

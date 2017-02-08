@@ -5,7 +5,6 @@ namespace Recca0120\Terminal\Tests\Console\Commands;
 use Exception;
 use SplFileInfo;
 use Mockery as m;
-use MockingHelpers;
 use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +15,16 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class FindTest extends TestCase
 {
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
+    }
+
     protected function setUp()
     {
         $structure = [
@@ -39,8 +48,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -73,8 +82,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -108,8 +117,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -143,8 +152,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -170,8 +179,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -205,8 +214,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -239,8 +248,8 @@ class FindTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
@@ -285,6 +294,6 @@ class FindTest extends TestCase
 
         $property = $reflectionClass->getProperty('input');
         $property->setAccessible(true);
-        $this->assertSame("'./' -N '*' -T d -M 0 -d true", (string) $property->getValue($command));
+        $this->assertSame("'./' -N '*' -T d -M 0 -d true", str_replace('"', "'", (string) $property->getValue($command)));
     }
 }

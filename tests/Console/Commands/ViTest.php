@@ -3,13 +3,22 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
-use MockingHelpers;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Vi;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class ViTest extends TestCase
 {
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
+    }
+
     protected function tearDown()
     {
         m::close();
@@ -20,8 +29,8 @@ class ViTest extends TestCase
         $command = new Vi(
             $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
         );
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('text')->andReturn($text = null);
@@ -41,8 +50,8 @@ class ViTest extends TestCase
         $command = new Vi(
             $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
         );
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
         $input->shouldReceive('getOption')->once()->with('text')->andReturn($text = 'foo');

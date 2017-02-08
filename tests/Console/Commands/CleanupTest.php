@@ -14,6 +14,16 @@ use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
 
 class CleanupTest extends TestCase
 {
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
+    }
+
     protected function tearDown()
     {
         m::close();
@@ -117,8 +127,8 @@ class CleanupTest extends TestCase
             $filesystem = m::mock(new Filesystem)
         );
 
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')

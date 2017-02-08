@@ -31,20 +31,8 @@ if (class_exists('PHPUnit\Framework\TestCase') === false) {
 */
 
 date_default_timezone_set('UTC');
+
 Carbon::setTestNow(Carbon::now());
-
-class MockingHelpers
-{
-    public static function mockProperty($object, $propertyName, $value)
-    {
-        $reflectionClass = new \ReflectionClass($object);
-
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
-    }
-}
 
 if (function_exists('env') === false) {
     function env($env)

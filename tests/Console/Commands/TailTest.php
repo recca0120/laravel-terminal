@@ -3,7 +3,6 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
-use MockingHelpers;
 use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -13,6 +12,16 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class TailTest extends TestCase
 {
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
+    }
+
     protected function setUp()
     {
         $structure = [
@@ -92,8 +101,8 @@ class TailTest extends TestCase
         $command = new Tail(
             $filesystem = m::mock(new Filesystem)
         );
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
@@ -113,8 +122,8 @@ class TailTest extends TestCase
         $command = new Tail(
             $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
         );
-        MockingHelpers::mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        MockingHelpers::mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
