@@ -81,10 +81,10 @@ class Cleanup extends Command
         ->each(function ($item) {
             if ($this->filesystem->isDirectory($item) === true) {
                 $this->filesystem->deleteDirectory($item);
-                $this->error('delete directory: '.$item);
+                $this->info('delete directory: '.$item);
             } else if ($this->filesystem->isFile($item)) {
                 $this->filesystem->delete($item);
-                $this->error('delete file: '.$item);
+                $this->info('delete file: '.$item);
             }
         });
         $this->line('');
