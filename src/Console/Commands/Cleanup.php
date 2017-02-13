@@ -2,9 +2,11 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
+use Webmozart\Glob\Glob;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
+
 
 class Cleanup extends Command
 {
@@ -56,10 +58,16 @@ class Cleanup extends Command
         $others = ['vendor'];
         $common = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg', 'node_modules'];
 
-        (new Collection(array_merge($common, $others, $docs, $tests)))
-            ->map(function ($item) use ($root) {
-                return $root.'vendor/*/*/'.$item;
+        (new Collection(Glob::glob($root.'vendor/*/*')))
+            ->map(function ($path) use ($common, $others, $docs, $tests) {
+                return (new Collection(array_merge($common, $others, $docs, $tests)))
+                    ->map(function($item) use ($path) {
+                        return rtrim($path, '/').'/**/'.$item;
+                    });
             })
+            ->collapse()
+            ->unique()
+            ->filter()
             ->merge(
                 (new Collection($common))
                     ->map(function ($item) use ($root) {
@@ -67,9 +75,10 @@ class Cleanup extends Command
                     })
             )
             ->map(function ($item) {
-                return $this->filesystem->glob($item);
+                return Glob::glob($item);
             })
             ->collapse()
+            ->unique()
             ->filter()
             ->each(function ($item) {
                 if ($this->filesystem->isDirectory($item) === true) {

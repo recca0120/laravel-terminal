@@ -6,6 +6,7 @@ use Mockery as m;
 use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Finder\Finder;
 use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Cleanup;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -75,6 +76,9 @@ class CleanupTest extends TestCase
                         'Test' => [],
                         'Tests' => [],
                         'vendor' => [],
+                        'abc' => [
+                            'tests' => [],
+                        ]
                     ],
                 ],
                 'vendor' => [
@@ -134,10 +138,6 @@ class CleanupTest extends TestCase
         );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $root->url());
 
-        $filesystem->shouldReceive('glob')->andReturnUsing(function ($item) {
-            return Glob::glob($item);
-        });
-
         $command->fire();
 
         $this->assertSame([
@@ -145,7 +145,9 @@ class CleanupTest extends TestCase
                 'test' => 'test',
                 'vendor' => [
                     'recca0120' => [
-                        'terminal' => [],
+                        'terminal' => [
+                            'abc' => []
+                        ],
                     ],
                     'vendor' => [
                         'package' => [],
