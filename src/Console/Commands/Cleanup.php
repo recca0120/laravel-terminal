@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
 
-
 class Cleanup extends Command
 {
     /**
@@ -57,13 +56,20 @@ class Cleanup extends Command
         $docs = ['README*', 'CHANGELOG*', 'FAQ*', 'CONTRIBUTING*', 'HISTORY*', 'UPGRADING*', 'UPGRADE*', 'package*', 'demo', 'example', 'examples', 'doc', 'docs', 'readme*'];
         $tests = ['.travis.yml', '.scrutinizer.yml', 'phpunit.xml*', 'phpunit.php', 'test', 'Test', 'tests', 'Tests', 'travis'];
         $vcs = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg'];
-        $others = ['vendor'];
-        $common = [
-            'node_modules',
+        $others = [
+            'vendor',
             '.editorconfig',
+            '.gitattributes',
+            '.gitignore',
             '.nitpick.json',
             '.php_cs',
+            '.travis.yml',
+            'package.json',
+            'phpcs.xml',
             'ruleset.xml',
+        ];
+        $common = [
+            'node_modules',
         ];
 
         (new Collection(
@@ -82,7 +88,7 @@ class Cleanup extends Command
             if ($this->filesystem->isDirectory($item) === true) {
                 $this->filesystem->deleteDirectory($item);
                 $this->info('delete directory: '.$item);
-            } else if ($this->filesystem->isFile($item)) {
+            } elseif ($this->filesystem->isFile($item)) {
                 $this->filesystem->delete($item);
                 $this->info('delete file: '.$item);
             }

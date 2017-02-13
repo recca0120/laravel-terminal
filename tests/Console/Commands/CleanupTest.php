@@ -3,10 +3,8 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
-use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Finder\Finder;
 use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Cleanup;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -85,7 +83,7 @@ class CleanupTest extends TestCase
                         'ruleset.xml' => 'ruleset.xml',
                         'abc' => [
                             'tests' => [],
-                        ]
+                        ],
                     ],
                 ],
                 'vendor' => [
@@ -153,7 +151,7 @@ class CleanupTest extends TestCase
                 'vendor' => [
                     'recca0120' => [
                         'terminal' => [
-                            'abc' => []
+                            'abc' => [],
                         ],
                     ],
                     'vendor' => [
