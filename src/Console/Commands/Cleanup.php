@@ -49,6 +49,7 @@ class Cleanup extends Command
      */
     public function fire()
     {
+        set_time_limit(0);
         $root = is_null($this->getLaravel()) === false ?
             $this->getLaravel()->basePath() : getcwd();
         $root = rtrim($root, '/').'/';
@@ -74,20 +75,19 @@ class Cleanup extends Command
                         return $root.$item;
                     })
             )
-            ->map(function ($item) {
-                return Glob::glob($item);
-            })
-            ->collapse()
-            ->unique()
-            ->filter()
             ->each(function ($item) {
-                if ($this->filesystem->isDirectory($item) === true) {
-                    $this->filesystem->deleteDirectory($item);
-                    $this->error('delete directory: '.$item);
-                } else {
-                    $this->filesystem->delete($item);
-                    $this->error('delete file: '.$item);
-                }
+                (new Collection(Glob::glob($item)))
+                    ->unique()
+                    ->filter()
+                    ->each(function ($item) {
+                        if ($this->filesystem->isDirectory($item) === true) {
+                            $this->filesystem->deleteDirectory($item);
+                            $this->error('delete directory: '.$item);
+                        } else {
+                            $this->filesystem->delete($item);
+                            $this->error('delete file: '.$item);
+                        }
+                    });
             });
     }
 }
