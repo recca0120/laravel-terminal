@@ -2,7 +2,7 @@
 
 /build export-ignore
 /examples export-ignore
-/screenshots export-ignore
+/docs export-ignore
 /tests export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore

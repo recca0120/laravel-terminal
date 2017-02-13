@@ -133,54 +133,54 @@ class Inspire extends Command
 ```bash
 $ help
 ```
-![Available Commands](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/available-commands.png)
+![Available Commands](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/available-commands.png)
 
 ### Artisan List
 ```bash
 $ artisan
 ```
-![Artisan List](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/artisan-list.png)
+![Artisan List](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/artisan-list.png)
 
 ### Migrate
 ```bash
 $ artisan migrate --seed
 ```
-![Migrate](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/artisan-migrate.png)
+![Migrate](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/artisan-migrate.png)
 
 ### Artisan Tinker
 ```bash
 $ artisan tinker
 ```
-![Tinker](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/artisan-tinker.png)
+![Tinker](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/artisan-tinker.png)
 
 ### MySQL
 ```bash
 $ mysql
 mysql> select * from users;
 ```
-![MySQL Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/mysql-command.png)
+![MySQL Command](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/mysql-command.png)
 
 ### Find Command
 ```bash
 $ find ./ -name * -maxdepth 1
 ```
-![Find Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/find-command.png)
+![Find Command](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/find-command.png)
 
 ### Find and Delete
 ```bash
 $ find ./storage/logs -name * -maxdepth 1 -delete
 ```
-![Find and Delete](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/find-and-delete.png)
+![Find and Delete](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/find-and-delete.png)
 
 ### Vi
 ```bash
 $ vi server.php
 ```
-![Vi Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/vi-command.png)
+![Vi Command](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/vi-command.png)
 
-![Vi Editor](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/vi-editor.png)
+![Vi Editor](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/vi-editor.png)
 
-![Vi Save](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/vi-save.png)
+![Vi Save](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/vi-save.png)
 
 ### Tail
 ```bash
@@ -189,11 +189,11 @@ $ tail --line=1
 $ tail server.php
 $ tail server.php --line 5
 ```
-![Tail Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/tail-command.png)
+![Tail Command](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/tail-command.png)
 
 
 ### Cleanup
 ```bash
 $ cleanup
 ```
-![Cleanup Command](https://cdn.rawgit.com/recca0120/terminal/master/screenshots/cleanup-command.png)
+![Cleanup Command](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/cleanup-command.png)

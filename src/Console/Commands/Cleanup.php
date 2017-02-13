@@ -56,38 +56,37 @@ class Cleanup extends Command
 
         $docs = ['README*', 'CHANGELOG*', 'FAQ*', 'CONTRIBUTING*', 'HISTORY*', 'UPGRADING*', 'UPGRADE*', 'package*', 'demo', 'example', 'examples', 'doc', 'docs', 'readme*'];
         $tests = ['.travis.yml', '.scrutinizer.yml', 'phpunit.xml*', 'phpunit.php', 'test', 'Test', 'tests', 'Tests', 'travis'];
+        $vcs = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg'];
         $others = ['vendor'];
-        $common = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg', 'node_modules'];
+        $common = [
+            'node_modules',
+            '.editorconfig',
+            '.nitpick.json',
+            '.php_cs',
+            'ruleset.xml',
+        ];
 
-        (new Collection(Glob::glob($root.'vendor/*/*')))
-            ->map(function ($path) use ($common, $others, $docs, $tests) {
-                return (new Collection(array_merge($common, $others, $docs, $tests)))
-                    ->map(function($item) use ($path) {
-                        return rtrim($path, '/').'/**/'.$item;
-                    });
+        (new Collection(
+            Glob::glob($root.'{'.(new Collection(Glob::glob($root.'vendor/*/*')))
+            ->map(function ($item) {
+                return substr($item, strpos($item, 'vendor'));
             })
-            ->collapse()
-            ->unique()
-            ->filter()
-            ->merge(
-                (new Collection($common))
-                    ->map(function ($item) use ($root) {
-                        return $root.$item;
-                    })
-            )
-            ->each(function ($item) {
-                (new Collection(Glob::glob($item)))
-                    ->unique()
-                    ->filter()
-                    ->each(function ($item) {
-                        if ($this->filesystem->isDirectory($item) === true) {
-                            $this->filesystem->deleteDirectory($item);
-                            $this->error('delete directory: '.$item);
-                        } else {
-                            $this->filesystem->delete($item);
-                            $this->error('delete file: '.$item);
-                        }
-                    });
-            });
+            ->implode(',').'}/**/{'.(implode(',', array_merge($vcs, $common, $others, $tests, $docs))).'}')
+        ))
+        ->merge(Glob::glob($root.'{'.(implode(',', array_merge($vcs, $common))).'}'))
+        ->merge([
+            $root.'vendor/phpunit',
+        ])
+        ->filter()
+        ->each(function ($item) {
+            if ($this->filesystem->isDirectory($item) === true) {
+                $this->filesystem->deleteDirectory($item);
+                $this->error('delete directory: '.$item);
+            } else if ($this->filesystem->isFile($item)) {
+                $this->filesystem->delete($item);
+                $this->error('delete file: '.$item);
+            }
+        });
+        $this->line('');
     }
 }

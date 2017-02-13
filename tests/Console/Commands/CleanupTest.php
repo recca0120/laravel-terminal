@@ -37,6 +37,9 @@ class CleanupTest extends TestCase
             'node_modules' => [],
             'test' => 'test',
             'vendor' => [
+                'phpunit' => [
+                    'phpunit' => [],
+                ],
                 'recca0120' => [
                     'terminal' => [
                         // others
@@ -76,6 +79,10 @@ class CleanupTest extends TestCase
                         'Test' => [],
                         'Tests' => [],
                         'vendor' => [],
+                        '.editorconfig' => '.editorconfig',
+                        '.nitpick.json' => '.nitpick.json',
+                        '.php_cs' => '.php_cs',
+                        'ruleset.xml' => 'ruleset.xml',
                         'abc' => [
                             'tests' => [],
                         ]
