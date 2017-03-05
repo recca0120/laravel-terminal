@@ -37,7 +37,6 @@ class Kernel implements KernelContract
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
      * @return int
      */
     public function handle($input, $output = null)
@@ -50,7 +49,6 @@ class Kernel implements KernelContract
      *
      * @param string $command
      * @param array  $parameters
-     *
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -63,7 +61,6 @@ class Kernel implements KernelContract
      *
      * @param string $command
      * @param array  $parameters
-     *
      * @return void
      */
     public function queue($command, array $parameters = [])

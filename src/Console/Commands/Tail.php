@@ -73,11 +73,8 @@ class Tail extends Command
     /**
      * readLine.
      *
-     * @method readLine
-     *
      * @param string $file
      * @param int    $lines
-     *
      * @return string
      */
     protected function readLine($file, $lines = 50)

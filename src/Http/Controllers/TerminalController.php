@@ -12,9 +12,26 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 
 class TerminalController extends Controller
 {
+    /**
+     * $request.
+     *
+     * @var \Illuminate\Http\Request
+     */
     protected $request;
+
+    /**
+     * $responseFactory.
+     *
+     * @var \Illuminate\Contracts\Routing\ResponseFactory
+     */
     protected $responseFactory;
 
+    /**
+     * __construct.
+     *
+     * @param \Illuminate\Http\Request         $request
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $responseFactory
+     */
     public function __construct(Request $request, ResponseFactory $responseFactory)
     {
         $this->request = $request;
@@ -26,7 +43,6 @@ class TerminalController extends Controller
      *
      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
      * @param string                                $view
-     *
      * @return mixed
      */
     public function index(TerminalManager $terminalManger, $view = 'index')
@@ -50,7 +66,6 @@ class TerminalController extends Controller
      * rpc response.
      *
      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
-     *
      * @return mixed
      */
     public function endpoint(TerminalManager $terminalManger)
@@ -77,7 +92,6 @@ class TerminalController extends Controller
      *
      * @param \Illuminate\Filesystem\Filesystem $filesystem
      * @param string                            $file
-     *
      * @return \Illuminate\Http\Response
      */
     public function media(Filesystem $filesystem, $file)

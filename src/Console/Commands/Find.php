@@ -60,7 +60,6 @@ class Find extends Command
      *
      * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
      * @return \Symfony\Component\Console\Input\StringInput
      */
     public function run(InputInterface $input, OutputInterface $output)

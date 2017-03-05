@@ -44,8 +44,6 @@ class Composer extends Command
 
     /**
      * install.
-     *
-     * @method install
      */
     protected function install()
     {
@@ -70,8 +68,6 @@ class Composer extends Command
 
     /**
      * init.
-     *
-     * @method init
      */
     protected function init()
     {

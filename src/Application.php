@@ -16,7 +16,6 @@ class Application extends ConsoleApplication
      *
      * @param string $command
      * @param array  $parameters
-     *
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -45,7 +44,6 @@ class Application extends ConsoleApplication
      *
      * @param array|mixed $commands
      * @param bool $web
-     *
      * @return $this
      */
     public function resolveCommands($commands, $web = false)
@@ -55,8 +53,6 @@ class Application extends ConsoleApplication
 
     /**
      * ajax.
-     *
-     * @method ajax
      *
      * @return bool
      */

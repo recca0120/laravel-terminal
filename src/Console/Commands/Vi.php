@@ -43,8 +43,6 @@ class Vi extends Command
 
     /**
      * fire.
-     *
-     * @method fire
      */
     public function fire()
     {
