@@ -63,6 +63,8 @@ class Cleanup extends Command
             '.gitignore',
             '.nitpick.json',
             '.php_cs',
+            '.scrutinizer.yml',
+            '.styleci.yml',
             '.travis.yml',
             'package.json',
             'phpcs.xml',
