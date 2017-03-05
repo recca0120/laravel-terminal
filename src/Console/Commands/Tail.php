@@ -48,7 +48,7 @@ class Tail extends Command
     public function fire()
     {
         $path = $this->argument('path');
-        $lines = $this->option('lines');
+        $lines = (int) $this->option('lines');
 
         if (empty($path) === false) {
             $root = is_null($this->getLaravel()) === false ?

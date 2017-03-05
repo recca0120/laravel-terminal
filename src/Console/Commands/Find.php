@@ -80,8 +80,6 @@ class Find extends Command
      */
     public function fire()
     {
-        // set_time_limit(30);
-
         $path = $this->argument('path');
         $name = $this->option('name');
         $type = $this->option('type');
