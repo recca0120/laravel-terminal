@@ -9,7 +9,6 @@
 [![Monthly Downloads](https://poser.pugx.org/recca0120/terminal/d/monthly)](https://packagist.org/packages/recca0120/terminal)
 [![Daily Downloads](https://poser.pugx.org/recca0120/terminal/d/daily)](https://packagist.org/packages/recca0120/terminal)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/recca0120/laravel-terminal/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/recca0120/laravel-terminal/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/recca0120/terminal/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/recca0120/terminal/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/recca0120/laravel-terminal/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/recca0120/laravel-terminal/?branch=master)
 
 ## Installation
