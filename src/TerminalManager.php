@@ -24,7 +24,7 @@ class TerminalManager
     /**
      * __construct.
      *
-     * @param Recca0120\Terminal\Kernel $kernel [description]
+     * @param \Recca0120\Terminal\Kernel $kernel [description]
      * @param array $config
      */
     public function __construct(Kernel $kernel, $config = [])

@@ -19,7 +19,7 @@ class TerminalServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @param \Illuminate\Http\Request   $Request
+     * @param \Illuminate\Http\Request   $request
      * @param \Illuminate\Routing\Router $router
      */
     public function boot(Request $request, Router $router)
