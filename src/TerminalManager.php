@@ -3,7 +3,6 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Support\Arr;
-use Illuminate\Contracts\Foundation\Application as Laravel;
 
 class TerminalManager
 {
@@ -24,7 +23,7 @@ class TerminalManager
     /**
      * __construct.
      *
-     * @param \Recca0120\Terminal\Kernel $kernel [description]
+     * @param \Recca0120\Terminal\Kernel $kernel
      * @param array $config
      */
     public function __construct(Kernel $kernel, $config = [])

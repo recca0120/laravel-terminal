@@ -43,7 +43,7 @@ class TerminalController extends Controller
      *
      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
      * @param string                                $view
-     * @return mixed
+     * @return \Illuminate\Http\Response
      */
     public function index(TerminalManager $terminalManger, $view = 'index')
     {
@@ -66,7 +66,7 @@ class TerminalController extends Controller
      * rpc response.
      *
      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
-     * @return mixed
+     * @return \Illuminate\Http\JsonResponse
      */
     public function endpoint(TerminalManager $terminalManger)
     {

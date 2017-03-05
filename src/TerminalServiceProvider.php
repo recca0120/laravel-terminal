@@ -68,7 +68,7 @@ class TerminalServiceProvider extends ServiceProvider
     /**
      * register routes.
      *
-     * @param Illuminate\Routing\Router $router
+     * @param \Illuminate\Routing\Router $router
      * @param array                     $config
      */
     protected function handleRoutes(Router $router, $config = [])

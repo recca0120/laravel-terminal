@@ -73,7 +73,7 @@ class Artisan extends Command
      * need focre option.
      *
      * @param string $command
-     * @return bool
+     * @return string
      */
     protected function forceCommand($command)
     {
