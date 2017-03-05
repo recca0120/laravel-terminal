@@ -42,7 +42,7 @@ class TerminalController extends Controller
      * index.
      *
      * @param \Recca0120\Terminal\TerminalManager   $terminalManger
-     * @param string                                $view
+     * @param string $view
      * @return \Illuminate\Http\Response
      */
     public function index(TerminalManager $terminalManger, $view = 'index')
@@ -91,7 +91,7 @@ class TerminalController extends Controller
      * media.
      *
      * @param \Illuminate\Filesystem\Filesystem $filesystem
-     * @param string                            $file
+     * @param string $file
      * @return \Illuminate\Http\Response
      */
     public function media(Filesystem $filesystem, $file)

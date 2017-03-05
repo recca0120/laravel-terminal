@@ -54,7 +54,7 @@ class TerminalManager
     /**
      * call.
      *
-     * @param  string $command
+     * @param string $command
      * @return int
      */
     public function call($command)

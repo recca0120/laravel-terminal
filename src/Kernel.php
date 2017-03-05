@@ -48,7 +48,7 @@ class Kernel implements KernelContract
      * Run an Artisan console command by name.
      *
      * @param string $command
-     * @param array  $parameters
+     * @param array $parameters
      * @return int
      */
     public function call($command, array $parameters = [])
@@ -60,7 +60,7 @@ class Kernel implements KernelContract
      * Queue an Artisan console command by name.
      *
      * @param string $command
-     * @param array  $parameters
+     * @param array $parameters
      * @return void
      */
     public function queue($command, array $parameters = [])
