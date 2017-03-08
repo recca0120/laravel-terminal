@@ -56,6 +56,7 @@ class Cleanup extends Command
         $vcs = ['.svn', '_svn', 'CVS', '_darcs', '.arch-params', '.monotone', '.bzr', '.git', '.hg'];
         $others = [
             'vendor',
+            '.babelrc',
             '.editorconfig',
             '.gitattributes',
             '.gitignore',
