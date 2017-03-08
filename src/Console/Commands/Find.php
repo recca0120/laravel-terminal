@@ -125,9 +125,9 @@ class Find extends Command
                         $removed = $this->filesystem->delete($realPath);
                     }
                 } catch (Exception $e) {
+                    $removed = false;
                 }
-                $removed === true ?
-                    $this->info('removed '.$realPath) : $this->error('removed '.$realPath.' fail');
+                $removed === true ? $this->info('removed '.$realPath) : $this->error('removed '.$realPath.' fail');
             } else {
                 $this->line($realPath);
             }
