@@ -47,8 +47,7 @@ class ArtisanTinker extends Command
                 $this->comment($result);
                 break;
             default:
-                is_numeric($result) === true ?
-                    $this->info($result) : $this->line($result);
+                is_numeric($result) === true ? $this->info($result) : $this->line($result);
                 break;
         }
     }
