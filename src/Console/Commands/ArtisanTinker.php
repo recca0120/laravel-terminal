@@ -30,14 +30,11 @@ class ArtisanTinker extends Command
         $code = trim(trim($command), ';').';';
         $result = null;
         if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
-            $func = create_function('', $code);
             ob_start();
-            $func();
-            // require $file->withContent('<?php '.$code)->url();
+            eval($code);
             $this->line(ob_get_clean());
         } else {
-            $func = create_function('', 'return '.$code);
-            $result = $func();
+            eval('$result = '.$code);
         }
 
         $this->getOutput()->write('=> ');
