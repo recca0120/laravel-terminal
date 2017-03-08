@@ -116,6 +116,7 @@ class CleanupTest extends TestCase
                         'doc' => [],
                         'docs' => [],
                         // tests
+                        '.babelrc' => '.babelrc',
                         '.travis.yml' => '.travis.yml',
                         '.scrutinizer.yml' => '.scrutinizer.yml',
                         'appveyor.yml' => 'appveyor.yml',
