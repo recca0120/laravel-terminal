@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use org\bovigo\vfs\vfsStream;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -27,18 +26,18 @@ class ArtisanTinker extends Command
      */
     public function fire()
     {
-        $root = vfsStream::setup('tinker');
-        $file = vfsStream::newFile('tinker.php')->at($root);
-
         $command = $this->option('command');
         $code = trim(trim($command), ';').';';
         $result = null;
         if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
+            $func = create_function('', $code);
             ob_start();
-            require $file->withContent('<?php '.$code)->url();
+            $func();
+            // require $file->withContent('<?php '.$code)->url();
             $this->line(ob_get_clean());
         } else {
-            $result = require $file->withContent('<?php return '.$code)->url();
+            $func = create_function('', 'return '.$code);
+            $result = $func();
         }
 
         $this->getOutput()->write('=> ');
