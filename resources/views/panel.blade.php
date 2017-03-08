@@ -1,61 +1,47 @@
 <div id="panel-terminal-shell-{{ $id }}" class="terminal-panel"></div>
 <script>
 (function() {
-    var loadStyle = function(id, filename) {
-        id = "laravel-terminal-"+id;
-        if (document.getElementById(id)) {
-            return;
-        }
-        var link = document.createElement('link');
-        link.setAttribute("rel", "stylesheet");
-        link.setAttribute("type", "text/css");
-        link.setAttribute("href", filename);
-        link.setAttribute("id", id);
-        link.onerror = function() {
-            loadStyle(id, filename);
-        }
-        var head = document.getElementsByTagName('head');
-
-        if (head.length > 0) {
-            head[0].appendChild(link);
-        } else {
-            document.body.appendChild(link);
-        }
-    }
-
-    var loadScript = function(id, filename, callback) {
-        id = "laravel-terminal-"+id;
-        if (document.getElementById(id)) {
-            if (callback) {
-                callback();
+    var preload = function() {
+        var createElement = function(tag, attributes) {
+            var id = "laravel-terminal-"+attributes.id;
+            var element = document.getElementById(id);
+            if (element) { return element; };
+            element = document.createElement(tag);
+            for (key in attributes) { element.setAttribute(key, attributes[key]); };
+            return element;
+        };
+        var appendTo = function(element) {
+            var appendTo = document.getElementsByTagName('head');
+            appendTo = appendTo.length > 0 ? appendTo[0] : document.body;
+            appendTo.appendChild(element);
+        };
+        var f = function(filename) {
+            return filename.replace(/\?.*/, '') + '?' + (new Date()).getTime()
+        };
+        return {
+            createElement: function(type, id, filename, callback) {
+                var attributes = {}, source;
+                if (type === 'script') {
+                    source = 'src';
+                    attributes['type'] = 'text/javascript';
+                } else {
+                    source = 'href';
+                    attributes['type'] = 'text/css';
+                    attributes['rel'] = 'stylesheet';
+                }
+                attributes[source] = filename;
+                attributes['id'] = 'laravel-terminal-' + id;
+                var element = createElement(type, attributes);
+                element.onerror = function() { preload.createElement(type, id, f(filename), callback); };
+                if (callback) { element.onload = callback; };
+                appendTo(element);
             }
-            return;
-        }
-        var js = document.createElement('script');
-        js.setAttribute("type","text/javascript");
-        js.setAttribute("src", filename);
-        js.setAttribute("id", id);
-        js.onerror = function() {
-            loadScript(id, filename, callback);
-        }
-        if (callback) {
-            js.onload = callback;
-        }
-        var head = document.getElementsByTagName('head');
-        if (head.length > 0) {
-            head[0].appendChild(js);
-        } else {
-            document.body.appendChild(js);
-        }
-    }
+        };
+    }();
 
-    loadStyle('css', "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/terminal.css']) }}");
-    var scripts = {
-        terminal: "{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}",
-    };
-
-    loadScript('terminal' ,scripts.terminal, function () {
-        new Terminal("#panel-terminal-shell-{{ $id }}", {!! $options !!});
+    preload.createElement('link', 'css', '{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/terminal.css']) }}');
+    preload.createElement('script', 'terminal', '{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}', function () {
+        new Terminal('#panel-terminal-shell-{{ $id }}', {!! $options !!});
     });
 })();
 </script>
