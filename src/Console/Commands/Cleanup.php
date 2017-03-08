@@ -64,6 +64,7 @@ class Cleanup extends Command
             '.scrutinizer.yml',
             '.styleci.yml',
             '.travis.yml',
+            'appveyor-yml',
             'package.json',
             'phpcs.xml',
             'ruleset.xml',
