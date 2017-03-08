@@ -80,6 +80,7 @@ class CleanupTest extends TestCase
                         '.editorconfig' => '.editorconfig',
                         '.nitpick.json' => '.nitpick.json',
                         '.php_cs' => '.php_cs',
+                        'appveyor.yml' => 'appveyor.yml',
                         'ruleset.xml' => 'ruleset.xml',
                         'abc' => [
                             'tests' => [],
@@ -117,6 +118,7 @@ class CleanupTest extends TestCase
                         // tests
                         '.travis.yml' => '.travis.yml',
                         '.scrutinizer.yml' => '.scrutinizer.yml',
+                        'appveyor.yml' => 'appveyor.yml',
                         'phpunit.xml' => 'phpunit.xml',
                         'phpunit.xml.dist' => 'phpunit.xml.dist',
                         'phpunit.php' => 'phpunit.php',
