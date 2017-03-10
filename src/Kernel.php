@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal;
 
-use Illuminate\Contracts\Queue\Queue;
 use Recca0120\Terminal\Application as Artisan;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
 

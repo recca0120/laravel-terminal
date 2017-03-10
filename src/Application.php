@@ -3,7 +3,6 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Http\Request;
-use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Formatter\OutputFormatter;
