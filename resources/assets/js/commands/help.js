@@ -1,4 +1,4 @@
-'use strict';
+'use babel';
 
 import Command from './command';
 
@@ -7,7 +7,7 @@ export default class Help extends Command {
         return ['list', 'help'].includes(name);
     }
 
-    call(cmd) {
+    call() {
         this.api.echo(this.api.options.helpInfo);
         this.api.serverInfo();
     }

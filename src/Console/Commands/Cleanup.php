@@ -58,6 +58,7 @@ class Cleanup extends Command
             'vendor',
             '.babelrc',
             '.editorconfig',
+            '.eslintrc.*',
             '.gitattributes',
             '.gitignore',
             '.nitpick.json',

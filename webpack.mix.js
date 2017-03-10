@@ -1,5 +1,5 @@
-let mix = require('laravel-mix').mix;
-let path = require('path');
+const mix = require('laravel-mix').mix;
+const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,16 +13,19 @@ let path = require('path');
  */
 
 mix.webpackConfig({
-  resolve: {
+    resolve: {
       alias: {
-        $: path.normalize(`${__dirname}/node_modules/jquery/src/jquery.js`),
-        jquery: path.normalize(`${__dirname}/node_modules/jquery/src/jquery.js`),
-        jQuery: path.normalize(`${__dirname}/node_modules/jquery/src/jquery.js`),
-        'window.jQuery': path.normalize(`${__dirname}/node_modules/jquery/src/jquery.js`),
-        'jquery-ui/sortable': `jquery-ui/ui/widgets/sortable.js`,
-        moment: path.normalize(`${__dirname}/node_modules/moment/moment.js`),
-      }
+        $: path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
+        jQuery: path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
+        jquery: path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
+        'window.jQuery': path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
+      },
+    },
+    module: {
+        noParse: [
+            /jquery/i
+        ]
     }
   })
-  .js('resources/assets/js/terminal.js', 'public/js')
-  .sass('resources/assets/sass/terminal.scss', 'public/css');
+  .js(['resources/assets/js/app.js'], 'public/js/terminal.js')
+  .sass('resources/assets/sass/app.scss', 'public/css/terminal.css');

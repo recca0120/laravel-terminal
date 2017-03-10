@@ -1,9 +1,11 @@
-'use strict';
+'use babel';
+
+import $ from 'jquery';
 
 class OutputFormatterStyle {
-    constructor(foreground = "white", background = "black", options = []) {
+    constructor(foreground = 'white', background = 'black', options = []) {
         Object.assign(this, {
-            options: options,
+            options,
             colorList: {
                 30: 'black',
                 31: 'red',
@@ -14,7 +16,7 @@ class OutputFormatterStyle {
                 36: 'cyan',
                 37: 'white',
 
-                39: 'white'
+                39: 'white',
             },
 
             backgroundList: {
@@ -27,13 +29,13 @@ class OutputFormatterStyle {
                 46: 'cyan',
                 47: 'white',
 
-                49: 'black'
+                49: 'black',
             },
 
             colors: Object.assign($.terminal.ansi_colors.bold, {
                 white: $.terminal.ansi_colors.normal.white,
-                red: $.terminal.ansi_colors.normal.red
-            })
+                red: $.terminal.ansi_colors.normal.red,
+            }),
         });
 
         this.foreground = this.getColor(foreground);
@@ -41,11 +43,7 @@ class OutputFormatterStyle {
     }
 
     getColor(color) {
-        if (this.colors[color]) {
-            return this.colors[color];
-        } else {
-            return color;
-        }
+        return this.colors[color] ? this.colors[color] : color;
     }
 
     apply(text) {
@@ -61,7 +59,7 @@ export default class OutputFormatter {
                 info: new OutputFormatterStyle('green'),
                 comment: new OutputFormatterStyle('yellow'),
                 question: new OutputFormatterStyle('magenta'),
-            }
+            },
         });
     }
 

@@ -1,14 +1,8 @@
-'use strict';
+'use babel';
 
-import './jquery';
-import 'jquery-mousewheel';
-import 'jquery.terminal';
-import 'jquery.terminal/js/unix_formatting';
-
-import './polyfill';
+import $ from 'jquery';
 import OutputFormatter from './output-formatter';
 import Loading from './loading';
-
 import Artisan from './commands/artisan';
 import Composer from './commands/composer';
 import Default from './commands/default';
@@ -17,13 +11,14 @@ import Mysql from './commands/mysql';
 import Tinker from './commands/tinker';
 import Vi from './commands/vi';
 
-class Terminal {
+export default class Terminal {
     constructor(element, options = {}) {
         this.$element = $(element);
         this.$parent = this.$element.parent();
         this.$win = $(window);
         this.$term = null;
-        let parentTagName = this.$parent.prop('tagName').toLowerCase();
+
+        const parentTagName = this.$parent.prop('tagName').toLowerCase();
 
         if (!options.endPoint) {
             options.endPoint = options.endpoint;
@@ -31,8 +26,8 @@ class Terminal {
 
         Object.assign(this, {
             options: Object.assign({}, options),
-            formatter: new OutputFormatter,
-            prompt: "$ ",
+            formatter: new OutputFormatter(),
+            prompt: '$ ',
         });
 
         this.$element.terminal(this.run.bind(this), {
@@ -54,15 +49,13 @@ class Terminal {
             onClear: () => {
                 this.serverInfo();
             },
-            prompt: this.prompt
+            prompt: this.prompt,
         });
 
         this.$win.on('resize', () => {
             if (parentTagName === 'body') {
-                let width = this.$parent.width() - 20;
-                let height = this.$parent.height() - 20;
-                this.$element.width(width);
-                this.$element.height(height);
+                this.$element.width(this.$parent.width() - 20);
+                this.$element.height(this.$parent.height() - 20);
             } else {
                 this.scrollToBottom();
             }
@@ -78,23 +71,23 @@ class Terminal {
     scrollToBottom(delay = 200) {
         setTimeout(() => {
             this.$element.parent().animate({
-                scrollTop: 9e9
+                scrollTop: 9e9,
             });
         }, delay);
     }
 
     run(command) {
-        for (let interpreter in this.options.interpreters) {
+        for (const interpreter in this.options.interpreters) {
             if (command === interpreter) {
-                let prompt = this.options.interpreters[interpreter];
+                const prompt = this.options.interpreters[interpreter];
                 this.interpreter(prompt);
                 return;
             }
         }
 
-        let cmd = $.terminal.parseCommand(command.trim());
+        const cmd = $.terminal.parse_command(command.trim());
         for (let i = 0; i < this.commands.length; i++) {
-            let command = this.commands[i];
+            command = this.commands[i];
             if (command.match(cmd.name) === true) {
                 command.call(cmd);
                 break;
@@ -106,22 +99,20 @@ class Terminal {
         this.$term.push((command) => {
             this.run(`${prompt.replace(/\s+/g, '-')} ${command}`);
         }, {
-            prompt: `${prompt}> `
-        })
+            prompt: `${prompt}> `,
+        });
     }
 
     greetings() {
-        return [
-            " __                        _    _____              _         _ ",
-            "|  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |",
-            "|  |__| .'|  _| .'| | | -_| |    | || -_|  _|     | |   | .'| |",
-            "|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|",
-            "",
-            "Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>",
-            "",
-            "Type a command, or type `" + this.info('help') + "`, for a list of commands.",
-            "",
-        ].join("\n");
+        return `
+ __                        _    _____              _         _
+|  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |
+|  |__| .'|  _| .'| | | -_| |    | || -_|  _|     | |   | .'| |
+|_____|__,|_| |__,|\\_/|___|_|    |_||___|_| |_|_|_|_|_|_|__,|_|
+
+Copyright (c) 2015 Recca Tsai <http://phpwrite.blogspot.tw/>
+
+Type a command, or type \`${this.info('help')}\`, for a list of commands.`;
     }
 
     serverInfo() {
@@ -129,9 +120,9 @@ class Terminal {
             return;
         }
 
-        let host = `${this.info(this.options.username)}${this.info('@')}${this.info(this.options.hostname)}`;
-        let os = this.question(`${this.options.os}`);
-        let path = this.comment(`${this.options.basePath}`);
+        const host = `${this.info(this.options.username)}${this.info('@')}${this.info(this.options.hostname)}`;
+        const os = this.question(`${this.options.os}`);
+        const path = this.comment(`${this.options.basePath}`);
         this.$term.echo(`${host} ${os} ${path}`);
         this.scrollToBottom();
     }
@@ -153,43 +144,41 @@ class Terminal {
     }
 
     echo(text) {
-        let regex = new RegExp("(\\033\\[(\\d+)(;\\d+)?m(((?!\\033\\[\\d+).)*)\\033\\[(\\d+)(;\\d+)?m)|(\\[|\\])", "g");
+        const regex = new RegExp('(\\033\\[(\\d+)(;\\d+)?m(((?!\\033\\[\\d+).)*)\\033\\[(\\d+)(;\\d+)?m)|(\\[|\\])', 'g');
         let content;
         text = text.replace(regex, (...m) => {
-            if (["[", "]"].includes(m[0]) === true) {
+            if (['[', ']'].includes(m[0]) === true) {
                 return $.terminal.escape_brackets(m[0]);
-            } else {
-                content = $.terminal.escape_brackets(m[4]);
-                switch (m[2]) {
-                    case '32':
-                        return this.info(content);
-                        break;
-                    case '33':
-                        return this.comment(content);
-                        break;
-                    case '37':
-                        return this.error(content);
-                        break;
-                    default:
-                        return m[0];
-                        break;
-                }
             }
+            content = $.terminal.escape_brackets(m[4]);
+            if (m[2] === '32') {
+                return this.info(content);
+            }
+
+            if (m[2] === '33') {
+                return this.comment(content);
+            }
+
+            if (m[2] === '37') {
+                return this.error(content);
+            }
+
+            return m[0];
         });
-        text.split("\n").forEach((line) => {
+        text.split('\n').forEach((line) => {
             if (line === '') {
                 line = ' ';
             }
             this.$term.echo(line);
-        })
+        });
     }
 
     confirm(message, title = '') {
         return new Promise((resolve, reject) => {
-            let history = this.$term.history();
+            const history = this.$term.history();
             history.disable();
 
-            if (title != '') {
+            if (title !== '') {
                 this.$term.echo(title);
             }
             this.$term.echo(message);
@@ -198,35 +187,18 @@ class Terminal {
                 if (this.toBoolean(result) === true) {
                     resolve(true);
                 } else {
-                    reject(false)
+                    reject(false);
                     this.serverInfo();
                 }
                 this.$term.pop();
                 history.enable();
-                return;
             }, {
-                prompt: ' > '
+                prompt: ' > ',
             });
         });
     }
 
     toBoolean(value) {
-        switch (value) {
-            case 'y':
-            case 'yes':
-            case 'true':
-                return true;
-                break;
-            case 'n':
-            case 'no':
-            case 'false':
-            case '':
-                return false;
-                break;
-        }
-
-        return false;
+        return ['y', 'yes', 'true'].includes(value.toLowerCase());
     }
-};
-
-window.Terminal = Terminal;
+}

@@ -1,23 +1,13 @@
-'use strict';
+'use babel';
 
-import './jquery';
-// import 'babel-polyfill';
+const $ = window.jQuery ? window.jQuery : require('jquery');
+$.migrateMute = true;
+window.$ = $;
+window.jQuery = $;
 
-(function() {
-    var testObject = {};
-
-    if (!(Object.setPrototypeOf || testObject.__proto__)) {
-        var nativeGetPrototypeOf = Object.getPrototypeOf;
-
-        Object.getPrototypeOf = function(object) {
-            if (object.__proto__) {
-                return object.__proto__;
-            } else {
-                return nativeGetPrototypeOf.call(Object, object);
-            }
-        }
-    }
-})();
+require('jquery-mousewheel');
+require('jquery.terminal');
+require('jquery.terminal/js/unix_formatting');
 
 if (!Object.assign) {
     Object.assign = $.extend;
@@ -27,7 +17,7 @@ if (!Array.prototype.includes) {
     Object.defineProperty(Array.prototype, 'includes', {
         value(...args) {
             return $.inArray(...args, this) !== -1;
-        }
+        },
     });
 }
 
@@ -57,3 +47,21 @@ class jQueryPromise {
 if (!window.Promise) {
     window.Promise = jQueryPromise;
 }
+
+(function setPrototypeOf() {
+    const testObject = {};
+
+    if (!(Object.setPrototypeOf || testObject.prototype)) {
+        const nativeGetPrototypeOf = Object.getPrototypeOf;
+
+        Object.getPrototypeOf = function getPrototypeOf(object) {
+            if (object.prototype) {
+                return object.prototype;
+            }
+
+            return nativeGetPrototypeOf.call(Object, object);
+        };
+    }
+}());
+
+export default $;

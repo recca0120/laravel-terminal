@@ -9,7 +9,7 @@ class TerminalManager
     /**
      * $kernel.
      *
-     * @var Recca0120\Terminal\Kernel
+     * @var \Recca0120\Terminal\Kernel
      */
     protected $kernel;
 

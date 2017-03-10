@@ -1,4 +1,4 @@
-'use strict';
+'use babel';
 
 export default class Loading {
     constructor(term) {
@@ -8,7 +8,7 @@ export default class Loading {
             prompt: null,
             delay: 50,
             intervalId: null,
-            counter: 0
+            counter: 0,
         });
     }
 

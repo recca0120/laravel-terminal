@@ -29,7 +29,7 @@ class TerminalController extends Controller
     /**
      * __construct.
      *
-     * @param \Illuminate\Http\Request         $request
+     * @param \Illuminate\Http\Request $request
      * @param \Illuminate\Contracts\Routing\ResponseFactory $responseFactory
      */
     public function __construct(Request $request, ResponseFactory $responseFactory)
@@ -41,7 +41,7 @@ class TerminalController extends Controller
     /**
      * index.
      *
-     * @param \Recca0120\Terminal\TerminalManager   $terminalManger
+     * @param \Recca0120\Terminal\TerminalManager $terminalManger
      * @param string $view
      * @return \Illuminate\Http\Response
      */
@@ -65,7 +65,7 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param \Recca0120\Terminal\TerminalManager   $terminalManger
+     * @param \Recca0120\Terminal\TerminalManager $terminalManger
      * @return \Illuminate\Http\JsonResponse
      */
     public function endpoint(TerminalManager $terminalManger)

@@ -1,27 +1,29 @@
-import '../jquery';
-import '../polyfill';
+'use babel';
+
+import $ from 'jquery';
 
 export default class Command {
     constructor(api, options) {
         Object.assign(this, {
-            api: api,
-            requestId: 0
+            api,
+            options,
+            requestId: 0,
         });
     }
 
-    match(name) {
-        return false;
+    match(name = false) {
+        return name;
     }
 
     call(cmd) {
         this.api.loading.show();
         this.makeRequest(cmd.command).then((response) => {
-            let responseResult = response.result ? response.result : response;
+            const responseResult = response.result ? response.result : response;
             this.api.loading.hide();
             this.api.echo(responseResult);
             this.api.serverInfo();
         }, (response) => {
-            let responseResult = response.result ? response.result : response;
+            const responseResult = response.result ? response.result : response;
             this.api.loading.hide();
             this.api.echo(responseResult);
             this.api.serverInfo();
@@ -29,7 +31,7 @@ export default class Command {
     }
 
     addslashes(str) {
-        return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+        return (String(str)).replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
     }
 
     makeRequest(command) {
@@ -39,12 +41,12 @@ export default class Command {
                 dataType: 'json',
                 type: 'post',
                 headers: {
-                    'X-CSRF-TOKEN': this.api.options.csrfToken
+                    'X-CSRF-TOKEN': this.api.options.csrfToken,
                 },
                 data: {
                     jsonrpc: '2.0',
                     id: ++this.requestId,
-                    command: command
+                    command,
                 },
                 success: (response) => {
                     if (response.error !== 0) {
@@ -56,9 +58,9 @@ export default class Command {
                 },
                 error: (jqXhr, json, errorThrown) => {
                     reject({
-                        result: `${jqXhr.status}: ${errorThrown}`
+                        result: `${jqXhr.status}: ${errorThrown}`,
                     });
-                }
+                },
             });
         });
     }
