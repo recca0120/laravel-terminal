@@ -24,8 +24,8 @@ mix.webpackConfig({
     module: {
         noParse: [
             /jquery/i
-        ]
-    }
+        ],
+    },
   })
   .js(['resources/assets/js/app.js'], 'public/js/terminal.js')
   .sass('resources/assets/sass/app.scss', 'public/css/terminal.css');
