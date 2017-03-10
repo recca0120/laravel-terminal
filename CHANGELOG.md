@@ -6,7 +6,6 @@ All notable changes to `laravel-terminal` will be documented in this file
 
 - js 改為 laravel-mix compile
 - 修正 js bug
-- 
 
 ## 1.6.8 - 2017-03-09
 
