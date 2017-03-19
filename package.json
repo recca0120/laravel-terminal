@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "codemirror": "^5.24.2",
-    "jquery": "^3.1.1",
+    "jquery": "^3.2.0",
     "jquery-migrate": "^3.0.0",
     "jquery-mousewheel": "^3.1.13",
     "jquery.terminal": "^1.0.10"
