@@ -1,6 +1,6 @@
 'use babel';
 
-import $ from 'jquery';
+import $ from '../bootstrap';
 import CodeMirror from 'codemirror';
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';

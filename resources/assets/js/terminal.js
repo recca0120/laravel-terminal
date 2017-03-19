@@ -1,6 +1,6 @@
 'use babel';
 
-import $ from 'jquery';
+import $ from './bootstrap';
 import OutputFormatter from './output-formatter';
 import Loading from './loading';
 import Artisan from './commands/artisan';

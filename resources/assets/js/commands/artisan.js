@@ -1,6 +1,6 @@
 'use babel';
 
-import $ from 'jquery';
+import $ from '../bootstrap';
 import Command from './command';
 
 export default class Artisan extends Command {

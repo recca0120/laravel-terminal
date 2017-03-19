@@ -1,6 +1,8 @@
 'use babel';
 
-import $ from 'jquery';
+import $ from './bootstrap';
+
+console.log($.fn)
 
 class OutputFormatterStyle {
     constructor(foreground = 'white', background = 'black', options = []) {

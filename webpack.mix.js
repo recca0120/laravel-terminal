@@ -15,10 +15,10 @@ const path = require('path');
 mix.webpackConfig({
     resolve: {
       alias: {
-        $: path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
-        jQuery: path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
-        jquery: path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
-        'window.jQuery': path.normalize(`${__dirname}/node_modules/jquery/dist/jquery.min.js`),
+        $: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
+        jQuery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
+        jquery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
+        'window.jQuery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
       },
     },
     module: {

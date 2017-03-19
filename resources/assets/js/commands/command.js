@@ -1,6 +1,6 @@
 'use babel';
 
-import $ from 'jquery';
+import $ from '../bootstrap';
 
 export default class Command {
     constructor(api, options) {
