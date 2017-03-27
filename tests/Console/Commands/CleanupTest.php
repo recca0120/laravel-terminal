@@ -12,16 +12,6 @@ use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
 
 class CleanupTest extends TestCase
 {
-    protected function mockProperty($object, $propertyName, $value)
-    {
-        $reflectionClass = new \ReflectionClass($object);
-
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
-    }
-
     protected function tearDown()
     {
         m::close();
@@ -163,5 +153,15 @@ class CleanupTest extends TestCase
                 ],
             ],
         ], vfsStream::inspect(new vfsStreamStructureVisitor())->getStructure());
+    }
+
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
     }
 }

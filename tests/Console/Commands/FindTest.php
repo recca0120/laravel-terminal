@@ -15,16 +15,6 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class FindTest extends TestCase
 {
-    protected function mockProperty($object, $propertyName, $value)
-    {
-        $reflectionClass = new \ReflectionClass($object);
-
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
-    }
-
     protected function setUp()
     {
         $structure = [
@@ -295,5 +285,15 @@ class FindTest extends TestCase
         $property = $reflectionClass->getProperty('input');
         $property->setAccessible(true);
         $this->assertSame("'./' -N '*' -T d -M 0 -d true", str_replace('"', "'", (string) $property->getValue($command)));
+    }
+
+    protected function mockProperty($object, $propertyName, $value)
+    {
+        $reflectionClass = new \ReflectionClass($object);
+
+        $property = $reflectionClass->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+        $property->setAccessible(false);
     }
 }

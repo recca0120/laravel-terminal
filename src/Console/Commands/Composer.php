@@ -43,6 +43,25 @@ class Composer extends Command
     }
 
     /**
+     * handle.
+     */
+    public function fire()
+    {
+        $this->install();
+
+        $command = trim($this->option('command'));
+        if (empty($command) === true) {
+            $command = 'help';
+        }
+
+        $input = new StringInput($command);
+        $output = $this->getOutput();
+        $application = new \Composer\Console\Application();
+        $application->setAutoExit(false);
+        $application->run($input, $output);
+    }
+
+    /**
      * install.
      */
     protected function install()
@@ -108,25 +127,6 @@ class Composer extends Command
 
         $basePath = $this->getLaravel()->basePath();
         chdir($basePath);
-    }
-
-    /**
-     * handle.
-     */
-    public function fire()
-    {
-        $this->install();
-
-        $command = trim($this->option('command'));
-        if (empty($command) === true) {
-            $command = 'help';
-        }
-
-        $input = new StringInput($command);
-        $output = $this->getOutput();
-        $application = new \Composer\Console\Application();
-        $application->setAutoExit(false);
-        $application->run($input, $output);
     }
 
     /**
