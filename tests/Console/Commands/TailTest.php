@@ -89,7 +89,7 @@ class TailTest extends TestCase
     public function testFire()
     {
         $command = new Tail(
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
@@ -100,7 +100,7 @@ class TailTest extends TestCase
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $laravel->shouldReceive('storagePath')->once()->andReturn($storagePath = $this->root->url());
-        $filesystem->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
+        $files->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
             return Glob::glob($path);
         });
 
@@ -110,7 +110,7 @@ class TailTest extends TestCase
     public function testFirePath()
     {
         $command = new Tail(
-            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+            $files = m::mock('Illuminate\Filesystem\Filesystem')
         );
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);

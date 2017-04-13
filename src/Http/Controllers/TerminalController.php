@@ -90,15 +90,15 @@ class TerminalController extends Controller
     /**
      * media.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Filesystem\Filesystem $files
      * @param string $file
      * @return \Illuminate\Http\Response
      */
-    public function media(Filesystem $filesystem, $file)
+    public function media(Filesystem $files, $file)
     {
         $filename = __DIR__.'/../../../public/'.$file;
         $mimeType = strpos($filename, '.css') !== false ? 'text/css' : 'application/javascript';
-        $lastModified = $filesystem->lastModified($filename);
+        $lastModified = $files->lastModified($filename);
         $eTag = sha1_file($filename);
         $headers = [
             'content-type' => $mimeType,

@@ -24,21 +24,22 @@ class Cleanup extends Command
     protected $description = 'cleanup vendor folder';
 
     /**
-     * $filesystem.
+     * $files.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
-    protected $filesystem;
+    protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Filesystem\Filesystem $files
      */
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $files)
     {
         parent::__construct();
-        $this->filesystem = $filesystem;
+
+        $this->files = $files;
     }
 
     /**
@@ -88,11 +89,11 @@ class Cleanup extends Command
         ])
         ->filter()
         ->each(function ($item) {
-            if ($this->filesystem->isDirectory($item) === true) {
-                $this->filesystem->deleteDirectory($item);
+            if ($this->files->isDirectory($item) === true) {
+                $this->files->deleteDirectory($item);
                 $this->info('delete directory: '.$item);
-            } elseif ($this->filesystem->isFile($item)) {
-                $this->filesystem->delete($item);
+            } elseif ($this->files->isFile($item)) {
+                $this->files->delete($item);
                 $this->info('delete file: '.$item);
             }
         });

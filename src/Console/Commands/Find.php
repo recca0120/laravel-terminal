@@ -36,23 +36,24 @@ class Find extends Command
     protected $finder;
 
     /**
-     * $filesystem.
+     * $files.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
-    protected $filesystem;
+    protected $files;
 
     /**
      * __construct.
      *
      * @param \Symfony\Component\Finder\Finder  $finder
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Filesystem\Filesystem $files
      */
-    public function __construct(Finder $finder, Filesystem $filesystem)
+    public function __construct(Finder $finder, Filesystem $files)
     {
         parent::__construct();
+
         $this->finder = $finder;
-        $this->filesystem = $filesystem;
+        $this->files = $files;
     }
 
     /**
@@ -116,13 +117,13 @@ class Find extends Command
 
         foreach ($this->finder->getIterator() as $file) {
             $realPath = $file->getRealpath();
-            if ($delete === true && $this->filesystem->exists($realPath) === true) {
+            if ($delete === true && $this->files->exists($realPath) === true) {
                 $removed = false;
                 try {
-                    if ($this->filesystem->isDirectory($realPath) === true) {
-                        $removed = $this->filesystem->deleteDirectory($realPath);
+                    if ($this->files->isDirectory($realPath) === true) {
+                        $removed = $this->files->deleteDirectory($realPath);
                     } else {
-                        $removed = $this->filesystem->delete($realPath);
+                        $removed = $this->files->delete($realPath);
                     }
                 } catch (Exception $e) {
                     $removed = false;

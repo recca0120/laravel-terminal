@@ -25,21 +25,22 @@ class Composer extends Command
     protected $description = 'composer';
 
     /**
-     * $filesystem.
+     * $files.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
-    protected $filesystem;
+    protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Filesystem\Filesystem $files
      */
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $files)
     {
         parent::__construct();
-        $this->filesystem = $filesystem;
+
+        $this->files = $files;
     }
 
     /**
@@ -68,20 +69,20 @@ class Composer extends Command
     {
         $storagePath = $this->getLaravel()->storagePath();
         $composerPath = $storagePath.'/app/composer/';
-        if ($this->filesystem->exists($composerPath.'vendor/autoload.php') === false) {
-            if ($this->filesystem->isDirectory($composerPath) === false) {
-                $this->filesystem->makeDirectory($composerPath, 0777);
+        if ($this->files->exists($composerPath.'vendor/autoload.php') === false) {
+            if ($this->files->isDirectory($composerPath) === false) {
+                $this->files->makeDirectory($composerPath, 0777);
             }
-            $this->filesystem->put($composerPath.'composer.phar', file_get_contents('https://getcomposer.org/composer.phar'));
+            $this->files->put($composerPath.'composer.phar', file_get_contents('https://getcomposer.org/composer.phar'));
             $composerPhar = new Phar($composerPath.'composer.phar');
             $composerPhar->extractTo($composerPath);
             unset($composerPhar);
-            $this->filesystem->delete($composerPath.'composer.phar');
+            $this->files->delete($composerPath.'composer.phar');
         }
         if (empty(getenv('COMPOSER_HOME')) === true) {
             putenv('COMPOSER_HOME='.$composerPath);
         }
-        $this->filesystem->getRequire($composerPath.'vendor/autoload.php');
+        $this->files->getRequire($composerPath.'vendor/autoload.php');
         $this->init();
     }
 

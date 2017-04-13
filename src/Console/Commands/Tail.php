@@ -25,21 +25,22 @@ class Tail extends Command
     protected $description = 'tail command';
 
     /**
-     * $filesystem.
+     * $files.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
-    protected $filesystem;
+    protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Filesystem\Filesystem $files
      */
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $files)
     {
         parent::__construct();
-        $this->filesystem = $filesystem;
+
+        $this->files = $files;
     }
 
     /**
@@ -59,7 +60,7 @@ class Tail extends Command
                 $this->getLaravel()->storagePath() : getcwd();
             $path = rtrim($path, '/').'/';
 
-            $file = (new Collection($this->filesystem->glob($path.'logs/*.log')))
+            $file = (new Collection($this->files->glob($path.'logs/*.log')))
                 ->map(function ($file) {
                     return is_file($file) === true ? $file : false;
                 })->sortByDesc(function ($file) {

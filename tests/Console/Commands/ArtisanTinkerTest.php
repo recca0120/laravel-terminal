@@ -22,7 +22,7 @@ class ArtisanTinkerTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'echo 123');
         $command->fire();
-        $this->assertSame("123\n=> ", $output->fetch());
+        $this->assertSame("123\n=> ", $this->lf($output->fetch()));
     }
 
     public function testFireVarDump()
@@ -45,7 +45,7 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'new stdClass;');
         $command->fire();
 
-        $this->assertSame("=> stdClass::__set_state(array(\n))\n", $output->fetch());
+        $this->assertSame("=> stdClass::__set_state(array(\n))\n", $this->lf($output->fetch()));
     }
 
     public function testFireArray()
@@ -57,7 +57,7 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "['foo' => 'bar'];");
         $command->fire();
 
-        $this->assertSame("=> array (\n  'foo' => 'bar',\n)\n", $output->fetch());
+        $this->assertSame("=> array (\n  'foo' => 'bar',\n)\n", $this->lf($output->fetch()));
     }
 
     public function testFireString()
@@ -69,7 +69,7 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "'abc'");
         $command->fire();
 
-        $this->assertSame("=> abc\n", $output->fetch());
+        $this->assertSame("=> abc\n", $this->lf($output->fetch()));
     }
 
     public function testNumeric()
@@ -81,7 +81,7 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = '123');
         $command->fire();
 
-        $this->assertSame("=> 123\n", $output->fetch());
+        $this->assertSame("=> 123\n", $this->lf($output->fetch()));
     }
 
     protected function mockProperty($object, $propertyName, $value)
@@ -92,5 +92,10 @@ class ArtisanTinkerTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($object, $value);
         $property->setAccessible(false);
+    }
+
+    protected function lf($content)
+    {
+        return str_replace("\r\n", "\n", $content);
     }
 }

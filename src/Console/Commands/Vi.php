@@ -24,21 +24,22 @@ class Vi extends Command
     protected $description = 'Vi Editor';
 
     /**
-     * $filesystem.
+     * $files.
      *
      * @var \Illuminate\Filesystem\Filesystem
      */
-    protected $filesystem;
+    protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Filesystem\Filesystem $files
      */
-    public function __construct(Filesystem $filesystem)
+    public function __construct(Filesystem $files)
     {
         parent::__construct();
-        $this->filesystem = $filesystem;
+
+        $this->files = $files;
     }
 
     /**
@@ -53,9 +54,9 @@ class Vi extends Command
         $path = trim($root, '/').'/'.$path;
 
         if (is_null($text) === false) {
-            $this->filesystem->put($path, $text);
+            $this->files->put($path, $text);
         } else {
-            $this->line($this->filesystem->get($path));
+            $this->line($this->files->get($path));
         }
     }
 

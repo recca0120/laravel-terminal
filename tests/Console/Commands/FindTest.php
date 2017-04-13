@@ -35,7 +35,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -69,7 +69,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -104,7 +104,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -139,7 +139,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -166,7 +166,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -201,7 +201,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -235,7 +235,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -262,7 +262,7 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
-        $filesystem->shouldReceive('isDirectory')->andThrow(new Exception());
+        $files->shouldReceive('isDirectory')->andThrow(new Exception());
         $command->fire();
     }
 
@@ -270,7 +270,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+            $files = m::mock('Illuminate\Filesystem\Filesystem')
         );
 
         $command->setLaravel(

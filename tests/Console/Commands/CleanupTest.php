@@ -125,7 +125,7 @@ class CleanupTest extends TestCase
         $root = vfsStream::setup('root', null, $structure);
 
         $command = new Cleanup(
-            $filesystem = m::mock(new Filesystem)
+            $files = m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));

@@ -17,7 +17,7 @@ class ViTest extends TestCase
     public function testFireRead()
     {
         $command = new Vi(
-            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+            $files = m::mock('Illuminate\Filesystem\Filesystem')
         );
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
@@ -30,7 +30,7 @@ class ViTest extends TestCase
         );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = 'foo/');
 
-        $filesystem->shouldReceive('get')->with($basePath.$path);
+        $files->shouldReceive('get')->with($basePath.$path);
 
         $command->fire();
     }
@@ -38,7 +38,7 @@ class ViTest extends TestCase
     public function testFireWrite()
     {
         $command = new Vi(
-            $filesystem = m::mock('Illuminate\Filesystem\Filesystem')
+            $files = m::mock('Illuminate\Filesystem\Filesystem')
         );
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
@@ -51,7 +51,7 @@ class ViTest extends TestCase
         );
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = 'foo/');
 
-        $filesystem->shouldReceive('put')->with($basePath.$path, $text);
+        $files->shouldReceive('put')->with($basePath.$path, $text);
 
         $command->fire();
     }
