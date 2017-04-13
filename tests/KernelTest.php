@@ -5,7 +5,6 @@ namespace Recca0120\Terminal\Tests;
 use Mockery as m;
 use Recca0120\Terminal\Kernel;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Contracts\Queue\Queue;
 
 class KernelTest extends TestCase
 {
