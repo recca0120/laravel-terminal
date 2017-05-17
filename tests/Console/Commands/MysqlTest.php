@@ -12,6 +12,7 @@ class MysqlTest extends TestCase
 {
     protected function tearDown()
     {
+        parent::tearDown();
         m::close();
     }
 
@@ -31,7 +32,7 @@ class MysqlTest extends TestCase
             new stdClass,
         ]);
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     protected function mockProperty($object, $propertyName, $value)

@@ -88,15 +88,15 @@ class TerminalServiceProvider extends ServiceProvider
     protected function handlePublishes()
     {
         $this->publishes([
-            __DIR__.'/../config/terminal.php' => $this->app->configPath().'/terminal.php',
+            __DIR__.'/../config/terminal.php' => config_path('terminal.php'),
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../resources/views' => $this->app->basePath().'/resources/views/vendor/terminal',
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),
         ], 'views');
 
         $this->publishes([
-            __DIR__.'/../public' => $this->app['path.public'].'/vendor/terminal',
+            __DIR__.'/../public' => public_path('vendor/terminal'),
         ], 'public');
     }
 }

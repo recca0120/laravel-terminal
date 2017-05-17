@@ -11,6 +11,7 @@ class ViTest extends TestCase
 {
     protected function tearDown()
     {
+        parent::tearDown();
         m::close();
     }
 
@@ -32,7 +33,7 @@ class ViTest extends TestCase
 
         $files->shouldReceive('get')->with($basePath.$path);
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireWrite()
@@ -53,7 +54,7 @@ class ViTest extends TestCase
 
         $files->shouldReceive('put')->with($basePath.$path, $text);
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     protected function mockProperty($object, $propertyName, $value)

@@ -14,6 +14,7 @@ class TailTest extends TestCase
 {
     protected function setUp()
     {
+        parent::setUp();
         $structure = [
             'logs' => [
                 '1.log' => '
@@ -83,6 +84,7 @@ class TailTest extends TestCase
 
     protected function tearDown()
     {
+        parent::tearDown();
         m::close();
     }
 
@@ -104,7 +106,7 @@ class TailTest extends TestCase
             return Glob::glob($path);
         });
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFirePath()
@@ -123,7 +125,7 @@ class TailTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
         $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     protected function mockProperty($object, $propertyName, $value)

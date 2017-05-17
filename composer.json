@@ -23,7 +23,7 @@
         "mikey179/vfsStream": "^1.6",
         "mockery/mockery": "~0.9.4",
         "nesbot/carbon": "~1.20",
-        "phpunit/phpunit": "~4.8|~5.4"
+        "phpunit/phpunit": "~4.8|~5.4|~6.1"
     },
     "autoload": {
         "files": [

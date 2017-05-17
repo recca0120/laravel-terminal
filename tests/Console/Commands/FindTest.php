@@ -17,6 +17,7 @@ class FindTest extends TestCase
 {
     protected function setUp()
     {
+        parent::setUp();
         $structure = [
             'foo' => [
                 'foo' => 'foo',
@@ -28,6 +29,7 @@ class FindTest extends TestCase
 
     protected function tearDown()
     {
+        parent::tearDown();
         m::close();
     }
 
@@ -62,7 +64,7 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireFindNameByDirectory()
@@ -97,7 +99,7 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireFindNameByFile()
@@ -132,7 +134,7 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireFindMaxDepthIsZero()
@@ -159,7 +161,7 @@ class FindTest extends TestCase
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireFindMaxDepthBiggerZero()
@@ -194,7 +196,7 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireDelete()
@@ -228,7 +230,7 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireDeleteAndThrowException()

@@ -3,13 +3,25 @@
 namespace Recca0120\Terminal\Tests;
 
 use Mockery as m;
+use Illuminate\Container\Container;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\TerminalServiceProvider;
 
 class TerminalServiceProviderTest extends TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        $container = m::mock(new Container);
+        $container->instance('path.public', __DIR__);
+        $container->instance('path.config', __DIR__);
+        $container->shouldReceive('basePath')->andReturn(__DIR__);
+        Container::setInstance($container);
+    }
+
     protected function tearDown()
     {
+        parent::tearDown();
         m::close();
     }
 
@@ -35,7 +47,7 @@ class TerminalServiceProviderTest extends TestCase
                 $app->shouldReceive('version')->once()->andReturn('testing');
                 $events->shouldReceive('fire');
                 $events->shouldReceive('dispatch');
-                $closure($app);
+                $this->assertInstanceOf('Recca0120\Terminal\Application', $closure($app));
 
                 return true;
             })
@@ -60,7 +72,7 @@ class TerminalServiceProviderTest extends TestCase
                 $app->shouldReceive('environment')->once()->andReturn($environment = 'foo');
                 $app->shouldReceive('version')->once()->andReturn($version = 'foo');
                 $url->shouldReceive('route')->once()->with('foo.endpoint')->andReturn('foo');
-                $closure($app);
+                $this->assertInstanceOf('Recca0120\Terminal\TerminalManager', $closure($app));
 
                 return true;
             })
@@ -103,11 +115,8 @@ class TerminalServiceProviderTest extends TestCase
         }));
 
         $app->shouldReceive('runningInConsole')->once()->andReturn(true);
-        $app->shouldReceive('configPath');
-        $app->shouldReceive('basePath');
-        $app->shouldReceive('offsetGet')->with('path.public');
         $app->shouldReceive('resourcePath');
 
-        $serviceProvider->boot($request, $router);
+        $this->assertNull($serviceProvider->boot($request, $router));
     }
 }

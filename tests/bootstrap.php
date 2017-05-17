@@ -49,6 +49,24 @@ if (function_exists('env') === false) {
     }
 }
 
+if (function_exists('public_path') === false) {
+    function public_path()
+    {
+    }
+}
+
+if (function_exists('config_path') === false) {
+    function config_path()
+    {
+    }
+}
+
+if (function_exists('base_path') === false) {
+    function base_path()
+    {
+    }
+}
+
 if (class_exists('Route') === false) {
     class Route
     {
