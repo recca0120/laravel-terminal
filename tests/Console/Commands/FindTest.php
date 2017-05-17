@@ -265,7 +265,7 @@ class FindTest extends TestCase
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
         $files->shouldReceive('isDirectory')->andThrow(new Exception());
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testRun()

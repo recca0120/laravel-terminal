@@ -34,7 +34,7 @@ class ApplicationTest extends TestCase
         );
         $command = 'help';
         $parameters = ['--foo'];
-        $application->call($command, $parameters);
+        $this->assertSame(0, $application->call($command, $parameters));
     }
 
     public function testCallAndRequestIsAjax()
@@ -55,7 +55,7 @@ class ApplicationTest extends TestCase
         );
         $command = 'help';
         $parameters = ['--foo'];
-        $application->call($command, $parameters);
+        $this->assertSame(0, $application->call($command, $parameters));
     }
 
     public function testResolveCommands()
@@ -74,7 +74,7 @@ class ApplicationTest extends TestCase
         $laravel->shouldReceive('make')->once()->with(
             $command = 'Symfony\Component\Console\Command\HelpCommand'
         )->andReturn(new HelpCommand);
-        $application->resolveCommands($command, true);
+        $this->assertSame($application, $application->resolveCommands($command, true));
     }
 
     public function testRun()
@@ -91,9 +91,9 @@ class ApplicationTest extends TestCase
             $version = 'testing'
         );
 
-        $application->run(
+        $this->assertSame(0, $application->run(
             $input = m::spy('Symfony\Component\Console\Input\InputInterface'),
             $output = m::spy('Symfony\Component\Console\Output\OutputInterface')
-        );
+        ));
     }
 }

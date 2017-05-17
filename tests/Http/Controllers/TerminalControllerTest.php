@@ -29,8 +29,10 @@ class TerminalControllerTest extends TestCase
         $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
             'options' => json_encode(array_merge($config, ['csrfToken' => $token, 'helpInfo' => $output])),
             'id' => null,
-        ]);
-        $controller->index($terminalManager, 'index');
+        ])->andReturn(
+            $view = m::mock('Illuminate\Contracts\View\View')
+        );
+        $this->assertSame($view, $controller->index($terminalManager, 'index'));
     }
 
     public function testEndpoint()

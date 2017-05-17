@@ -53,7 +53,7 @@ class KernelTest extends TestCase
             $command = 'foo',
             $parameters = ['foo' => 'bar'],
         ]);
-        $kernel->queue($command, $parameters);
+        $this->assertNull($kernel->queue($command, $parameters));
     }
 
     public function testAll()

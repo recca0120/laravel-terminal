@@ -28,7 +28,7 @@ class ArtisanTest extends TestCase
             return (string) $input === $cmd;
         }), $output);
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     public function testFireForceCommand()
@@ -44,7 +44,7 @@ class ArtisanTest extends TestCase
             return (string) $input === $cmd.' --force';
         }), $output);
 
-        $command->fire();
+        $this->assertNull($command->fire());
     }
 
     /**

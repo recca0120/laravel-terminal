@@ -33,7 +33,7 @@ class ArtisanTinkerTest extends TestCase
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'var_dump(123)');
-        $command->fire();
+        $this->assertNull($command->fire());
         // $this->assertSame("int(123)\n\n=> ", $output->fetch());
     }
 
