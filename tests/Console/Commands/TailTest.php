@@ -6,6 +6,7 @@ use Mockery as m;
 use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Tail;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -80,6 +81,10 @@ class TailTest extends TestCase
             ],
         ];
         $this->root = vfsStream::setup('root', null, $structure);
+        $container = m::mock(new Container);
+        $container->shouldReceive('basePath')->andReturn($this->root->url());
+        $container->instance('path.storage', $this->root->url());
+        Container::setInstance($container);
     }
 
     protected function tearDown()
@@ -101,7 +106,7 @@ class TailTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('storagePath')->once()->andReturn($storagePath = $this->root->url());
+        $storagePath = $this->root->url();
         $files->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
             return Glob::glob($path);
         });
@@ -123,7 +128,6 @@ class TailTest extends TestCase
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/5.log');
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
 
         $this->assertNull($command->fire());
     }

@@ -4,11 +4,20 @@ namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
 use Recca0120\Terminal\Console\Commands\Vi;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class ViTest extends TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        $container = m::mock(new Container);
+        $container->shouldReceive('basePath')->andReturn('foo/');
+        Container::setInstance($container);
+    }
+
     protected function tearDown()
     {
         parent::tearDown();
@@ -29,7 +38,7 @@ class ViTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = 'foo/');
+        $basePath = 'foo/';
 
         $files->shouldReceive('get')->with($basePath.$path);
 
@@ -50,7 +59,7 @@ class ViTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = 'foo/');
+        $basePath = 'foo/';
 
         $files->shouldReceive('put')->with($basePath.$path, $text);
 

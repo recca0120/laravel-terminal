@@ -5,6 +5,7 @@ namespace Recca0120\Terminal\Tests\Console\Commands;
 use Mockery as m;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Cleanup;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -124,6 +125,9 @@ class CleanupTest extends TestCase
             ],
         ];
         $root = vfsStream::setup('root', null, $structure);
+        $container = m::mock(new Container);
+        $container->shouldReceive('basePath')->andReturn($basePath = $root->url());
+        Container::setInstance($container);
 
         $command = new Cleanup(
             $files = m::mock(new Filesystem)
@@ -135,8 +139,6 @@ class CleanupTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $root->url());
-
         $command->fire();
 
         $this->assertSame([

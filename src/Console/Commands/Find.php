@@ -87,8 +87,7 @@ class Find extends Command
         $maxDepth = $this->option('maxdepth');
         $delete = filter_var($this->option('delete'), FILTER_VALIDATE_BOOLEAN);
 
-        $root = is_null($this->getLaravel()) === false ?
-            $this->getLaravel()->basePath() : getcwd();
+        $root = function_exists('base_path') === true ? base_path() : getcwd();
         $path = rtrim($root, '/').'/'.$path;
 
         $this->finder->in($path);

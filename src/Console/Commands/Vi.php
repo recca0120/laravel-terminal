@@ -49,8 +49,7 @@ class Vi extends Command
     {
         $path = $this->argument('path');
         $text = $this->option('text');
-        $root = is_null($this->getLaravel()) === false ?
-            $this->getLaravel()->basePath() : getcwd();
+        $root = function_exists('base_path') === true ? base_path() : getcwd();
         $path = trim($root, '/').'/'.$path;
 
         if (is_null($text) === false) {

@@ -64,6 +64,14 @@ if (function_exists('config_path') === false) {
 if (function_exists('base_path') === false) {
     function base_path()
     {
+        return \Illuminate\Container\Container::getInstance()->basePath();
+    }
+}
+
+if (function_exists('storage_path') === false) {
+    function storage_path()
+    {
+        return \Illuminate\Container\Container::getInstance()->make('path.storage');
     }
 }
 

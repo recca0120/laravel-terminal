@@ -8,6 +8,7 @@ use Mockery as m;
 use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Find;
 use Symfony\Component\Console\Input\StringInput;
@@ -25,6 +26,9 @@ class FindTest extends TestCase
             ],
         ];
         $this->root = vfsStream::setup('root', null, $structure);
+        $container = m::mock(new Container);
+        $container->shouldReceive('basePath')->andReturn($this->root->url());
+        Container::setInstance($container);
     }
 
     protected function tearDown()
@@ -52,7 +56,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
@@ -86,7 +90,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
@@ -121,7 +125,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
@@ -156,7 +160,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
@@ -183,7 +187,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
@@ -218,7 +222,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
@@ -252,7 +256,7 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $laravel->shouldReceive('basePath')->once()->andReturn($basePath = $this->root->url());
+        $basePath = $this->root->url();
 
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);

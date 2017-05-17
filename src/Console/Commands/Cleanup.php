@@ -48,8 +48,7 @@ class Cleanup extends Command
     public function fire()
     {
         set_time_limit(0);
-        $root = is_null($this->getLaravel()) === false ?
-            $this->getLaravel()->basePath() : getcwd();
+        $root = function_exists('base_path') === true ? base_path() : getcwd();
         $root = rtrim($root, '/').'/';
 
         $docs = ['README*', 'CHANGELOG*', 'FAQ*', 'CONTRIBUTING*', 'HISTORY*', 'UPGRADING*', 'UPGRADE*', 'package*', 'demo', 'example', 'examples', 'doc', 'docs', 'readme*'];

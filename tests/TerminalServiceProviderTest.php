@@ -16,6 +16,7 @@ class TerminalServiceProviderTest extends TestCase
         $container->instance('path.public', __DIR__);
         $container->instance('path.config', __DIR__);
         $container->shouldReceive('basePath')->andReturn(__DIR__);
+        $container->shouldReceive('resourcePath')->andReturn(__DIR__);
         Container::setInstance($container);
     }
 
@@ -68,7 +69,7 @@ class TerminalServiceProviderTest extends TestCase
                 $app->shouldReceive('offsetGet')->once()->with('url')->andReturn(
                     $url = m::mock('Illuminate\Contracts\Routing\UrlGenerator')
                 );
-                $app->shouldReceive('basePath')->once()->andReturn($basePath = 'foo');
+
                 $app->shouldReceive('environment')->once()->andReturn($environment = 'foo');
                 $app->shouldReceive('version')->once()->andReturn($version = 'foo');
                 $url->shouldReceive('route')->once()->with('foo.endpoint')->andReturn('foo');
@@ -77,6 +78,9 @@ class TerminalServiceProviderTest extends TestCase
                 return true;
             })
         );
+
+        $app->shouldReceive('basePath')->andReturn($basePath = 'foo');
+
         $serviceProvider->register();
     }
 

@@ -52,12 +52,10 @@ class Tail extends Command
         $lines = (int) $this->option('lines');
 
         if (empty($path) === false) {
-            $root = is_null($this->getLaravel()) === false ?
-                $this->getLaravel()->basePath() : getcwd();
+            $root = function_exists('base_path') === true ? base_path() : getcwd();
             $file = rtrim($root, '/').'/'.$path;
         } else {
-            $path = is_null($this->getLaravel()) === false ?
-                $this->getLaravel()->storagePath() : getcwd();
+            $path = function_exists('storage_path') === true ? storage_path() : getcwd();
             $path = rtrim($path, '/').'/';
 
             $file = (new Collection($this->files->glob($path.'logs/*.log')))
