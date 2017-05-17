@@ -3,8 +3,8 @@
 namespace Recca0120\Terminal\Tests;
 
 use Mockery as m;
-use Illuminate\Container\Container;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
 use Recca0120\Terminal\TerminalServiceProvider;
 
 class TerminalServiceProviderTest extends TestCase
