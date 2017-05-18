@@ -118,6 +118,7 @@ class TerminalServiceProviderTest extends TestCase
         }));
 
         $app->shouldReceive('runningInConsole')->once()->andReturn(true);
+        $app->shouldReceive('basePath');
         $app->shouldReceive('resourcePath');
 
         $this->assertNull($serviceProvider->boot($request, $router));
