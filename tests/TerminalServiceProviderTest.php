@@ -31,9 +31,6 @@ class TerminalServiceProviderTest extends TestCase
         $serviceProvider = new TerminalServiceProvider(
             $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess')
         );
-
-        $app->shouldReceive('basePath')->andReturn($basePath = 'foo');
-
         $app->shouldReceive('offsetGet')->twice()->with('config')->andReturn(
             $config = m::mock('Illuminate\Contracts\Config\Repository, ArrayAccess')
         );
@@ -73,6 +70,7 @@ class TerminalServiceProviderTest extends TestCase
                     $url = m::mock('Illuminate\Contracts\Routing\UrlGenerator')
                 );
 
+                $app->shouldReceive('basePath')->andReturn($basePath = 'foo');
                 $app->shouldReceive('environment')->once()->andReturn($environment = 'foo');
                 $app->shouldReceive('version')->once()->andReturn($version = 'foo');
                 $url->shouldReceive('route')->once()->with('foo.endpoint')->andReturn('foo');
