@@ -40,9 +40,11 @@ class ViTest extends TestCase
         );
         $basePath = 'foo/';
 
-        $files->shouldReceive('get')->with($basePath.$path);
+        $files->shouldReceive('get')->with($basePath.$path)->andReturn($text = 'foo');
 
-        $this->assertNull($command->fire());
+        $command->fire();
+
+        $this->assertContains($text, $output->fetch());
     }
 
     public function testFireWrite()
@@ -63,7 +65,9 @@ class ViTest extends TestCase
 
         $files->shouldReceive('put')->with($basePath.$path, $text);
 
-        $this->assertNull($command->fire());
+        $command->fire();
+
+        $this->assertEmpty($output->fetch());
     }
 
     protected function mockProperty($object, $propertyName, $value)

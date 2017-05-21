@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
-use stdClass;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Mysql;
@@ -29,10 +28,11 @@ class MysqlTest extends TestCase
             $connection = m::mock('Illuminate\Database\ConnectionInterface')
         );
         $connection->shouldReceive('select')->once()->with($query)->andReturn($rows = [
-            new stdClass,
+            ['name' => 'name', 'email' => 'email'],
         ]);
 
-        $this->assertNull($command->fire());
+        $command->fire();
+        $this->assertContains('email', $output->fetch());
     }
 
     protected function mockProperty($object, $propertyName, $value)

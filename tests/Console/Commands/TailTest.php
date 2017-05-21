@@ -111,7 +111,9 @@ class TailTest extends TestCase
             return Glob::glob($path);
         });
 
-        $this->assertNull($command->fire());
+        $command->fire();
+
+        $this->assertContains('1.log', $output->fetch());
     }
 
     public function testFirePath()
@@ -129,7 +131,9 @@ class TailTest extends TestCase
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/5.log');
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
 
-        $this->assertNull($command->fire());
+        $command->fire();
+
+        $this->assertContains('5.log', $output->fetch());
     }
 
     protected function mockProperty($object, $propertyName, $value)

@@ -34,7 +34,7 @@ class ArtisanTinkerTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'var_dump(123)');
         $this->assertNull($command->fire());
-        // $this->assertSame("int(123)\n\n=> ", $output->fetch());
+        $this->assertSame("int(123)\n\n=> ", $this->lf($output->fetch()));
     }
 
     public function testFireObject()

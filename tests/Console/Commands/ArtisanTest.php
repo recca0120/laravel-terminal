@@ -41,10 +41,12 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'migrate');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
+            $this->assertSame((string) $input, $cmd.' --force');
+
             return (string) $input === $cmd.' --force';
         }), $output);
 
-        $this->assertNull($command->fire());
+        $command->fire();
     }
 
     /**
