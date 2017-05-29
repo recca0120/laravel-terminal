@@ -30,8 +30,9 @@ class ArtisanTinker extends Command
         $code = trim(trim($command), ';').';';
         $result = null;
         if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
+            error_reporting(-1);
             ob_start();
-            eval($code);
+            @eval($code);
             $this->line(ob_get_clean());
         } else {
             eval('$result = '.$code);
