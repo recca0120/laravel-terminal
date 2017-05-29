@@ -81,6 +81,14 @@ class TailTest extends TestCase
             ],
         ];
         $this->root = vfsStream::setup('root', null, $structure);
+        $i = 0;
+        foreach ($structure as $directory => $files) {
+            foreach ($files as $file => $content) {
+                $this->root->getChild($directory.'/'.$file)->lastAttributeModified(time() + $i);
+                $i++;
+            }
+        }
+
         $container = m::mock(new Container);
         $container->shouldReceive('basePath')->andReturn($this->root->url());
         $container->instance('path.storage', $this->root->url());
@@ -113,7 +121,7 @@ class TailTest extends TestCase
 
         $command->fire();
 
-        $this->assertContains('1.log', $output->fetch());
+        $this->assertContains('5.log', $output->fetch());
     }
 
     public function testFirePath()
@@ -128,12 +136,12 @@ class TailTest extends TestCase
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
 
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/5.log');
+        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/1.log');
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
 
         $command->fire();
 
-        $this->assertContains('5.log', $output->fetch());
+        $this->assertContains('1.log', $output->fetch());
     }
 
     protected function mockProperty($object, $propertyName, $value)
