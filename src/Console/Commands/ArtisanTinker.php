@@ -36,6 +36,7 @@ class ArtisanTinker extends Command
 
         if (empty($output) === false) {
             $this->line($output);
+            $result = null;
         }
 
         $this->getOutput()->write('=> ');
@@ -56,11 +57,16 @@ class ArtisanTinker extends Command
     protected function executeCode($code)
     {
         $result = null;
-        if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
-            eval($code);
-        } else {
-            eval('$result = '.$code);
+        if (strpos($code, 'echo') === false && strpos($code, 'var_dump') === false) {
+            $code = 'return '.$code;
         }
+
+        $tmpfname = tempnam(sys_get_temp_dir(), "artisan-thinker");
+        $handle = fopen($tmpfname, "w+");
+        fwrite($handle, "<?php\n" . $code);
+        fclose($handle);
+        $result = require $tmpfname;
+        unlink($tmpfname);
 
         return $result;
     }
