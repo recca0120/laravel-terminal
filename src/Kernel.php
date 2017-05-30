@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal;
 
+use Illuminate\Support\Arr;
 use Recca0120\Terminal\Application as Artisan;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
 
@@ -15,6 +16,13 @@ class Kernel implements KernelContract
     protected $artisan;
 
     /**
+     * $config.
+     *
+     * @var array
+     */
+    protected $config;
+
+    /**
      * The Artisan commands provided by the application.
      *
      * @var array
@@ -26,9 +34,29 @@ class Kernel implements KernelContract
      *
      * @param \Recca0120\Terminal\Application $artisan
      */
-    public function __construct(Artisan $artisan)
+    public function __construct(Artisan $artisan, $config = [])
     {
         $this->artisan = $artisan;
+        $this->config = Arr::except(array_merge([
+            'username' => 'LARAVEL',
+            'hostname' => php_uname('n'),
+            'os' => PHP_OS,
+        ], $config), [
+            'enabled',
+            'whitelists',
+            'route',
+            'commands',
+        ]);
+    }
+
+    /**
+     * getConfig.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**

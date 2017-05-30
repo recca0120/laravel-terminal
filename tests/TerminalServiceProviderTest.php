@@ -3,6 +3,7 @@
 namespace Recca0120\Terminal\Tests;
 
 use Mockery as m;
+use Recca0120\Terminal\Kernel;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Recca0120\Terminal\TerminalServiceProvider;
@@ -55,28 +56,22 @@ class TerminalServiceProviderTest extends TestCase
         );
 
         $app->shouldReceive('singleton')->once()->with(
-            'Recca0120\Terminal\Kernel', 'Recca0120\Terminal\Kernel'
-        );
-
-        $app->shouldReceive('singleton')->once()->with(
-            'Recca0120\Terminal\TerminalManager', m::on(function ($closure) use ($app) {
+            'Recca0120\Terminal\Kernel', m::on(function ($closure) use ($app) {
                 $app->shouldReceive('offsetGet')->once()->with('config')->andReturn(
                     $config = ['terminal' => ['route' => ['as' => 'foo.']]]
                 );
-                $app->shouldReceive('make')->once()->with('Recca0120\Terminal\Kernel')->andReturn(
-                    $kernel = m::mock('Recca0120\Terminal\Kernel')
+                $app->shouldReceive('offsetGet')->once()->with('Recca0120\Terminal\Application')->andReturn(
+                    $artisan = m::mock('Recca0120\Terminal\Application')
                 );
                 $app->shouldReceive('offsetGet')->once()->with('url')->andReturn(
                     $url = m::mock('Illuminate\Contracts\Routing\UrlGenerator')
                 );
-
                 $app->shouldReceive('basePath')->andReturn($basePath = 'foo');
                 $app->shouldReceive('environment')->once()->andReturn($environment = 'foo');
                 $app->shouldReceive('version')->once()->andReturn($version = 'foo');
                 $url->shouldReceive('route')->once()->with('foo.endpoint')->andReturn('foo');
-                $this->assertInstanceOf('Recca0120\Terminal\TerminalManager', $closure($app));
 
-                return true;
+                return $closure($app) instanceof Kernel;
             })
         );
 

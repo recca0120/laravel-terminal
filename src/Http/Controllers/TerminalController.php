@@ -4,9 +4,9 @@ namespace Recca0120\Terminal\Http\Controllers;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Recca0120\Terminal\Kernel;
 use Illuminate\Routing\Controller;
 use Illuminate\Filesystem\Filesystem;
-use Recca0120\Terminal\TerminalManager;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 
@@ -41,21 +41,21 @@ class TerminalController extends Controller
     /**
      * index.
      *
-     * @param \Recca0120\Terminal\TerminalManager $terminalManger
+     * @param \Recca0120\Terminal\Kernel $kernel
      * @param string $view
      * @return \Illuminate\Http\Response
      */
-    public function index(TerminalManager $terminalManger, $view = 'index')
+    public function index(Kernel $kernel, $view = 'index')
     {
         $token = null;
         if ($this->request->hasSession() === true) {
             $token = $this->request->session()->token();
         }
 
-        $terminalManger->call('list --ansi');
-        $options = json_encode(array_merge($terminalManger->getConfig(), [
+        $kernel->call('list --ansi');
+        $options = json_encode(array_merge($kernel->getConfig(), [
             'csrfToken' => $token,
-            'helpInfo' => $terminalManger->output(),
+            'helpInfo' => $kernel->output(),
         ]));
         $id = ($view === 'panel') ? Str::random(30) : null;
 
@@ -65,10 +65,10 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param \Recca0120\Terminal\TerminalManager $terminalManger
+     * @param \Recca0120\Terminal\Kernel $kernel
      * @return \Illuminate\Http\JsonResponse
      */
-    public function endpoint(TerminalManager $terminalManger)
+    public function endpoint(Kernel $kernel)
     {
         if ($this->request->hasSession() === true) {
             $session = $this->request->session();
@@ -77,12 +77,12 @@ class TerminalController extends Controller
             }
         }
 
-        $error = $terminalManger->call($this->request->get('command'));
+        $error = $kernel->call($this->request->get('command'));
 
         return $this->responseFactory->json([
             'jsonrpc' => $this->request->get('jsonrpc'),
             'id' => $this->request->get('id'),
-            'result' => $terminalManger->output(),
+            'result' => $kernel->output(),
             'error' => $error,
         ]);
     }

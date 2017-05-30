@@ -51,12 +51,10 @@ class TerminalServiceProvider extends ServiceProvider
             return $artisan;
         });
 
-        $this->app->singleton(Kernel::class, Kernel::class);
-
-        $this->app->singleton(TerminalManager::class, function ($app) {
+        $this->app->singleton(Kernel::class, function ($app) {
             $config = $app['config']['terminal'];
 
-            return new TerminalManager($app->make(Kernel::class), array_merge($config, [
+            return new Kernel($app[Application::class], array_merge($config, [
                 'basePath' => $app->basePath(),
                 'environment' => $app->environment(),
                 'version' => $app->version(),

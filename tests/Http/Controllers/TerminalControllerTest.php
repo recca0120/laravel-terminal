@@ -22,17 +22,17 @@ class TerminalControllerTest extends TestCase
         );
         $request->shouldReceive('hasSession')->once()->andReturn(true);
         $request->shouldReceive('session->token')->once()->andReturn($token = uniqid());
-        $terminalManager = m::mock('Recca0120\Terminal\TerminalManager');
-        $terminalManager->shouldReceive('call')->once()->with('list --ansi');
-        $terminalManager->shouldReceive('output')->once()->andReturn($output = 'foo');
-        $terminalManager->shouldReceive('getConfig')->once()->andReturn($config = ['foo' => 'bar']);
+        $kernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel->shouldReceive('call')->once()->with('list --ansi');
+        $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
+        $kernel->shouldReceive('getConfig')->once()->andReturn($config = ['foo' => 'bar']);
         $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
             'options' => json_encode(array_merge($config, ['csrfToken' => $token, 'helpInfo' => $output])),
             'id' => null,
         ])->andReturn(
             $view = m::mock('Illuminate\Contracts\View\View')
         );
-        $this->assertSame($view, $controller->index($terminalManager, 'index'));
+        $this->assertSame($view, $controller->index($kernel, 'index'));
     }
 
     public function testEndpoint()
@@ -51,11 +51,11 @@ class TerminalControllerTest extends TestCase
 
         $request->shouldReceive('get')->once()->with('command')->andReturn($command = 'foo');
 
-        $terminalManager = m::mock('Recca0120\Terminal\TerminalManager');
-        $terminalManager->shouldReceive('call')->once()->with($command)->andReturn($error = 0);
+        $kernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel->shouldReceive('call')->once()->with($command)->andReturn($error = 0);
         $request->shouldReceive('get')->once()->with('jsonrpc')->andReturn($jsonrpc = 'foo');
         $request->shouldReceive('get')->once()->with('id')->andReturn($id = 'foo');
-        $terminalManager->shouldReceive('output')->once()->andReturn($output = 'foo');
+        $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
 
         $responseFactory->shouldReceive('json')->once()->with([
             'jsonrpc' => $jsonrpc,
@@ -64,6 +64,6 @@ class TerminalControllerTest extends TestCase
             'error' => $error,
         ])->andReturn($result = 'foo');
 
-        $this->assertSame($result, $controller->endpoint($terminalManager));
+        $this->assertSame($result, $controller->endpoint($kernel));
     }
 }
