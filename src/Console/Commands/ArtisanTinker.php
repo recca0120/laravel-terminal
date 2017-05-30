@@ -27,15 +27,15 @@ class ArtisanTinker extends Command
     public function fire()
     {
         $command = $this->option('command');
-        $code = trim(trim($command), ';').';';
-        $result = null;
-        if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
-            error_reporting(-1);
-            ob_start();
-            @eval($code);
-            $this->line(ob_get_clean());
-        } else {
-            eval('$result = '.$code);
+
+        ob_start();
+        $result = $this->executeCode(
+            trim(trim($command), ';').';'
+        );
+        $output = ob_get_clean();
+
+        if (empty($output) === false) {
+            $this->line($output);
         }
 
         $this->getOutput()->write('=> ');
@@ -51,6 +51,18 @@ class ArtisanTinker extends Command
                 is_numeric($result) === true ? $this->info($result) : $this->line($result);
                 break;
         }
+    }
+
+    protected function executeCode($code)
+    {
+        $result = null;
+        if (strpos($code, 'echo') !== false || strpos($code, 'var_dump') !== false) {
+            eval($code);
+        } else {
+            eval('$result = '.$code);
+        }
+
+        return $result;
     }
 
     /**
