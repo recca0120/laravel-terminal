@@ -54,6 +54,12 @@ class ArtisanTinker extends Command
         }
     }
 
+    /**
+     * executeCode.
+     *
+     * @param string $code
+     * @return string
+     */
     protected function executeCode($code)
     {
         $result = null;
@@ -61,9 +67,9 @@ class ArtisanTinker extends Command
             $code = 'return '.$code;
         }
 
-        $tmpfname = tempnam(sys_get_temp_dir(), "artisan-thinker");
-        $handle = fopen($tmpfname, "w+");
-        fwrite($handle, "<?php\n" . $code);
+        $tmpfname = tempnam(sys_get_temp_dir(), 'artisan-thinker');
+        $handle = fopen($tmpfname, 'w+');
+        fwrite($handle, "<?php\n".$code);
         fclose($handle);
         $result = require $tmpfname;
         unlink($tmpfname);
