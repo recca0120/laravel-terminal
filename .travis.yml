@@ -8,27 +8,36 @@ php:
   - 7.1
   - hhvm
 
-# This triggers builds to run on the new TravisCI infrastructure.
-# See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+env:
+  global:
+    - setup=basic
+
 sudo: false
 
-## Cache composer
+matrix:
+  allow_failures:
+    - php: hhvm
+  fast_finish: true
+  include:
+    - php: 5.5.9
+      env: setup=lowest
+    - php: hhvm
+      dist: trusty
+
 cache:
   directories:
     - $HOME/.composer/cache
 
-matrix:
-  include:
-    - php: 5.5.9
-      env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
-
-before_script:
+before_install:
   - travis_retry composer self-update
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
 
-script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+install:
+  - if [[ $setup = 'basic' ]]; then travis_retry composer install --no-interaction --prefer-dist --no-suggest; fi
+  - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
+  - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
+
+script: vendor/bin/phpunit  --coverage-text --coverage-clover=coverage.clover
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
