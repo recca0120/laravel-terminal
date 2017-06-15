@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Recca0120\Terminal\Kernel;
 use Illuminate\Routing\Controller;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 
 class TerminalController extends Controller
@@ -47,14 +46,8 @@ class TerminalController extends Controller
      */
     public function index(Kernel $kernel, $view = 'index')
     {
-        $token = null;
-        if ($this->request->hasSession() === true) {
-            $token = $this->request->session()->token();
-        }
-
         $kernel->call('list --ansi');
         $options = json_encode(array_merge($kernel->getConfig(), [
-            'csrfToken' => $token,
             'helpInfo' => $kernel->output(),
         ]));
         $id = ($view === 'panel') ? Str::random(30) : null;
@@ -70,13 +63,6 @@ class TerminalController extends Controller
      */
     public function endpoint(Kernel $kernel)
     {
-        if ($this->request->hasSession() === true) {
-            $session = $this->request->session();
-            if ($session->isStarted() === true) {
-                $session->save();
-            }
-        }
-
         $error = $kernel->call($this->request->get('command'));
 
         return $this->responseFactory->json([

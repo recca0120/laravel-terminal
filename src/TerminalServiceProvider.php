@@ -69,12 +69,14 @@ class TerminalServiceProvider extends ServiceProvider
      * @param \Illuminate\Routing\Router $router
      * @param array $config
      */
-    protected function handleRoutes(Router $router, $config = [])
+    protected function handleRoutes(Router $router)
     {
         if ($this->app->routesAreCached() === false) {
-            $router->group(array_merge([
+            $router->group([
                 'namespace' => $this->namespace,
-            ], Arr::get($config, 'route', [])), function (Router $router) {
+                'prefix' => 'terminal',
+                'as' => 'terminal.',
+            ], function (Router $router) {
                 require __DIR__.'/Http/routes.php';
             });
         }

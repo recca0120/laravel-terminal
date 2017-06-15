@@ -20,14 +20,13 @@ class TerminalControllerTest extends TestCase
             $request = m::mock('Illuminate\Http\Request'),
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
-        $request->shouldReceive('hasSession')->once()->andReturn(true);
-        $request->shouldReceive('session->token')->once()->andReturn($token = uniqid());
+
         $kernel = m::mock('Recca0120\Terminal\Kernel');
         $kernel->shouldReceive('call')->once()->with('list --ansi');
         $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
         $kernel->shouldReceive('getConfig')->once()->andReturn($config = ['foo' => 'bar']);
         $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
-            'options' => json_encode(array_merge($config, ['csrfToken' => $token, 'helpInfo' => $output])),
+            'options' => json_encode(array_merge($config, ['helpInfo' => $output])),
             'id' => null,
         ])->andReturn(
             $view = m::mock('Illuminate\Contracts\View\View')
@@ -41,13 +40,6 @@ class TerminalControllerTest extends TestCase
             $request = m::mock('Illuminate\Http\Request'),
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
-
-        $request->shouldReceive('hasSession')->once()->andReturn(true);
-        $request->shouldReceive('session')->once()->andReturn(
-            $session = m::mock('Illuminate\Session\SessionManager')
-        );
-        $session->shouldReceive('isStarted')->once()->andReturn(true);
-        $session->shouldReceive('save')->once();
 
         $request->shouldReceive('get')->once()->with('command')->andReturn($command = 'foo');
 

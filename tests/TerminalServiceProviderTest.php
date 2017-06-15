@@ -107,7 +107,8 @@ class TerminalServiceProviderTest extends TestCase
         $app->shouldReceive('routesAreCached')->once()->andReturn(false);
         $router->shouldReceive('group')->once()->with([
             'namespace' => 'Recca0120\Terminal\Http\Controllers',
-            'prefix' => 'terminal.',
+            'prefix' => 'terminal',
+            'as' => 'terminal.',
         ], m::on(function ($closure) use ($router) {
             return true;
         }));
