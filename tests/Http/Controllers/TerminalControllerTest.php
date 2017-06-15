@@ -21,12 +21,18 @@ class TerminalControllerTest extends TestCase
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
 
+        $request->shouldReceive('hasSession')->once()->andReturn(true);
+        $request->shouldReceive('session->token')->once()->andReturn($token = 'foo');
+
         $kernel = m::mock('Recca0120\Terminal\Kernel');
         $kernel->shouldReceive('call')->once()->with('list --ansi');
         $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
         $kernel->shouldReceive('getConfig')->once()->andReturn($config = ['foo' => 'bar']);
         $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
-            'options' => json_encode(array_merge($config, ['helpInfo' => $output])),
+            'options' => json_encode(array_merge($config, [
+                'csrfToken' => $token,
+                'helpInfo' => $output,
+            ])),
             'id' => null,
         ])->andReturn(
             $view = m::mock('Illuminate\Contracts\View\View')

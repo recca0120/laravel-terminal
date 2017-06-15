@@ -58,7 +58,7 @@ class TerminalServiceProvider extends ServiceProvider
                 'basePath' => $app->basePath(),
                 'environment' => $app->environment(),
                 'version' => $app->version(),
-                'endpoint' => $app['url']->route(Arr::get($config, 'route.as').'endpoint'),
+                'endpoint' => $app['url']->route('terminal.endpoint'),
             ]));
         });
     }

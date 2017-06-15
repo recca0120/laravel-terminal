@@ -46,8 +46,14 @@ class TerminalController extends Controller
      */
     public function index(Kernel $kernel, $view = 'index')
     {
+        $token = null;
+        if ($this->request->hasSession() === true) {
+            $token = $this->request->session()->token();
+        }
+
         $kernel->call('list --ansi');
         $options = json_encode(array_merge($kernel->getConfig(), [
+            'csrfToken' => $token,
             'helpInfo' => $kernel->output(),
         ]));
         $id = ($view === 'panel') ? Str::random(30) : null;
