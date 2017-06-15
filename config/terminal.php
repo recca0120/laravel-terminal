@@ -3,6 +3,10 @@
 return [
     'enabled' => env('APP_DEBUG') === true,
     'whitelists' => [],
+    'route' => [
+        'prefix' => 'terminal',
+        'as' => 'terminal.',
+    ],
     'interpreters' => [
         'mysql' => 'mysql',
         'artisan tinker' => 'tinker',

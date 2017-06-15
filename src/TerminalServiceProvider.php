@@ -58,7 +58,7 @@ class TerminalServiceProvider extends ServiceProvider
                 'basePath' => $app->basePath(),
                 'environment' => $app->environment(),
                 'version' => $app->version(),
-                'endpoint' => $app['url']->route('terminal.endpoint'),
+                'endpoint' => $app['url']->route(Arr::get($config, 'route.as').'endpoint'),
             ]));
         });
     }
@@ -69,14 +69,12 @@ class TerminalServiceProvider extends ServiceProvider
      * @param \Illuminate\Routing\Router $router
      * @param array $config
      */
-    protected function handleRoutes(Router $router)
+    protected function handleRoutes(Router $router, $config = [])
     {
         if ($this->app->routesAreCached() === false) {
-            $router->group([
+            $router->group(array_merge([
                 'namespace' => $this->namespace,
-                'prefix' => 'terminal',
-                'as' => 'terminal.',
-            ], function (Router $router) {
+            ], Arr::get($config, 'route', [])), function (Router $router) {
                 require __DIR__.'/Http/routes.php';
             });
         }

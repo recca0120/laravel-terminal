@@ -87,7 +87,8 @@ class TerminalServiceProviderTest extends TestCase
             $config = [
                 'terminal' => [
                     'route' => [
-                        'prefix' => 'terminal.',
+                        'prefix' => 'terminal',
+                        'as' => 'terminal.',
                     ],
                     'whitelists' => [
                         $ip = '127.0.0.1',
