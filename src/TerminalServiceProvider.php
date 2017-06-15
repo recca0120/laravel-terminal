@@ -75,7 +75,7 @@ class TerminalServiceProvider extends ServiceProvider
             $router->group(array_merge([
                 'namespace' => $this->namespace,
             ], Arr::get($config, 'route', [])), function (Router $router) {
-                require __DIR__.'/Http/routes.php';
+                require __DIR__.'/../routes/web.php';
             });
         }
     }
