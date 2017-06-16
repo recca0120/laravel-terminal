@@ -29,6 +29,7 @@ $rules = [
     'hash_to_slash_comment' => true,
     'heredoc_to_nowdoc' => true,
     'include' => true,
+    'indentation_type' => true,
     'lowercase_cast' => true,
     'lowercase_constants' => true,
     'lowercase_keywords' => true,
