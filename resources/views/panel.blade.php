@@ -5,8 +5,8 @@
     if(type==='script'){source='src';attributes.type='text/javascript'}else{source='href';attributes.type='text/css';attributes.rel='stylesheet'}
     attributes[source]=filename;attributes.id='laravel-terminal-'+id;var element=createElement(type,attributes);element.onerror=function(){if(retry===1){return}setTimeout(function(){preload.createElement(type,id,f(filename),callback,--retry)})};if(callback){element.onload=callback};appendTo(element)}}}()
 
-    preload.createElement('link', 'css', '{{ parse_url(action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/terminal.css']), PHP_URL_PATH) }}');
-    preload.createElement('script', 'terminal', '{{ parse_url(action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']), PHP_URL_PATH) }}', function () {
+    preload.createElement('link', 'css', '{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'css/terminal.css']) }}');
+    preload.createElement('script', 'terminal', '{{ action('\Recca0120\Terminal\Http\Controllers\TerminalController@media', ['file' => 'js/terminal.js']) }}', function () {
         new Terminal('#panel-terminal-shell-{{ $id }}', {!! $options !!});
     });
 })();

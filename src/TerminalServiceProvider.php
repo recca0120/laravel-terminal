@@ -58,7 +58,7 @@ class TerminalServiceProvider extends ServiceProvider
                 'basePath' => $app->basePath(),
                 'environment' => $app->environment(),
                 'version' => $app->version(),
-                'endpoint' => parse_url($app['url']->route(Arr::get($config, 'route.as').'endpoint'), PHP_URL_PATH),
+                'endpoint' => $app['url']->route(Arr::get($config, 'route.as').'endpoint'),
             ]));
         });
     }
