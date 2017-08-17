@@ -60,7 +60,10 @@ return [
     'route'     => [
         'prefix'     => 'terminal',
         'as'         => 'terminal.',
-        'middleware' => ['web'], // if you use laravel 5.1 remove web
+        // if you use laravel 5.1, remember to remove web middleware
+        'middleware' => ['web'],
+        // if you need auth, you need use web and auth middleware
+        // 'middleware' => ['web', 'auth']
     ],
     'commands' => [
         \Recca0120\Terminal\Console\Commands\Artisan::class,
