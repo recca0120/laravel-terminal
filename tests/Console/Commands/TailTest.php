@@ -101,7 +101,7 @@ class TailTest extends TestCase
         m::close();
     }
 
-    public function testFire()
+    public function testHandle()
     {
         $command = new Tail(
             $files = m::mock(new Filesystem)
@@ -119,12 +119,12 @@ class TailTest extends TestCase
             return Glob::glob($path);
         });
 
-        $command->fire();
+        $command->handle();
 
         $this->assertContains('5.log', $output->fetch());
     }
 
-    public function testFirePath()
+    public function testHandlePath()
     {
         $command = new Tail(
             $files = m::mock('Illuminate\Filesystem\Filesystem')
@@ -139,7 +139,7 @@ class TailTest extends TestCase
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/1.log');
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
 
-        $command->fire();
+        $command->handle();
 
         $this->assertContains('1.log', $output->fetch());
     }

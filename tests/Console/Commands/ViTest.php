@@ -24,7 +24,7 @@ class ViTest extends TestCase
         m::close();
     }
 
-    public function testFireRead()
+    public function testHandleRead()
     {
         $command = new Vi(
             $files = m::mock('Illuminate\Filesystem\Filesystem')
@@ -42,12 +42,12 @@ class ViTest extends TestCase
 
         $files->shouldReceive('get')->with($basePath.$path)->andReturn($text = 'foo');
 
-        $command->fire();
+        $command->handle();
 
         $this->assertContains($text, $output->fetch());
     }
 
-    public function testFireWrite()
+    public function testHandleWrite()
     {
         $command = new Vi(
             $files = m::mock('Illuminate\Filesystem\Filesystem')
@@ -65,7 +65,7 @@ class ViTest extends TestCase
 
         $files->shouldReceive('put')->with($basePath.$path, $text);
 
-        $command->fire();
+        $command->handle();
 
         $this->assertEmpty($output->fetch());
     }

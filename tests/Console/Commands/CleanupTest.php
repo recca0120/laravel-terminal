@@ -19,7 +19,7 @@ class CleanupTest extends TestCase
         m::close();
     }
 
-    public function testFire()
+    public function testHandle()
     {
         $structure = [
             '.git' => [],
@@ -139,7 +139,7 @@ class CleanupTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
-        $command->fire();
+        $command->handle();
 
         $this->assertSame([
             'root' => [

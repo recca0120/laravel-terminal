@@ -6,7 +6,9 @@ use Mockery as m;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Application;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Command\HelpCommand;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class ApplicationTest extends TestCase
 {
@@ -90,10 +92,12 @@ class ApplicationTest extends TestCase
             $events,
             $version = 'testing'
         );
+        $input = new StringInput('help');
+        $output = new BufferedOutput();
 
         $this->assertSame(0, $application->run(
-            $input = m::spy('Symfony\Component\Console\Input\InputInterface'),
-            $output = m::spy('Symfony\Component\Console\Output\OutputInterface')
+            $input,
+            $output
         ));
     }
 }

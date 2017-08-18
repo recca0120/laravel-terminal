@@ -15,7 +15,7 @@ class ArtisanTest extends TestCase
         m::close();
     }
 
-    public function testFire()
+    public function testHandle()
     {
         $command = new Artisan(
             $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
@@ -25,13 +25,15 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'foo');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
+            $this->assertSame((string) $input, $cmd);
+
             return (string) $input === $cmd;
         }), $output);
 
-        $this->assertNull($command->fire());
+        $command->handle();
     }
 
-    public function testFireForceCommand()
+    public function testHandleForceCommand()
     {
         $command = new Artisan(
             $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
@@ -46,13 +48,13 @@ class ArtisanTest extends TestCase
             return (string) $input === $cmd.' --force';
         }), $output);
 
-        $command->fire();
+        $command->handle();
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testFireNotSupportCommand()
+    public function testHandleNotSupportCommand()
     {
         $command = new Artisan(
             $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
@@ -62,7 +64,7 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'down');
 
-        $command->fire();
+        $command->handle();
     }
 
     protected function mockProperty($object, $propertyName, $value)

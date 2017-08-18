@@ -37,7 +37,7 @@ class FindTest extends TestCase
         m::close();
     }
 
-    public function testFireFindName()
+    public function testHandleFindName()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -68,10 +68,10 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
-    public function testFireFindNameByDirectory()
+    public function testHandleFindNameByDirectory()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -103,10 +103,10 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
-    public function testFireFindNameByFile()
+    public function testHandleFindNameByFile()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -138,10 +138,10 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
-    public function testFireFindMaxDepthIsZero()
+    public function testHandleFindMaxDepthIsZero()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -165,10 +165,10 @@ class FindTest extends TestCase
         $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
         $finder->shouldReceive('name')->once()->with($name);
 
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
-    public function testFireFindMaxDepthBiggerZero()
+    public function testHandleFindMaxDepthBiggerZero()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -200,10 +200,10 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/*'));
         });
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
-    public function testFireDelete()
+    public function testHandleDelete()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -234,10 +234,10 @@ class FindTest extends TestCase
                 return $fileinfo;
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
-    public function testFireDeleteAndThrowException()
+    public function testHandleDeleteAndThrowException()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
@@ -269,7 +269,7 @@ class FindTest extends TestCase
             }, Glob::glob($basePath.'/'.$path.'/'));
         });
         $files->shouldReceive('isDirectory')->andThrow(new Exception());
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
     }
 
     public function testRun()

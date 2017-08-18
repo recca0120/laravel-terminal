@@ -15,7 +15,7 @@ class MysqlTest extends TestCase
         m::close();
     }
 
-    public function testFire()
+    public function testHandle()
     {
         $command = new Mysql(
             $databaseManager = m::mock('Illuminate\Database\DatabaseManager')
@@ -31,7 +31,7 @@ class MysqlTest extends TestCase
             ['name' => 'name', 'email' => 'email'],
         ]);
 
-        $command->fire();
+        $command->handle();
         $this->assertContains('email', $output->fetch());
     }
 

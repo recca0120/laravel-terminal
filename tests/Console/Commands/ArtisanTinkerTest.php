@@ -15,62 +15,62 @@ class ArtisanTinkerTest extends TestCase
         m::close();
     }
 
-    public function testFireEcho()
+    public function testHandleEcho()
     {
         $command = new ArtisanTinker();
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'echo 123');
-        $command->fire();
+        $command->handle();
 
         $this->assertContains('123', $this->lf($output->fetch()));
     }
 
-    public function testFireVarDump()
+    public function testHandleVarDump()
     {
         $command = new ArtisanTinker();
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'var_dump(123)');
-        $this->assertNull($command->fire());
+        $this->assertNull($command->handle());
 
         $this->assertContains('int(123)', $this->lf($output->fetch()));
     }
 
-    public function testFireObject()
+    public function testHandleObject()
     {
         $command = new ArtisanTinker();
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'new stdClass;');
-        $command->fire();
+        $command->handle();
 
         $this->assertSame("=> stdClass::__set_state(array(\n))\n", $this->lf($output->fetch()));
     }
 
-    public function testFireArray()
+    public function testHandleArray()
     {
         $command = new ArtisanTinker();
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "['foo' => 'bar'];");
-        $command->fire();
+        $command->handle();
 
         $this->assertSame("=> array (\n  'foo' => 'bar',\n)\n", $this->lf($output->fetch()));
     }
 
-    public function testFireString()
+    public function testHandleString()
     {
         $command = new ArtisanTinker();
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = "'abc'");
-        $command->fire();
+        $command->handle();
 
         $this->assertSame("=> abc\n", $this->lf($output->fetch()));
     }
@@ -82,7 +82,7 @@ class ArtisanTinkerTest extends TestCase
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = '123');
-        $command->fire();
+        $command->handle();
 
         $this->assertSame("=> 123\n", $this->lf($output->fetch()));
     }
