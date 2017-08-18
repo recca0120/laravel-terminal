@@ -42,5 +42,12 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Recca0120\\Terminal\\TerminalServiceProvider"
+            ]
+        }
     }
 }

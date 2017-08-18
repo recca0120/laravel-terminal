@@ -92,12 +92,10 @@ class ApplicationTest extends TestCase
             $events,
             $version = 'testing'
         );
-        $input = new StringInput('help');
-        $output = new BufferedOutput();
 
         $this->assertSame(0, $application->run(
-            $input,
-            $output
+            new StringInput('help'),
+            new BufferedOutput()
         ));
     }
 }
