@@ -77,9 +77,11 @@ class Find extends Command
     }
 
     /**
-     * fire.
+     * Handle the command.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         $path = $this->argument('path');
         $name = $this->option('name');

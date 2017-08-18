@@ -43,9 +43,11 @@ class Cleanup extends Command
     }
 
     /**
-     * fire.
+     * Handle the command.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         set_time_limit(0);
         $root = function_exists('base_path') === true ? base_path() : getcwd();

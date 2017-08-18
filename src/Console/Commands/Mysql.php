@@ -38,13 +38,16 @@ class Mysql extends Command
     public function __construct(DatabaseManager $databaseManager)
     {
         parent::__construct();
+
         $this->databaseManager = $databaseManager;
     }
 
     /**
-     * fire.
+     * Handle the command.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         $query = $this->option('command');
         $connection = $this->databaseManager->connection();

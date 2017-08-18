@@ -44,9 +44,11 @@ class Composer extends Command
     }
 
     /**
-     * handle.
+     * Handle the command.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         $this->install();
 

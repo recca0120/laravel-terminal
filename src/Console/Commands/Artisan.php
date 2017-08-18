@@ -49,15 +49,16 @@ class Artisan extends Command
     public function __construct(ArtisanContract $artisan)
     {
         parent::__construct();
+
         $this->artisan = $artisan;
     }
 
     /**
-     * handle.
+     * Handle the command.
      *
      * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         $command = $this->forceCommand($this->option('command'));
 

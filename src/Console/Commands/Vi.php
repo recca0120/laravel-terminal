@@ -43,9 +43,11 @@ class Vi extends Command
     }
 
     /**
-     * fire.
+     * Handle the command.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         $path = $this->argument('path');
         $text = $this->option('text');

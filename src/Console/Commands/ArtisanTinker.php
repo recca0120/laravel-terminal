@@ -22,9 +22,11 @@ class ArtisanTinker extends Command
     protected $description = 'artisn tinker';
 
     /**
-     * fire.
+     * Handle the command.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function fire()
+    public function handle()
     {
         $command = $this->option('command');
 
