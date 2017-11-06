@@ -29,6 +29,26 @@
     .prompt {
         display: inline;
     }
+
+    .clipboard {
+        position: absolute !important;
+        left: -16px !important;
+        top: 0 !important;
+        width: 20px !important;
+        height: 16px !important;
+        opacity: 0.01 !important;
+        filter: alpha(opacity=0.01) !important;
+        filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.01) !important;
+        background: transparent !important;
+        border: none !important;
+        color: transparent !important;
+        outline: none !important;
+        padding: 0 !important;
+        resize: none !important;
+        z-index: 0 !important;
+        overflow: hidden !important;
+        white-space: pre !important;
+    }
 }
 
 .CodeMirror-fullscreen {
