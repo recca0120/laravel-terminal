@@ -6,18 +6,22 @@ import { Composer } from './commands/composer';
 import { Help } from './commands/help';
 import { Loading } from './loading';
 import { MySQL } from './commands/mysql';
-import { OutputFormatter } from './output-formatter';
 import { Tinker } from './commands/tinker';
 import { Vi } from './commands/vi';
+import outputFormatter from './output-formatter';
 
-// $.terminal.ansi_colors.normal = $.terminal.ansi_colors.bold;
+function addslashes(str) {
+    return String(str)
+        .replace(/[\\"']/g, '\\$&')
+        .replace(/\u0000/g, '\\0');
+}
 
 export class Terminal {
     constructor(element, options) {
         this.element = document.querySelector(element);
         this.options = options;
         this.requestId = 0;
-        this.formatter = new OutputFormatter();
+        this.formatter = outputFormatter;
         this.prompt = '$ ';
 
         this.fit();
@@ -68,7 +72,7 @@ export class Terminal {
                     cmd.args.map((arg, i) => {
                         const quote = cmd.args_quotes[i];
 
-                        return this.addslashes(quote + arg + quote);
+                        return addslashes(`${quote}${arg}${quote}`);
                     })
                 );
 
@@ -86,8 +90,12 @@ export class Terminal {
         }
     }
 
-    write(str) {
-        this.shell.set_prompt(str);
+    write(str, setPrompt = false) {
+        if (setPrompt === true) {
+            this.shell.set_prompt(str);
+        } else {
+            this.echo(str);
+        }
     }
 
     showCursor() {
@@ -104,12 +112,6 @@ export class Terminal {
     clearLine() {}
 
     cursorTo(pos) {}
-
-    addslashes(str) {
-        return String(str)
-            .replace(/[\\"']/g, '\\$&')
-            .replace(/\u0000/g, '\\0');
-    }
 
     environment() {
         return this.options.environment;

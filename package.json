@@ -16,6 +16,7 @@
         "prettier-project": "npm run prettier-write -- resources/**/*.{js,scss}"
     },
     "dependencies": {
+        "cli-spinner": "^0.2.7",
         "codemirror": "^5.31.0",
         "jquery-migrate": "^3.0.1",
         "jquery-mousewheel": "^3.1.13",

@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+// $.terminal.ansi_colors.normal = $.terminal.ansi_colors.bold;
+
 class OutputFormatterStyle {
     constructor(foreground = 'white', background = 'black', options = []) {
         Object.assign(this, {
@@ -53,6 +55,14 @@ export class OutputFormatter {
     constructor() {
         Object.assign(this, {
             formatters: {
+                black: new OutputFormatterStyle('black'),
+                red: new OutputFormatterStyle('red'),
+                green: new OutputFormatterStyle('green'),
+                yellow: new OutputFormatterStyle('yellow'),
+                blue: new OutputFormatterStyle('blue'),
+                magenta: new OutputFormatterStyle('magenta'),
+                cyan: new OutputFormatterStyle('cyan'),
+                white: new OutputFormatterStyle('white'),
                 error: new OutputFormatterStyle('white', 'red'),
                 info: new OutputFormatterStyle('green'),
                 comment: new OutputFormatterStyle('yellow'),
@@ -76,4 +86,38 @@ export class OutputFormatter {
     question(text) {
         return this.formatters.question.apply(text);
     }
+
+    black(text) {
+        return this.formatters.black.apply(text);
+    }
+
+    red(text) {
+        return this.formatters.red.apply(text);
+    }
+
+    green(text) {
+        return this.formatters.green.apply(text);
+    }
+
+    yellow(text) {
+        return this.formatters.yellow.apply(text);
+    }
+
+    blue(text) {
+        return this.formatters.blue.apply(text);
+    }
+
+    magenta(text) {
+        return this.formatters.magenta.apply(text);
+    }
+
+    cyan(text) {
+        return this.formatters.cyan.apply(text);
+    }
+
+    white(text) {
+        return this.formatters.white.apply(text);
+    }
 }
+
+export default new OutputFormatter();

@@ -1,4 +1,12 @@
 import cliSpinners from 'cli-spinners';
+import outputFormatter from './output-formatter';
+
+const logSymbols = {
+    info: outputFormatter.blue('i'),
+    success: outputFormatter.green('√'),
+    warning: outputFormatter.yellow('‼'),
+    error: outputFormatter.red('×'),
+};
 
 export class Loading {
     constructor(options) {
@@ -42,7 +50,7 @@ export class Loading {
 
     render() {
         this.clear();
-        this.stream.write(this.frame());
+        this.stream.write(this.frame(), true);
 
         return this;
     }
