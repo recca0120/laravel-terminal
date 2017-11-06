@@ -83,8 +83,11 @@ class TerminalServiceProviderTest extends TestCase
         $serviceProvider = new TerminalServiceProvider(
             $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess')
         );
-        $app->shouldReceive('offsetGet')->once()->with('config')->andReturn(
+        $app->shouldReceive('offsetGet')->with('config')->andReturn(
             $config = [
+                'view' => [
+                    'paths' => [],
+                ],
                 'terminal' => [
                     'route' => [
                         'prefix' => 'terminal',
@@ -96,6 +99,7 @@ class TerminalServiceProviderTest extends TestCase
                 ],
             ]
         );
+        $app->config = $config;
         $request = m::mock('Illuminate\Http\Request');
         $router = m::mock('Illuminate\Routing\Router');
 

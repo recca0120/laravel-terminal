@@ -48,18 +48,20 @@ class TerminalControllerTest extends TestCase
         );
 
         $request->shouldReceive('get')->once()->with('command')->andReturn($command = 'foo');
+        $request->shouldReceive('get')->once()->with('parameters', [])->andReturn($parameters = ['foo' => 'bar']);
 
         $kernel = m::mock('Recca0120\Terminal\Kernel');
-        $kernel->shouldReceive('call')->once()->with($command)->andReturn($error = 0);
+        $kernel->shouldReceive('call')->once()->with($command, $parameters)->andReturn($error = 0);
         $request->shouldReceive('get')->once()->with('jsonrpc')->andReturn($jsonrpc = 'foo');
         $request->shouldReceive('get')->once()->with('id')->andReturn($id = 'foo');
         $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
 
+        $key = $error === 0 ? 'result' : 'error';
+
         $responseFactory->shouldReceive('json')->once()->with([
             'jsonrpc' => $jsonrpc,
             'id' => $id,
-            'result' => $output,
-            'error' => $error,
+            $key => $output,
         ])->andReturn($result = 'foo');
 
         $this->assertSame($result, $controller->endpoint($kernel));

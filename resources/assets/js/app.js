@@ -140,8 +140,8 @@ export class Terminal {
                     this.spinner.start('');
                 },
                 success: response => {
-                    const responseResult = response.result ? response.result : response;
-                    resolve(responseResult);
+                    const responseResult = response.result ? response.result : response.error;
+                    resolve(responseResult ? responseResult : response);
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     reject(new Error(`${jqXHR.status}: ${errorThrown}`));

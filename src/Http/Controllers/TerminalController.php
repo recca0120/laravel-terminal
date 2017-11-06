@@ -74,11 +74,12 @@ class TerminalController extends Controller
             $this->request->get('parameters', [])
         );
 
+        $key = $error === 0 ? 'result' : 'error';
+
         return $this->responseFactory->json([
             'jsonrpc' => $this->request->get('jsonrpc'),
             'id' => $this->request->get('id'),
-            'result' => $kernel->output(),
-            'error' => $error,
+            $key => $kernel->output(),
         ]);
     }
 
