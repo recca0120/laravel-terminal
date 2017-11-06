@@ -1,14 +1,7 @@
-'use babel';
+import { Command } from './command';
 
-import Command from './command';
-
-export default class Tinker extends Command {
-    match(name) {
-        return name === 'tinker';
-    }
-
-    call(cmd) {
-        cmd.command = `tinker --command="${this.addslashes(cmd.rest)}"`;
-        super.call(cmd);
+export class Tinker extends Command {
+    constructor(shell, options) {
+        super('tinker', shell, options);
     }
 }

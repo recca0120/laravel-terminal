@@ -1,14 +1,17 @@
-'use babel';
+import { Command } from './command';
 
-import Command from './command';
+export class Help extends Command {
+    constructor(shell, options) {
+        super('help', shell, options);
+    }
 
-export default class Help extends Command {
-    match(name) {
+    is(name) {
         return ['list', 'help'].includes(name);
     }
 
-    call() {
-        this.api.echo(this.api.options.helpInfo);
-        this.api.serverInfo();
+    handle() {
+        this.line();
+        this.line(this.options.helpInfo);
+        this.serverInfo();
     }
 }

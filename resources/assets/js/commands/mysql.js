@@ -1,14 +1,7 @@
-'use babel';
+import { Command } from './command';
 
-import Command from './command';
-
-export default class Mysql extends Command {
-    match(name) {
-        return name === 'mysql';
-    }
-
-    call(cmd) {
-        cmd.command = `mysql --command="${this.addslashes(cmd.rest)}"`;
-        super.call(cmd);
+export class MySQL extends Command {
+    constructor(shell, options) {
+        super('mysql', shell, options);
     }
 }

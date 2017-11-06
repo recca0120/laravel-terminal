@@ -1,3 +1,45 @@
 {
-    "presets": ["es2015"]
+    "env": {
+        "test": {
+            "presets": [
+                [
+                    "env",
+                    {
+                        "targets": {
+                            "node": "current"
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    "plugins": [
+        [
+            "transform-runtime",
+            {
+                "helpers": false,
+                "polyfill": false,
+                "regenerator": true,
+                "moduleName": "babel-runtime"
+            }
+        ]
+    ],
+    "presets": [
+        [
+            "env",
+            {
+                "debug": false,
+                "targets": {
+                    "node": "current",
+                    "browsers": [
+                        "> 1%",
+                        "last 2 versions",
+                        "ie >= 9"
+                    ]
+                },
+                "useBuiltIns": true,
+                "modules": false
+            }
+        ]
+    ]
 }

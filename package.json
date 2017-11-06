@@ -1,23 +1,54 @@
 {
-  "private": true,
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch-poll": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --watch-poll --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
-  },
-  "dependencies": {
-    "codemirror": "^5.24.2",
-    "jquery": "^3.2.0",
-    "jquery-migrate": "^3.0.0",
-    "jquery-mousewheel": "^3.1.13",
-    "jquery.terminal": "^1.0.10"
-  },
-  "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "cross-env": "^3.2.3",
-    "laravel-mix": "^0.8.8",
-    "lodash": "^4.17.4"
-  }
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch-poll": "npm run watch -- --watch-poll",
+        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "prod": "npm run production",
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "precommit": "lint-staged",
+        "prettier": "prettier",
+        "prettier-write": "npm run prettier -- --single-quote --trailing-comma es5 --write --print-width 120 --tab-width 4",
+        "prettier-project": "npm run prettier-write -- resources/**/*.{js,scss}"
+    },
+    "dependencies": {
+        "codemirror": "^5.31.0",
+        "jquery-migrate": "^3.0.1",
+        "jquery-mousewheel": "^3.1.13",
+        "jquery.terminal": "^1.9.0"
+    },
+    "devDependencies": {
+        "babel-plugin-transform-runtime": "^6.23.0",
+        "babel-preset-env": "^1.6.1",
+        "browser-sync": "^2.18.13",
+        "browser-sync-webpack-plugin": "^1.2.0",
+        "cross-env": "^5.1.0",
+        "element-dataset": "^2.2.6",
+        "eslint": "^4.9.0",
+        "eslint-config-prettier": "^2.6.0",
+        "eslint-plugin-prettier": "^2.3.1",
+        "husky": "^0.14.3",
+        "jest": "^21.2.1",
+        "jquery": "^3.2.1",
+        "laravel-mix": "^1.5.1",
+        "lint-staged": "^4.3.0",
+        "lodash": "^4.17.4",
+        "prettier": "^1.7.4"
+    },
+    "lint-staged": {
+        "linters": {
+            "resources/**/*.{ts,js,scss,less,json}": [
+                "npm run prettier-write --",
+                "git add"
+            ],
+            "webpack.mix.js": [
+                "npm run prettier-write --",
+                "git add"
+            ]
+        }
+    }
 }

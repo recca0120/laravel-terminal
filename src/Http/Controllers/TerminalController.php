@@ -69,7 +69,10 @@ class TerminalController extends Controller
      */
     public function endpoint(Kernel $kernel)
     {
-        $error = $kernel->call($this->request->get('command'));
+        $error = $kernel->call(
+            $this->request->get('command'),
+            $this->request->get('parameters', [])
+        );
 
         return $this->responseFactory->json([
             'jsonrpc' => $this->request->get('jsonrpc'),

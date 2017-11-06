@@ -1,67 +1,84 @@
-'use babel';
-
-import $ from '../bootstrap';
-
-export default class Command {
-    constructor(api, options) {
-        Object.assign(this, {
-            api,
-            options,
-            requestId: 0,
-        });
+export class Shell {
+    constructor(shell, options) {
+        this.shell = shell;
+        this.options = options;
     }
 
-    match(name = false) {
-        return name;
+    environment() {
+        return this.shell.environment();
     }
 
-    call(cmd) {
-        this.api.loading.show();
-        this.makeRequest(cmd.command).then((response) => {
-            const responseResult = response.result ? response.result : response;
-            this.api.loading.hide();
-            this.api.echo(responseResult);
-            this.api.serverInfo();
-        }, (response) => {
-            const responseResult = response.result ? response.result : response;
-            this.api.loading.hide();
-            this.api.echo(responseResult);
-            this.api.serverInfo();
-        });
+    isProduction() {
+        return this.shell.isProduction();
     }
 
-    addslashes(str) {
-        return (String(str)).replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+    serverInfo() {
+        return this.shell.serverInfo();
     }
 
-    makeRequest(command) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: this.api.options.endpoint,
-                dataType: 'json',
-                type: 'post',
-                headers: {
-                    'X-CSRF-TOKEN': this.api.options.csrfToken,
-                },
-                data: {
-                    jsonrpc: '2.0',
-                    id: ++this.requestId,
-                    command,
-                },
-                success: (response) => {
-                    if (response.error !== 0) {
-                        reject(response);
-                        return;
-                    }
+    pause() {
+        this.shell.pause();
+    }
 
-                    resolve(response);
-                },
-                error: (jqXhr, json, errorThrown) => {
-                    reject({
-                        result: `${jqXhr.status}: ${errorThrown}`,
-                    });
-                },
-            });
-        });
+    resume() {
+        this.shell.resume();
+    }
+
+    focus() {
+        this.shell.focus();
+    }
+
+    scrollToBottom() {
+        this.shell.scrollToBottom();
+    }
+
+    style(text, style = '') {
+        return this.shell.style(text, style);
+    }
+
+    echo(text) {
+        this.shell.echo(text);
+    }
+
+    line(text) {
+        this.shell.line(text);
+    }
+
+    error(text) {
+        this.shell.error(text);
+    }
+
+    ask(message, title = '') {
+        return this.shell.ask(message, title);
+    }
+}
+
+export class Command extends Shell {
+    constructor(name, shell, options) {
+        super(shell, options);
+        this.name = name;
+    }
+
+    is(command) {
+        return command === this.name;
+    }
+
+    async handle(parameters) {
+        try {
+            const response = await this.sendRequest([`--command="${parameters.join(' ')}"`]);
+            this.line(response);
+            this.serverInfo();
+        } catch (error) {
+            this.error(error.message);
+            this.serverInfo();
+        }
+    }
+
+    confirmToProceed(command) {
+        return this.shell.confirmToProceed(this.name).includes(command);
+    }
+
+    async sendRequest(parameters) {
+        return this.shell.sendRequest(this.name, parameters);
     }
 }

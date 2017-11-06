@@ -1,36 +1,44 @@
-'use babel';
+import { Command } from './command';
 
-import $ from '../bootstrap';
-import Command from './command';
-
-export default class Artisan extends Command {
-    match(name) {
-        return name === 'artisan';
+export class Artisan extends Command {
+    constructor(shell, options) {
+        super('artisan', shell, options);
     }
 
-    call(cmd) {
-        const rest = $.terminal.parse_command(cmd.rest.trim());
-        if (this.api.options.environment === 'production' &&
-            rest.args.includes('--force') === false &&
-            this.api.options.confirmToProceed[cmd.name].includes(rest.name) === true
+    async handle(parameters) {
+        const firstParameter = parameters[0] ? parameters[0] : '';
+        if (
+            parameters.includes('--force') === false &&
+            this.isProduction() === true &&
+            this.confirmToProceed(firstParameter) === true
         ) {
-            this.api.$term.echo(this.api.comment('**************************************'));
-            this.api.$term.echo(this.api.comment('*     Application In Production!     *'));
-            this.api.$term.echo(this.api.comment('**************************************'));
-            this.api.$term.echo(' ');
+            const title = this.style(
+                [
+                    '**************************************',
+                    '*     Application In Production!     *',
+                    '**************************************',
+                    '\n',
+                ].join('\n'),
+                'comment'
+            );
 
-            const promise = this.api.confirm(`${this.api.info('Do you really wish to run this command? [y/N] (yes/no)')} ${this.api.comment('[no]')}: `);
-            promise.then(() => {
-                cmd.command = `artisan --command="${this.addslashes(cmd.rest)}"`;
-                super.call(cmd);
-            }, () => {
-                this.$term.echo(' ');
-                this.$term.echo(`${this.comment('Command Cancelled!')}`);
-                this.$term.echo(' ');
-            });
-        } else {
-            cmd.command = `artisan --command="${this.addslashes(cmd.rest)}"`;
-            super.call(cmd);
+            const result = await this.ask(
+                [
+                    this.style('Do you really wish to run this command? [y/N] (yes/no)', 'info'),
+                    this.style('[no]', 'comment'),
+                ].join(' '),
+                title
+            );
+
+            if (result === false) {
+                this.line();
+                this.echo(this.style('Command Cancelled!', 'comment'));
+                this.line();
+
+                return;
+            }
         }
+
+        return super.handle(parameters);
     }
 }

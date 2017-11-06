@@ -1,104 +1,129 @@
-'use babel';
-
-import $ from '../bootstrap';
-import CodeMirror from 'codemirror';
+import 'codemirror/keymap/vim';
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/mode/loadmode';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/display/fullscreen';
 import 'codemirror/mode/clike/clike';
 import 'codemirror/mode/meta';
-import 'codemirror/keymap/vim';
 import 'codemirror/mode/php/php';
 import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
-import Command from './command';
 
-export default class Vi extends Command {
-    constructor(api, options) {
-        super(api, options);
-        const textarea = $('<textarea style="display: none;"></textarea>').appendTo(document.body).get(0);
-        this.editor = CodeMirror.fromTextArea(textarea, {
-            lineNumbers: true,
-            matchBrackets: true,
-            keyMap: 'vim',
-            showCursorWhenSelecting: true,
-            theme: 'monokai',
+import CodeMirror from 'codemirror';
+import { Command } from './command';
+import tap from 'lodash/tap';
+
+export class Vi extends Command {
+    constructor(shell, options) {
+        super('vi', shell, options);
+        this.textarea = document.createElement('textarea');
+        this.textarea = tap(document.createElement('textarea'), textarea => {
+            document.body.appendChild(textarea);
         });
-        this.editor.getWrapperElement().className += ' CodeMirror-fullscreen';
-        $(this.editor.getWrapperElement()).hide();
+
+        this.editor = tap(
+            CodeMirror.fromTextArea(this.textarea, {
+                lineNumbers: true,
+                matchBrackets: true,
+                styleActiveLine: true,
+                keyMap: 'vim',
+                showCursorWhenSelecting: true,
+                theme: 'monokai',
+            }),
+            editor => {
+                editor.getWrapperElement().className += ' CodeMirror-fullscreen';
+            }
+        );
+        this.doc = this.editor.getDoc();
+        this.cm = this.doc.cm;
+        this.hide();
+
+        CodeMirror.Vim.defineEx('q', 'q', () => {
+            this.quit();
+        });
+
+        CodeMirror.Vim.defineEx('w', 'w', () => {
+            this.save();
+        });
+
+        CodeMirror.Vim.defineEx('wq', 'wq', () => {
+            this.save()
+                .then(() => {
+                    this.quit();
+                })
+                .catch(error => this.error(error));
+        });
     }
 
-    match(name) {
-        return name === 'vi';
+    show() {
+        this.editor.getWrapperElement().style.display = 'block';
+        setTimeout(() => {
+            this.cm.focus();
+        }, 200);
     }
 
-    call(cmd) {
-        this.api.$term.pause();
-        this.makeRequest(cmd.command).then((response) => {
-            const path = cmd.rest;
-            const editor = this.editor;
-            const matches = path.match(/.+\.([^.]+)$/);
-            let info;
-            let mode;
-            let spec;
-            if (matches.length > 0) {
-                info = CodeMirror.findModeByExtension(matches[1]);
-                if (info) {
-                    mode = info.mode;
-                    spec = info.mime;
-                }
-            } else if (/\//.test(path)) {
-                info = CodeMirror.findModeByMIME(path);
-                if (info) {
-                    mode = info.mode;
-                    spec = info.mime;
-                }
-            }
+    hide() {
+        this.editor.getWrapperElement().style.display = 'none';
+    }
 
-            if (['htmlmixed', 'css', 'javascript', 'php'].includes(mode) === false) {
-                mode = 'php';
-                spec = 'application/x-httpd-php';
-            }
+    setOption(key, value) {
+        this.editor.setOption(key, value);
+    }
 
-            if (mode) {
-                editor.setOption('mode', spec);
-                CodeMirror.autoLoadMode(editor, mode);
-            }
-            $(editor.getWrapperElement()).show();
-            const doc = editor.getDoc();
-            const cm = doc.cm;
-            doc.setValue(response.result);
-            doc.setCursor(0);
-            editor.focus();
-            cm.focus();
-            const save = () => {
-                const value = JSON.stringify(doc.getValue());
-                cmd.command += ` --text=${value}`;
-                this.makeRequest(cmd.command).then(() => {}, () => {});
-            };
-            const quit = () => {
-                $(editor.getWrapperElement()).hide();
-                this.api.$term.resume();
-                this.api.$term.focus();
-            };
-            CodeMirror.Vim.defineEx('q', 'q', () => {
-                quit();
-            });
-            CodeMirror.Vim.defineEx('w', 'w', () => {
-                save();
-            });
-            CodeMirror.Vim.defineEx('wq', 'wq', () => {
-                save();
-                quit();
-            });
-        }, (response) => {
-            this.api.loading.hide();
-            this.api.echo(response.result);
-            this.api.serverInfo();
-        });
+    setValue(text) {
+        this.doc.setValue(text);
+    }
+
+    setCursor(pos) {
+        this.doc.setCursor(pos);
+    }
+
+    save() {
+        const value = JSON.stringify(this.doc.getValue().replace(/\n$/, ''));
+
+        return this.sendRequest([this.file, `--text=${value}`]);
+    }
+
+    quit() {
+        this.setValue('');
+        this.hide();
+        setTimeout(() => {
+            this.resume();
+            this.focus();
+        }, 200);
+    }
+
+    info() {
+        const matches = this.file.match(/.+\.([^.]+)$/);
+
+        if (matches.length > 0) {
+            return CodeMirror.findModeByExtension(matches[1]);
+        }
+
+        if (/\//.test(this.file)) {
+            return CodeMirror.findModeByMIME(this.file);
+        }
+
+        return {
+            mode: 'php',
+            mime: 'application/x-httpd-php',
+        };
+    }
+
+    async open(parameters) {
+        const response = await this.sendRequest([this.file]);
+        const info = this.info();
+        this.setOption('mode', info.mode);
+        this.pause();
+        this.show();
+        this.setValue(response);
+        this.setCursor(0);
+    }
+
+    handle(parameters) {
+        this.file = parameters[0] ? parameters[0] : '';
+        this.open();
     }
 }

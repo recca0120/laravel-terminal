@@ -1,14 +1,7 @@
-'use babel';
+import { Command } from './command';
 
-import Command from './command';
-
-export default class Composer extends Command {
-    match(name) {
-        return name === 'composer';
-    }
-
-    call(cmd) {
-        cmd.command = `composer --command="${this.addslashes(cmd.rest)}"`;
-        super.call(cmd);
+export class Composer extends Command {
+    constructor(shell, options) {
+        super('composer', shell, options);
     }
 }

@@ -1,8 +1,4 @@
-'use babel';
-
-import $ from './bootstrap';
-
-console.log($.fn)
+import $ from 'jquery';
 
 class OutputFormatterStyle {
     constructor(foreground = 'white', background = 'black', options = []) {
@@ -53,7 +49,7 @@ class OutputFormatterStyle {
     }
 }
 
-export default class OutputFormatter {
+export class OutputFormatter {
     constructor() {
         Object.assign(this, {
             formatters: {

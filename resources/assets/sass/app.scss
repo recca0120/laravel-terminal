@@ -4,8 +4,7 @@
 @import 'node_modules/codemirror/addon/display/fullscreen';
 @import 'node_modules/codemirror/theme/monokai';
 
-#terminal-shell,
-{
+#terminal-shell {
     padding: 10px 10px !important;
     min-width: 480px;
 }

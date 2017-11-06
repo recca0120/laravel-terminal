@@ -1,5 +1,7 @@
-const mix = require('laravel-mix').mix;
+const fs = require('fs');
+const mix = require('laravel-mix');
 const path = require('path');
+const publicPath = path.resolve(__dirname, '../../../../vendor/terminal');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,20 +14,23 @@ const path = require('path');
  |
  */
 
-mix.webpackConfig({
-    resolve: {
-      alias: {
-        $: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-        jQuery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-        jquery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-        'window.jQuery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.min.js'),
-      },
-    },
-    module: {
-        noParse: [
-            /jquery/i
-        ],
-    },
-  })
-  .js(['resources/assets/js/app.js'], 'public/js/terminal.js')
-  .sass('resources/assets/sass/app.scss', 'public/css/terminal.css');
+mix
+    .options({
+        autoload: {
+            jquery: ['$', 'window.jQuery', 'jQuery', 'CodeMirror'],
+        },
+        processCssUrls: false,
+        publicPath: './',
+    })
+    .browserSync({
+        files: [`${publicPath}/js/app.js`, `${publicPath}/css/app.css`],
+    });
+
+mix
+    .js('resources/assets/js/app.js', 'public/js/terminal.js')
+    .sass('resources/assets/sass/app.scss', 'public/css/terminal.css');
+
+mix.then(() => {
+    fs.copyFileSync('public/css/terminal.css', path.resolve(publicPath, 'css/terminal.css'));
+    fs.copyFileSync('public/js/terminal.js', path.resolve(publicPath, 'js/terminal.js'));
+});
