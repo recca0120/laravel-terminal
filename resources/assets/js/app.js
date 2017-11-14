@@ -4,8 +4,8 @@ import $ from 'jquery';
 import { Artisan } from './commands/artisan';
 import { Composer } from './commands/composer';
 import { Help } from './commands/help';
-import { Loading } from './loading';
 import { MySQL } from './commands/mysql';
+import { Spinner } from './spinner';
 import { Tinker } from './commands/tinker';
 import { Vi } from './commands/vi';
 import outputFormatter from './output-formatter';
@@ -46,7 +46,7 @@ export class Terminal {
 
         this.handle('help');
 
-        this.spinner = new Loading({
+        this.spinner = new Spinner({
             stream: this,
         });
 
@@ -57,8 +57,7 @@ export class Terminal {
         str = str.trim();
         for (const interpreter in this.options.interpreters) {
             if (str === interpreter) {
-                const prompt = this.options.interpreters[interpreter];
-                this.interpreter(prompt);
+                this.interpreter(this.options.interpreters[interpreter]);
 
                 return;
             }

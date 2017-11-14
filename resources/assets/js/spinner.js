@@ -8,7 +8,8 @@ const logSymbols = {
     error: outputFormatter.red('×'),
 };
 
-export class Loading {
+// git@github.com:sindresorhus/ora.git
+export class Spinner {
     constructor(options) {
         this.options = Object.assign(
             {
