@@ -194,7 +194,10 @@ Type a command, or type \`${this.style('help', 'info')}\`, for a list of command
             return;
         }
 
-        const host = this.style(`${this.options.username}@${this.options.hostname}`, 'info');
+        const host = [this.options.username, '@', this.options.hostname].reduce(
+            (prev, next) => prev + this.style(next, 'info'),
+            ''
+        );
         const os = this.style(this.options.os, 'question');
         const path = this.style(this.options.basePath, 'comment');
         this.echo(`${host} ${os} ${path}`);
@@ -225,42 +228,55 @@ Type a command, or type \`${this.style('help', 'info')}\`, for a list of command
     }
 
     line(text) {
-        if (!text) {
+        if (!text || !text.replace) {
             this.shell.echo(' ');
 
             return;
         }
-        const regex = new RegExp(
-            '(\\033\\[(\\d+)(;\\d+)?m(((?!\\033\\[\\d+).)*)\\033\\[(\\d+)(;\\d+)?m)|(\\[|\\])',
-            'g'
-        );
-        let content;
-        text = text.replace(regex, (...m) => {
-            if (['[', ']'].includes(m[0]) === true) {
-                return $.terminal.escape_brackets(m[0]);
-            }
-            content = $.terminal.escape_brackets(m[4]);
-            if (m[2] === '32') {
-                return this.style(content, 'info');
-            }
 
-            if (m[2] === '33') {
-                return this.style(content, 'comment');
-            }
+        const emailReplacer = (() => {
+            const pattern = /((([^<>('")[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))/g;
 
-            if (m[2] === '37') {
-                return this.style(content, 'error');
-            }
+            return str => {
+                return str.replace(pattern, (...m) => {
+                    return m[0].replace('@', '&commat;');
+                });
+            };
+        })();
 
-            return m[0];
-        });
+        const formatReplacer = (() => {
+            const pattern = new RegExp(
+                [
+                    '[\u001b\u009b][[()#;?]*(?:([0-9]{1,4})(?:;([0-9]{0,4}))*)?[0-9A-PRZcf-nqry=><]',
+                    '(.*)',
+                    '[\u001b\u009b][[()#;?]*(?:([0-9]{1,4})(?:;([0-9]{0,4}))*)?[0-9A-PRZcf-nqry=><]',
+                ].join(''),
+                'g'
+            );
 
-        text.split('\n').forEach(line => {
-            if (line === '') {
-                line = ' ';
-            }
-            this.shell.echo(line);
-        });
+            return str => {
+                return str.replace(pattern, (...m) => {
+                    switch (m[1]) {
+                        case '32':
+                            return this.style($.terminal.escape_brackets(emailReplacer(m[3])), 'info');
+
+                        case '33':
+                            return this.style($.terminal.escape_brackets(emailReplacer(m[3])), 'comment');
+
+                        case '37':
+                            return this.style($.terminal.escape_brackets(emailReplacer(m[3])), 'error');
+                    }
+
+                    return m[0];
+                });
+            };
+        })();
+
+        formatReplacer(text)
+            .split('\n')
+            .forEach(line => {
+                this.shell.echo(line === '' ? ' ' : line);
+            });
     }
 
     error(text) {

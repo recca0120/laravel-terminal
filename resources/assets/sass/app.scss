@@ -51,6 +51,12 @@
     }
 }
 
+.terminal-output {
+    span {
+        line-height: calc(var(--size, 1) * 15px);
+    }
+}
+
 .CodeMirror-fullscreen {
     z-index: 50000 !important;
 }
