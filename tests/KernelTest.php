@@ -33,9 +33,10 @@ class KernelTest extends TestCase
         );
         $artisan->shouldReceive('call')->once()->with(
             $command = 'foo',
-            $parameters = ['foo' => 'bar']
+            $parameters = ['foo' => 'bar'],
+            $outputBuffer = null
         )->andReturn($code = 'foo');
-        $this->assertSame($code, $kernel->call($command, $parameters));
+        $this->assertSame($code, $kernel->call($command, $parameters, $outputBuffer));
     }
 
     public function testQueue()

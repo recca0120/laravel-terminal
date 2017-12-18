@@ -81,7 +81,7 @@ class Kernel implements KernelContract
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
-        return $this->artisan->run($input, $output, $outputBuffer);
+        return $this->artisan->call($command, $parameters, $outputBuffer);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Recca0120\Terminal\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
+use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
