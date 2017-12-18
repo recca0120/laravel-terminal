@@ -74,13 +74,14 @@ class Kernel implements KernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param string $command
-     * @param array $parameters
+     * @param  string  $command
+     * @param  array  $parameters
+     * @param  \Symfony\Component\Console\Output\OutputInterface  $outputBuffer
      * @return int
      */
-    public function call($command, array $parameters = [])
+    public function call($command, array $parameters = [], $outputBuffer = null)
     {
-        return $this->artisan->call($command, $parameters);
+        return $this->artisan->run($input, $output, $outputBuffer);
     }
 
     /**

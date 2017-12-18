@@ -15,15 +15,16 @@ class Application extends ConsoleApplication
      *
      * @param string $command
      * @param array $parameters
+     * @param  \Symfony\Component\Console\Output\OutputInterface  $outputBuffer
      * @return int
      */
-    public function call($command, array $parameters = [])
+    public function call($command, array $parameters = [], $outputBuffer = null)
     {
         if ($this->ajax() === true) {
-            $this->lastOutput = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
+            $this->lastOutput = $outputBuffer ?: new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true, new OutputFormatter(true));
             $this->setCatchExceptions(true);
         } else {
-            $this->lastOutput = new BufferedOutput();
+            $this->lastOutput = $outputBuffer ?: new BufferedOutput();
             $this->setCatchExceptions(false);
         }
 

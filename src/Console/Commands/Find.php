@@ -6,13 +6,14 @@ use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Filesystem\Filesystem;
+use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Find extends Command
+class Find extends Command implements WebCommand
 {
     /**
      * The console command name.

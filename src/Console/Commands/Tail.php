@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class Tail extends Command
+class Tail extends Command implements WebCommand
 {
     /**
      * The console command name.

@@ -5,9 +5,10 @@ namespace Recca0120\Terminal\Console\Commands;
 use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
+use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-class Mysql extends Command
+class Mysql extends Command implements WebCommand
 {
     /**
      * The console command name.
