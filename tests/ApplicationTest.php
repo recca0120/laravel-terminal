@@ -74,9 +74,9 @@ class ApplicationTest extends TestCase
         );
 
         $laravel->shouldReceive('make')->once()->with(
-            $command = 'Symfony\Component\Console\Command\HelpCommand'
+            $command = 'Recca0120\Terminal\Console\Commands\Artisan'
         )->andReturn(new HelpCommand);
-        $this->assertSame($application, $application->resolveCommands($command, true));
+        $this->assertSame($application, $application->resolveCommands([$command]));
     }
 
     public function testRun()

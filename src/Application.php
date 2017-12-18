@@ -3,6 +3,7 @@
 namespace Recca0120\Terminal;
 
 use Illuminate\Http\Request;
+use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Formatter\OutputFormatter;
@@ -46,9 +47,11 @@ class Application extends ConsoleApplication
      * @param bool $web
      * @return $this
      */
-    public function resolveCommands($commands, $web = false)
+    public function resolveCommands($commands)
     {
-        return $web === true ? parent::resolveCommands($commands) : $this;
+        return parent::resolveCommands(array_filter($commands, function ($command) {
+            return is_subclass_of($command, WebCommand::class);
+        }));
     }
 
     /**

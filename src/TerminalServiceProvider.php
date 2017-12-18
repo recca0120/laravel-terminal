@@ -44,9 +44,8 @@ class TerminalServiceProvider extends ServiceProvider
 
         $this->app->singleton(Application::class, function ($app) {
             $config = $app['config']['terminal'];
-            $commands = $config['commands'];
             $artisan = new Application($app, $app['events'], $app->version());
-            $artisan->resolveCommands($commands, true);
+            $artisan->resolveCommands($config['commands']);
 
             return $artisan;
         });
