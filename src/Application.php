@@ -44,7 +44,6 @@ class Application extends ConsoleApplication
      * Resolve an array of commands through the application.
      *
      * @param array|mixed $commands
-     * @param bool $web
      * @return $this
      */
     public function resolveCommands($commands)
