@@ -16,14 +16,14 @@
         "illuminate/filesystem": "^5.1",
         "illuminate/routing": "^5.1",
         "illuminate/view": "^5.1",
-        "symfony/finder": "^2.7|^3.0",
+        "symfony/finder": "^2.7|^3.0|^4.0",
         "webmozart/glob": "^4.1"
     },
     "require-dev": {
         "mikey179/vfsStream": "^1.6",
-        "mockery/mockery": "~0.9.4",
+        "mockery/mockery": "~0.9.4|~1.0",
         "nesbot/carbon": "~1.20",
-        "phpunit/phpunit": "~4.8|~5.4|~6.1"
+        "phpunit/phpunit": "~4.8|~5.4|~6.1|~7.0"
     },
     "autoload": {
         "files": [
@@ -43,6 +43,8 @@
         "sort-packages": true,
         "optimize-autoloader": true
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "laravel": {
             "providers": [
