@@ -51,7 +51,11 @@ class Mysql extends Command implements WebCommand
     public function handle()
     {
         $query = $this->option('command');
-        $connection = $this->databaseManager->connection();
+        if(isset(config('terminal.dbconnection')) {
+            $connection = $this->databaseManager->connection(config('terminal.dbconnection'));
+        } else {
+            $connection = $this->databaseManager->connection();
+        }
         $rows = json_decode(json_encode($connection->select($query)), true);
         $headers = array_keys(Arr::get($rows, 0, []));
         $this->table($headers, $rows);
