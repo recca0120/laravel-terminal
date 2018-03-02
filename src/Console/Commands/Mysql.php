@@ -52,9 +52,22 @@ class Mysql extends Command implements WebCommand
     {
         $query = $this->option('command');
         $connection = $this->databaseManager->connection();
-        $rows = json_decode(json_encode($connection->select($query)), true);
+        $rows = $this->castArray($connection->select($query));
         $headers = array_keys(Arr::get($rows, 0, []));
         $this->table($headers, $rows);
+    }
+
+    /**
+     * castArray.
+     *
+     * @param stdClass[] $rows
+     * @return void
+     */
+    protected function castArray($rows)
+    {
+        return array_map(function ($row) {
+            return (array) $row;
+        }, $rows);
     }
 
     /**

@@ -27,7 +27,9 @@
     }
 
     .prompt {
-        display: inline;
+        span {
+            float: left !important;
+        }
     }
 
     .clipboard {

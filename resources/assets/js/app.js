@@ -245,10 +245,38 @@ Type a command, or type \`${this.style('help', 'info')}\`, for a list of command
         })();
 
         const formatReplacer = (() => {
+            // const pattern = new RegExp(
+            //     '(\\033\\[(\\d+)(;\\d+)?m(((?!\\033\\[\\d+).)*)\\033\\[(\\d+)(;\\d+)?m)|(\\[|\\])',
+            //     'g'
+            // );
+
+            // return str => {
+            //     return str.replace(pattern, (...m) => {
+            //         if (['[', ']'].includes(m[0]) === true) {
+            //             return $.terminal.escape_brackets(m[0]);
+            //         }
+
+            //         const content = $.terminal.escape_brackets(m[4]);
+
+            //         switch (m[2]) {
+            //             case '32':
+            //                 return this.style($.terminal.escape_brackets(emailReplacer(content)), 'info');
+
+            //             case '33':
+            //                 return this.style($.terminal.escape_brackets(emailReplacer(content)), 'comment');
+
+            //             case '37':
+            //                 return this.style($.terminal.escape_brackets(emailReplacer(content)), 'error');
+            //         }
+
+            //         return m[0];
+            //     });
+            // };
+
             const pattern = new RegExp(
                 [
                     '[\u001b\u009b][[()#;?]*(?:([0-9]{1,4})(?:;([0-9]{0,4}))*)?[0-9A-PRZcf-nqry=><]',
-                    '(.*)',
+                    '(.*?)',
                     '[\u001b\u009b][[()#;?]*(?:([0-9]{1,4})(?:;([0-9]{0,4}))*)?[0-9A-PRZcf-nqry=><]',
                 ].join(''),
                 'g'
