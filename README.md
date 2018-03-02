@@ -81,10 +81,12 @@ return [
 
 ## Available Commands
 
-*   artisan
-*   artisan tinker
-*   find
-*   mysql
+* artisan
+* artisan tinker
+* find
+* mysql
+* tail
+* vi
 
 ### Find
 
@@ -104,8 +106,9 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Inspiring;
+use Recca0120\Terminal\Contracts\TerminalCommand;
 
-class Inspire extends Command
+class Inspire extends Command implements TerminalCommand
 {
     /**
      * The name and signature of the console command.
@@ -162,6 +165,10 @@ $ artisan tinker
 ### MySQL
 ```bash
 $ mysql
+mysql> select * from users;
+
+# change connection
+mysql> use sqlite;
 mysql> select * from users;
 ```
 ![MySQL Command](https://cdn.rawgit.com/recca0120/terminal/master/docs/screenshots/mysql-command.png)
