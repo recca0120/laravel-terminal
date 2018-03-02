@@ -3,13 +3,11 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use InvalidArgumentException;
-use Illuminate\Console\Command;
-use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 use Illuminate\Contracts\Console\Kernel as ArtisanContract;
 
-class Artisan extends Command implements WebCommand
+class Artisan extends Command
 {
     /**
      * The console command name.

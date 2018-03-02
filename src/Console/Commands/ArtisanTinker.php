@@ -2,11 +2,9 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Illuminate\Console\Command;
-use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-class ArtisanTinker extends Command implements WebCommand
+class ArtisanTinker extends Command
 {
     /**
      * The console command name.

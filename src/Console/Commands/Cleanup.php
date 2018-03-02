@@ -3,12 +3,10 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Webmozart\Glob\Glob;
-use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
-use Recca0120\Terminal\Contracts\WebCommand;
 
-class Cleanup extends Command implements WebCommand
+class Cleanup extends Command
 {
     /**
      * The console command name.

@@ -3,13 +3,11 @@
 namespace Recca0120\Terminal\Console\Commands;
 
 use Phar;
-use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Recca0120\Terminal\Contracts\WebCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 
-class Composer extends Command implements WebCommand
+class Composer extends Command
 {
     /**
      * The console command name.
