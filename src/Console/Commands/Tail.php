@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;

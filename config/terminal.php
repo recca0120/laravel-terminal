@@ -15,6 +15,7 @@ return [
     'confirmToProceed' => [
         'artisan' => [
             'migrate',
+            'migrate:fresh',
             'migrate:install',
             'migrate:refresh',
             'migrate:reset',
