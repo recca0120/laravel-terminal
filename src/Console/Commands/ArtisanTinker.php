@@ -88,7 +88,7 @@ class ArtisanTinker extends Command implements WebCommand
     protected function getOptions()
     {
         return [
-            ['command', null, InputOption::VALUE_OPTIONAL],
+            ['command', null, InputOption::VALUE_REQUIRED],
         ];
     }
 }

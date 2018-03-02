@@ -24,7 +24,8 @@ class MysqlTest extends TestCase
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($query = 'SELECT * FROM users;');
-        $databaseManager->shouldReceive('connection')->once()->andReturn(
+        $input->shouldReceive('getOption')->once()->with('connection')->andReturn($connection = 'mysql');
+        $databaseManager->shouldReceive('connection')->once()->with($connection)->andReturn(
             $connection = m::mock('Illuminate\Database\ConnectionInterface')
         );
         $connection->shouldReceive('select')->once()->with($query)->andReturn($rows = [

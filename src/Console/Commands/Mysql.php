@@ -51,7 +51,7 @@ class Mysql extends Command implements WebCommand
     public function handle()
     {
         $query = $this->option('command');
-        $connection = $this->databaseManager->connection();
+        $connection = $this->databaseManager->connection($this->option('connection'));
         $rows = $this->castArray($connection->select($query));
         $headers = array_keys(Arr::get($rows, 0, []));
         $this->table($headers, $rows);
@@ -78,7 +78,8 @@ class Mysql extends Command implements WebCommand
     protected function getOptions()
     {
         return [
-            ['command', null, InputOption::VALUE_OPTIONAL],
+            ['command', null, InputOption::VALUE_REQUIRED],
+            ['connection', null, InputOption::VALUE_OPTIONAL],
         ];
     }
 }
