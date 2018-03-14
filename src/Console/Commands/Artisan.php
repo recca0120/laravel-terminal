@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
@@ -80,13 +81,13 @@ class Artisan extends Command
     protected function forceCommand($command)
     {
         if ((
-            starts_with($command, 'migrate') === true && starts_with($command, 'migrate:status') === false ||
-            starts_with($command, 'db:seed') === true
+            Str::startsWith($command, 'migrate') === true && Str::startsWith($command, 'migrate:status') === false ||
+            Str::startsWith($command, 'db:seed') === true
         ) && strpos($command, '--force') === false) {
             $command .= ' --force';
         }
 
-        if (starts_with($command, 'vendor:publish') === true && strpos($command, '--all') === false) {
+        if (Str::startsWith($command, 'vendor:publish') === true && strpos($command, '--all') === false) {
             $command .= ' --all';
         }
 

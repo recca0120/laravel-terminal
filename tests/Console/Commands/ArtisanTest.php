@@ -4,6 +4,7 @@ namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\ProcessUtils;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -43,9 +44,9 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'migrate:fresh');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
-            $this->assertSame('"'.$cmd.'" --force', (string) $input);
+            $this->assertSame(ProcessUtils::escapeArgument($cmd).' --force', (string) $input);
 
-            return '"'.$cmd.'" --force' === (string) $input;
+            return ProcessUtils::escapeArgument($cmd).' --force' === (string) $input;
         }), $output);
 
         $command->handle();
@@ -61,9 +62,9 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'vendor:publish');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
-            $this->assertSame('"'.$cmd.'" --all', (string) $input);
+            $this->assertSame(ProcessUtils::escapeArgument($cmd).' --all', (string) $input);
 
-            return '"'.$cmd.'" --all' === (string) $input;
+            return ProcessUtils::escapeArgument($cmd).' --all' === (string) $input;
         }), $output);
 
         $command->handle();
