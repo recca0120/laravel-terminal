@@ -23,12 +23,12 @@ class MysqlTest extends TestCase
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
-        $input->shouldReceive('getOption')->once()->with('command')->andReturn($query = 'SELECT * FROM users;');
+        $input->shouldReceive('getOption')->once()->with('command')->andReturn($sql = 'SELECT * FROM users;');
         $input->shouldReceive('getOption')->once()->with('connection')->andReturn($connection = 'mysql');
         $databaseManager->shouldReceive('connection')->once()->with($connection)->andReturn(
             $connection = m::mock('Illuminate\Database\ConnectionInterface')
         );
-        $connection->shouldReceive('select')->once()->with($query)->andReturn($rows = [
+        $connection->shouldReceive('select')->once()->with($sql, [], true)->andReturn($rows = [
             ['name' => 'name', 'email' => 'email'],
         ]);
 

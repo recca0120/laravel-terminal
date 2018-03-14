@@ -48,9 +48,9 @@ class Mysql extends Command
      */
     public function handle()
     {
-        $query = $this->option('command');
+        $sql = $this->option('command');
         $connection = $this->databaseManager->connection($this->option('connection'));
-        $rows = $this->castArray($connection->select($query));
+        $rows = $this->castArray($connection->select($sql, [], true));
         $headers = array_keys(Arr::get($rows, 0, []));
         $this->table($headers, $rows);
     }
