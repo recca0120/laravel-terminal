@@ -87,7 +87,10 @@ class Artisan extends Command
             $command .= ' --force';
         }
 
-        if (Str::startsWith($command, 'vendor:publish') === true && strpos($command, '--all') === false) {
+        if ((
+            version_compare(app()->version(), 5.5, '>=') &&
+            Str::startsWith($command, 'vendor:publish') === true
+        ) && strpos($command, '--all') === false) {
             $command .= ' --all';
         }
 
