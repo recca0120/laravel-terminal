@@ -88,18 +88,3 @@ if (class_exists('Route') === false) {
         }
     }
 }
-
-if (function_exists('app') === false) {
-    class Application
-    {
-        public function version()
-        {
-            return '5.5.0';
-        }
-    }
-
-    function app()
-    {
-        return new Application;
-    }
-}

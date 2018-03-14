@@ -60,6 +60,12 @@ class ArtisanTest extends TestCase
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
+        $command->setLaravel(
+            $application = m::mock('Illuminate\Contracts\Foundation\Application')
+        );
+
+        $application->shouldReceive('version')->once()->andReturn('5.5.0');
+
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'vendor:publish');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
             $this->assertSame(ProcessUtils::escapeArgument($cmd).' --all', (string) $input);

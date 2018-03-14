@@ -88,7 +88,8 @@ class Artisan extends Command
         }
 
         if ((
-            version_compare(app()->version(), 5.5, '>=') &&
+            is_null($this->laravel) === false &&
+            version_compare($this->laravel->version(), 5.5, '>=') &&
             Str::startsWith($command, 'vendor:publish') === true
         ) && strpos($command, '--all') === false) {
             $command .= ' --all';
