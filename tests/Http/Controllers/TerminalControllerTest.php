@@ -4,15 +4,12 @@ namespace Recca0120\Terminal\Tests\Http\Controllers;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
 
 class TerminalControllerTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function testIndex()
     {

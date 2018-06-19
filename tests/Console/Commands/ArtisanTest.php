@@ -7,14 +7,11 @@ use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\ProcessUtils;
 use Recca0120\Terminal\Console\Commands\Artisan;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class ArtisanTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function testHandle()
     {
@@ -26,8 +23,6 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'foo');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
-            $this->assertSame((string) $input, $cmd);
-
             return (string) $input === $cmd;
         }), $output);
 
@@ -44,8 +39,6 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'migrate:fresh');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
-            $this->assertSame(ProcessUtils::escapeArgument($cmd).' --force', (string) $input);
-
             return ProcessUtils::escapeArgument($cmd).' --force' === (string) $input;
         }), $output);
 
@@ -68,8 +61,6 @@ class ArtisanTest extends TestCase
 
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'vendor:publish');
         $kernel->shouldReceive('handle')->with(m::on(function ($input) use ($cmd) {
-            $this->assertSame(ProcessUtils::escapeArgument($cmd).' --all', (string) $input);
-
             return ProcessUtils::escapeArgument($cmd).' --all' === (string) $input;
         }), $output);
 

@@ -3,20 +3,16 @@
 namespace Recca0120\Terminal\Tests;
 
 use Mockery as m;
-use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class ApplicationTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function testCall()
     {

@@ -6,10 +6,14 @@ use Mockery as m;
 use Recca0120\Terminal\Kernel;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
+use Recca0120\Terminal\Application;
 use Recca0120\Terminal\TerminalServiceProvider;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class TerminalServiceProviderTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected function setUp()
     {
         parent::setUp();
@@ -19,12 +23,6 @@ class TerminalServiceProviderTest extends TestCase
         $container->shouldReceive('basePath')->andReturn(__DIR__);
         $container->shouldReceive('resourcePath')->andReturn(__DIR__);
         Container::setInstance($container);
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
     }
 
     public function testRegister()
@@ -49,9 +47,8 @@ class TerminalServiceProviderTest extends TestCase
                 $app->shouldReceive('version')->once()->andReturn('testing');
                 $events->shouldReceive('fire');
                 $events->shouldReceive('dispatch');
-                $this->assertInstanceOf('Recca0120\Terminal\Application', $closure($app));
 
-                return true;
+                return $closure($app) instanceof Application;
             })
         );
 

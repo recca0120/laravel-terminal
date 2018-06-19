@@ -5,14 +5,11 @@ namespace Recca0120\Terminal\Tests;
 use Mockery as m;
 use Recca0120\Terminal\Kernel;
 use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class KernelTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function testHandle()
     {

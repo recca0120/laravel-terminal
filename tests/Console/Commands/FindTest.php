@@ -3,7 +3,6 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Exception;
-use SplFileInfo;
 use Mockery as m;
 use Webmozart\Glob\Glob;
 use org\bovigo\vfs\vfsStream;
