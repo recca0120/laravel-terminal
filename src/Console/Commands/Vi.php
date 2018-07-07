@@ -51,7 +51,7 @@ class Vi extends Command
         $path = $this->argument('path');
         $text = $this->option('text');
         $root = function_exists('base_path') === true ? base_path() : getcwd();
-        $path = trim($root, '/').'/'.$path;
+        $path = rtrim($root, '/').'/'.$path;
 
         if (is_null($text) === false) {
             $this->files->put($path, $text);
