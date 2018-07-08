@@ -98,4 +98,3 @@ return [
         \Recca0120\Terminal\Console\Commands\Vi::class,
     ],
 ];
-
