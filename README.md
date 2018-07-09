@@ -1,6 +1,6 @@
  [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YNNLC9V28YDPN)
 
-# Laravel Web Artisan
+# Laravel Terminal
 
 [![StyleCI](https://styleci.io/repos/45892521/shield?style=flat)](https://styleci.io/repos/45892521)
 [![Build Status](https://travis-ci.org/recca0120/laravel-terminal.svg)](https://travis-ci.org/recca0120/laravel-terminal)
