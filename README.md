@@ -15,10 +15,16 @@
 
 ## Installation
 
+```bash
+composer require recca0120/terminal --dev
+```
+
+OR
+
 Add Presenter to your composer.json file:
 
 ```js
-"require": {
+"require-dev": {
     "recca0120/terminal": "^1.6.8"
 }
 ```
