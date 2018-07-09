@@ -18,7 +18,7 @@ class ArtisanTinker extends Command
      *
      * @var string
      */
-    protected $description = 'artisn tinker';
+    protected $description = 'artisan tinker';
 
     /**
      * Handle the command.
