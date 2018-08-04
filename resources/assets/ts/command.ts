@@ -2,17 +2,18 @@ import { HttpClient } from './httpclient';
 const parseSentence = require('minimist-string');
 
 export abstract class Command {
-    constructor(private client: HttpClient = new HttpClient()) {}
+    constructor(protected client: HttpClient = new HttpClient()) {}
 
     abstract is(command): boolean;
 
-    run(command) {
-        const cmd: any = this.parseSentence(command.replace(/^\.\//, ''));
+    async run(command): Promise<any> {
+        const cmd: any = this.parseSentence(command);
 
-        return this.client.jsonrpc(cmd.cmd, [`--command="${cmd.parameters.join(' ')}"`]);
+        return await this.client.jsonrpc(cmd.cmd, [`--command="${cmd.parameters.join(' ')}"`]);
     }
 
     protected parseSentence(command): any {
+        command = command.replace(/^\.\//, '').trim();
         const minimist: any = parseSentence(command);
         const cmd: string = minimist._.shift();
         const parameters: string[] = [];

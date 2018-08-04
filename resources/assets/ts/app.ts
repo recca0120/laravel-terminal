@@ -3,7 +3,7 @@ import 'jquery-mousewheel';
 import 'jquery.terminal';
 import './unix_formatting';
 import { HttpClient } from './httpclient';
-import { Artisan, MySQL, Tinker, Composer } from './commands';
+import { Artisan, Composer, MySQL, Tinker, Vim } from './commands';
 
 const win: any = <any>window;
 $.terminal.defaults.unixFormattingEscapeBrackets = true;
@@ -19,7 +19,13 @@ export class Terminal {
             'X-CSRF-TOKEN': options.csrfToken,
         });
 
-        this.commands = [new Artisan(client), new MySQL(client), new Tinker(client), new Composer(client)];
+        this.commands = [
+            new Artisan(client),
+            new Composer(client),
+            new MySQL(client),
+            new Tinker(client),
+            new Vim(client),
+        ];
 
         this.element = document.querySelector(elementId);
         this.term = $(this.element).terminal(this.run.bind(this), {});

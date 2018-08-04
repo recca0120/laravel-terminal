@@ -5,8 +5,7 @@ export class HttpClient {
 
     constructor(private endpoint: string = '', private headers: any = {}) {}
 
-    async jsonrpc(command: string, parameters: string[] = []) {
-        console.log(parameters);
+    async jsonrpc(command: string, parameters: string[] = []): Promise<any> {
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: this.endpoint,

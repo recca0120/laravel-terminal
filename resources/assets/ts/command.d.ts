@@ -1,8 +1,8 @@
 import { HttpClient } from './httpclient';
-export declare abstract class Command {
-    private client;
+export abstract class Command {
+    protected client: HttpClient;
     constructor(client?: HttpClient);
     abstract is(command: any): boolean;
-    run(command: any): Promise<{}>;
+    run(command: any): Promise<any>;
     protected parseSentence(command: any): any;
 }
