@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "rootDir": ".",
+        "sourceMap": true,
+        "removeComments": true,
+        "declaration": true,
+        "preserveWatchOutput": true,
+        "lib": ["dom", "es6"]
+	},
+    "include": [
+        "resources/assets/ts/**/*"
+    ]
+}

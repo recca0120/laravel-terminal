@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fse = require('fs-extra');
 const mix = require('laravel-mix');
 const path = require('path');
 const publicPath = path.resolve(__dirname, '../../../../vendor/terminal');
@@ -27,10 +27,15 @@ mix
     });
 
 mix
-    .js('resources/assets/js/app.js', 'public/js/terminal.js')
+    .ts('resources/assets/ts/app.ts', 'public/js/terminal.js')
     .sass('resources/assets/sass/app.scss', 'public/css/terminal.css');
 
 mix.then(() => {
-    fs.copyFileSync('public/css/terminal.css', path.resolve(publicPath, 'css/terminal.css'));
-    fs.copyFileSync('public/js/terminal.js', path.resolve(publicPath, 'js/terminal.js'));
+    try {
+        fse.copyFileSync(path.resolve(__dirname, 'public/css/terminal.css'), path.resolve(publicPath, 'css/terminal.css'));
+        fse.copyFileSync(path.resolve(__dirname, 'public/js/terminal.js'), path.resolve(publicPath, 'js/terminal.js'));
+        fse.copyFileSync(path.resolve(__dirname, 'resources/views/index.blade.php'), path.resolve(publicPath, '../../laravel/resources/views/vendor/terminal/index.blade.php'));
+    } catch (e) {
+        console.error(e);
+    }
 });
