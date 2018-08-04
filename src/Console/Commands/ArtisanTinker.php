@@ -49,6 +49,9 @@ class ArtisanTinker extends Command
             case 'string':
                 $this->comment($result);
                 break;
+            case 'NULL':
+                $this->line('');
+                break;
             default:
                 is_numeric($result) === true ? $this->info($result) : $this->line($result);
                 break;
