@@ -4,6 +4,8 @@ export abstract class Command {
     protected options: any;
     constructor(client?: HttpClient, options?: any);
     abstract is(command: string): boolean;
+    isInterpreter(command: string): boolean;
+    getInterpreter(): any;
     run(command: string): Promise<any>;
     protected parseSentence(command: any): any;
 }

@@ -6,6 +6,14 @@ export abstract class Command {
 
     abstract is(command: string): boolean;
 
+    isInterpreter(command: string): boolean {
+        return false;
+    }
+
+    getInterpreter(): any {
+        return {};
+    }
+
     async run(command: string): Promise<any> {
         const cmd: any = this.parseSentence(command);
 

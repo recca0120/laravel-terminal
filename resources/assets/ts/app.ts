@@ -5,6 +5,7 @@ import './unix_formatting';
 import { HttpClient } from './httpclient';
 import { Artisan, Composer, MySQL, Tinker, Vim, Help } from './commands';
 import { OutputFormatter } from './output-formatter';
+import { Command } from './command';
 
 const win: any = <any>window;
 $.terminal.defaults.unixFormattingEscapeBrackets = true;
@@ -13,10 +14,11 @@ $.terminal['ansi_colors']['normal'] = $.terminal['ansi_colors']['bold'];
 export class Terminal {
     private element: HTMLDivElement;
     private outputFormatter = new OutputFormatter();
-    private commands = [];
+    private commands: any[] = [];
     private term;
 
     constructor(elementId, private options: any) {
+        console.log(this.options);
         const client = new HttpClient(this.options.endpoint, {
             'X-CSRF-TOKEN': this.options.csrfToken,
         });
@@ -47,8 +49,13 @@ export class Terminal {
         for (const index in this.commands) {
             const command = this.commands[index];
             try {
+                if (this.interpreter(command, cmd) === true) {
+                    break;
+                }
+
                 if (command.is(cmd) === true) {
-                    this.term.echo(await command.run(cmd));
+                    this.term.pause();
+                    this.term.echo(await command.run(cmd)).resume();
 
                     break;
                 }
@@ -56,6 +63,25 @@ export class Terminal {
                 this.term.error(e);
             }
         }
+    }
+
+    private interpreter(command: Command, cmd: string): boolean {
+        if (command.isInterpreter(cmd) === false) {
+            return false;
+        }
+
+        const interpreter = command.getInterpreter();
+        this.term.push((cmd: string, term: any) => {
+            if (cmd === 'exit') {
+                term.pop();
+
+                return;
+            }
+
+            this.run(`${term.name()} ${cmd}`);
+        }, interpreter);
+
+        return true;
     }
 
     private prompt() {

@@ -9,6 +9,7 @@ export declare class Terminal {
     private term;
     constructor(elementId: any, options: any);
     run(cmd: string): Promise<void>;
+    private interpreter;
     private prompt;
     private greetings;
     private fit;
