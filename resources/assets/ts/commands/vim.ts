@@ -13,7 +13,6 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
 import * as CodeMirror from 'codemirror';
 import { HttpClient } from '../httpclient';
-import { rejects } from 'assert';
 
 export class Editor {
     private textarea: HTMLTextAreaElement;
@@ -132,8 +131,8 @@ export class Vim extends Command {
     private resolve: any;
     private reject: any;
 
-    constructor(client: HttpClient = new HttpClient()) {
-        super(client);
+    constructor(client: HttpClient = new HttpClient(), options: any) {
+        super(client, options);
         this.editor = new Editor();
         this.editor.hide();
 

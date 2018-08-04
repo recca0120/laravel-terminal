@@ -2,11 +2,11 @@ import { HttpClient } from './httpclient';
 const parseSentence = require('minimist-string');
 
 export abstract class Command {
-    constructor(protected client: HttpClient = new HttpClient()) {}
+    constructor(protected client: HttpClient = new HttpClient(), protected options: any = []) {}
 
-    abstract is(command): boolean;
+    abstract is(command: string): boolean;
 
-    async run(command): Promise<any> {
+    async run(command: string): Promise<any> {
         const cmd: any = this.parseSentence(command);
 
         return await this.client.jsonrpc(cmd.cmd, [`--command="${cmd.parameters.join(' ')}"`]);

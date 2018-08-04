@@ -34,7 +34,7 @@ export declare class Vim extends Command {
     private file;
     private resolve;
     private reject;
-    constructor(client?: HttpClient);
+    constructor(client: HttpClient, options: any);
     private write;
     is(command: any): boolean;
     run(command: any): Promise<any>;
