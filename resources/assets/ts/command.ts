@@ -26,7 +26,7 @@ export abstract class Command implements Interpreterable, Comfirmable {
     async run(command: string): Promise<any> {
         const cmd: any = this.parseSentence(command);
 
-        return await this.client.jsonrpc(cmd.cmd, [`--command="${cmd.parameters.join(' ')}"`]);
+        return await this.client.jsonrpc(cmd.name, [`--command="${cmd.params.join(' ')}"`]);
     }
 
     interpreterable(command: string): boolean {
@@ -60,9 +60,9 @@ export abstract class Command implements Interpreterable, Comfirmable {
     protected parseSentence(command): any {
         command = command.replace(/^\.\//, '').trim();
         const minimist: any = parseSentence(command);
-        const cmd: string = minimist._.shift();
-        const parameters: string[] = [];
-        parameters.push(...minimist._);
+        const name: string = minimist._.shift();
+        const params: string[] = [];
+        params.push(...minimist._);
         for (let index in minimist) {
             if (index === '_') {
                 continue;
@@ -72,15 +72,15 @@ export abstract class Command implements Interpreterable, Comfirmable {
             const value = minimist[index];
 
             if (value === true) {
-                parameters.push(key);
+                params.push(key);
             } else if (value !== false) {
-                parameters.push(`${key}=${value}`);
+                params.push(`${key}=${value}`);
             }
         }
 
         return {
-            cmd,
-            parameters,
+            name,
+            params,
         };
     }
 }

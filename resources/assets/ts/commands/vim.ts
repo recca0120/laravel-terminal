@@ -179,14 +179,14 @@ export class Vim extends Command {
             this.reject = reject;
 
             const cmd = this.parseSentence(command);
-            this.file = cmd.parameters[0] || '';
+            this.file = cmd.params[0] || '';
 
             if (!this.file) {
                 return reject('');
             }
 
             try {
-                const text: string = await this.client.jsonrpc(cmd.cmd, [this.file]);
+                const text: string = await this.client.jsonrpc(cmd.name, [this.file]);
 
                 this.editor
                     .setModeByFile(this.file)

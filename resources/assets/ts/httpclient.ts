@@ -8,20 +8,18 @@ export class HttpClient {
         this.headers['X-Requested-With'] = 'XMLHttpRequest';
     }
 
-    async jsonrpc(command: string, parameters: string[] = []): Promise<any> {
-        const params = {
+    async jsonrpc(name: string, params: string[] = []): Promise<any> {
+        return axios({
             url: this.endpoint,
             method: 'post',
             data: {
                 jsonrpc: '2.0',
                 id: ++this.requestId,
-                command,
-                parameters,
+                name,
+                params,
             },
             headers: this.headers,
-        };
-
-        return axios(params)
+        })
             .catch(error => Promise.reject(error))
             .then(response => response.data || {})
             .then(response => (response.error ? Promise.reject(response.error) : Promise.resolve(response.result)));

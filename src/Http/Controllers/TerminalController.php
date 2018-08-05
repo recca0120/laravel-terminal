@@ -70,8 +70,8 @@ class TerminalController extends Controller
     public function endpoint(Kernel $kernel)
     {
         $error = $kernel->call(
-            $this->request->get('command'),
-            $this->request->get('parameters', [])
+            $this->request->get('name'),
+            $this->request->get('params', [])
         );
 
         $key = $error === 0 ? 'result' : 'error';

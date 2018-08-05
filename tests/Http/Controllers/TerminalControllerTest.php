@@ -44,8 +44,8 @@ class TerminalControllerTest extends TestCase
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
 
-        $request->shouldReceive('get')->once()->with('command')->andReturn($command = 'foo');
-        $request->shouldReceive('get')->once()->with('parameters', [])->andReturn($parameters = ['foo' => 'bar']);
+        $request->shouldReceive('get')->once()->with('name')->andReturn($command = 'foo');
+        $request->shouldReceive('get')->once()->with('params', [])->andReturn($parameters = ['foo' => 'bar']);
 
         $kernel = m::mock('Recca0120\Terminal\Kernel');
         $kernel->shouldReceive('call')->once()->with($command, $parameters)->andReturn($error = 0);
