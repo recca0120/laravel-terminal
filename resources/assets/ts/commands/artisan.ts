@@ -2,11 +2,20 @@ import { Command } from '../command';
 
 export class Artisan extends Command {
     is(command: string): boolean {
-        return /^(\.\/)?artisan/.test(command);
+        console.log(this.removePHP(command))
+        return /^(\.\/)?artisan/.test(this.removePHP(command));
+    }
+
+    async run(command: string): Promise<any> {
+        const cmd: any = this.parseSentence(this.removePHP(command));
+
+        return await this.client.jsonrpc(cmd.cmd, [`--command="${cmd.parameters.join(' ')}"`]);
     }
 
     comfirmable(command: string): boolean {
-        if (this.isProduction() === true || /--force/.test(command) === true) {
+        command = this.removePHP(command);
+
+        if (this.isProduction() === false || /--force/.test(command) === true) {
             return false;
         }
 
@@ -46,5 +55,9 @@ export class Artisan extends Command {
 
     getComfirmCommand(command: string): string {
         return `${command} --force`;
+    }
+
+    private removePHP(command: string) {
+        return command.replace(/^php\s+/, '');
     }
 }
