@@ -7,7 +7,7 @@ export class Help extends Command {
 
     run(): Promise<any> {
         return new Promise(resolve => {
-            resolve(this.options.helpInfo);
+            resolve(['', this.options.helpInfo].join('\n'));
         });
     }
 }

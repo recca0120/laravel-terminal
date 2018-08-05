@@ -20,6 +20,8 @@ export class Terminal {
     private term;
 
     constructor(elementId, private options: any) {
+        this.element = document.querySelector(elementId);
+
         const client = new HttpClient(this.options.endpoint, {
             'X-CSRF-TOKEN': this.options.csrfToken,
         });
@@ -33,12 +35,13 @@ export class Terminal {
             new Vim(client, this.outputFormatter, this.options),
         ];
 
-        this.element = document.querySelector(elementId);
+        this.fit();
+
         this.term = $(this.element).terminal(this.run.bind(this), {
+            login: true,
             greetings: this.greetings(),
             prompt: this.prompt(),
         } as any);
-        this.fit();
 
         this.run('help');
 
@@ -153,20 +156,27 @@ export class Terminal {
         });
     }
 
-    private prompt(): string {
+    private prompt(withOS = true): string {
         // const host = [this.options.username, '@', this.options.hostname].reduce(
         //     (prev, next) => prev + this.outputFormatter.info(next),
         //     ''
         // );
-        // const os = this.outputFormatter.question(this.options.os);
-        // const path = this.outputFormatter.comment(this.options.basePath);
+        // const path = this.outputFormatter.comment('~');
 
-        // return `${host} ${os} ${path} $ `;
+        // return `${host} ${os} ${path} $ \n`;
 
         const host = [this.options.username, '@', this.options.hostname].reduce(
             (prev, next) => prev + this.outputFormatter.info(next),
             ''
         );
+
+        if (withOS === true) {
+            const os = this.outputFormatter.question(this.options.os);
+            const path = this.outputFormatter.comment(this.options.basePath);
+
+            return `${host} ${os} ${path} \n$ `;
+        }
+
         const path = this.outputFormatter.question('~');
 
         return `${host}:${path} $ `;
@@ -182,7 +192,6 @@ export class Terminal {
 Copyright (c) 2018 Recca Tsai <https://github.com/recca0120/>
 
 Type a command, or type \`${this.outputFormatter.info('help')}\`, for a list of commands.
-
 `;
     }
 
