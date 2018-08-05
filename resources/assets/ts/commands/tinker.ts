@@ -1,11 +1,11 @@
-import { Command } from '../command';
+import { Command, Interpreterable } from '../command';
 
-export class Tinker extends Command {
+export class Tinker extends Command implements Interpreterable {
     is(command): boolean {
         return /^(\.\/)?tinker/.test(command);
     }
 
-    isInterpreter(command: string): boolean {
+    interpreterable(command: string): boolean {
         return ['artisan tinker', 'tinker'].indexOf(command.trim()) !== -1;
     }
 

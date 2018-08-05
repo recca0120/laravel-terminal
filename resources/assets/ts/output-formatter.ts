@@ -67,6 +67,10 @@ export class OutputFormatter {
         question: new OutputFormatterStyle('magenta'),
     };
 
+    is(text) {
+        return /\[\d+;(\d+)?/.test(text);
+    }
+
     error(text) {
         return this.formatters.error.apply(text);
     }

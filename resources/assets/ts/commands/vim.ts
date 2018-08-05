@@ -13,6 +13,7 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
 import * as CodeMirror from 'codemirror';
 import { HttpClient } from '../httpclient';
+import { OutputFormatter } from '../output-formatter';
 
 export class Editor {
     private textarea: HTMLTextAreaElement;
@@ -131,8 +132,8 @@ export class Vim extends Command {
     private resolve: any;
     private reject: any;
 
-    constructor(client: HttpClient = new HttpClient(), options: any) {
-        super(client, options);
+    constructor(client: HttpClient, outputFormatter: OutputFormatter, options: any) {
+        super(client, outputFormatter, options);
         this.editor = new Editor();
         this.editor.hide();
 
@@ -184,12 +185,17 @@ export class Vim extends Command {
                 return reject('');
             }
 
-            const text: string = await this.client.jsonrpc(cmd.cmd, [this.file]);
-            this.editor
-                .setModeByFile(this.file)
-                .show()
-                .setText(text)
-                .setCursor(0);
+            try {
+                const text: string = await this.client.jsonrpc(cmd.cmd, [this.file]);
+
+                this.editor
+                    .setModeByFile(this.file)
+                    .show()
+                    .setText(text)
+                    .setCursor(0);
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 }

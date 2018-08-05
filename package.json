@@ -17,9 +17,9 @@
     },
     "dependencies": {
         "@types/codemirror": "0.0.58",
+        "axios": "^0.18.0",
         "cli-spinner": "^0.2.8",
         "codemirror": "^5.39.2",
-        "jquery-migrate": "^3.0.1",
         "jquery-mousewheel": "^3.1.13",
         "jquery.terminal": "^1.19.1",
         "minimist-string": "^1.0.2"
@@ -33,7 +33,6 @@
         "browser-sync": "^2.24.6",
         "browser-sync-webpack-plugin": "^2.2.2",
         "cross-env": "^5.2.0",
-        "element-dataset": "^2.2.6",
         "eslint": "^5.2.0",
         "eslint-config-prettier": "^2.9.0",
         "eslint-plugin-prettier": "^2.6.2",

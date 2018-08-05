@@ -10,6 +10,7 @@ export declare class OutputFormatterStyle {
 }
 export declare class OutputFormatter {
     private formatters;
+    is(text: any): boolean;
     error(text: any): any;
     info(text: any): any;
     comment(text: any): any;

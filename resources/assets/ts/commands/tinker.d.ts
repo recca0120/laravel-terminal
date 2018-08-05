@@ -1,6 +1,6 @@
-import { Command } from '../command';
-export declare class Tinker extends Command {
+import { Command, Interpreterable } from '../command';
+export declare class Tinker extends Command implements Interpreterable {
     is(command: any): boolean;
-    isInterpreter(command: string): boolean;
+    interpreterable(command: string): boolean;
     getInterpreter(): any;
 }

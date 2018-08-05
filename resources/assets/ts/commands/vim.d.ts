@@ -12,6 +12,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
 import { HttpClient } from '../httpclient';
+import { OutputFormatter } from '../output-formatter';
 export declare class Editor {
     private textarea;
     private editor;
@@ -34,7 +35,7 @@ export declare class Vim extends Command {
     private file;
     private resolve;
     private reject;
-    constructor(client: HttpClient, options: any);
+    constructor(client: HttpClient, outputFormatter: OutputFormatter, options: any);
     private write;
     is(command: any): boolean;
     run(command: any): Promise<any>;

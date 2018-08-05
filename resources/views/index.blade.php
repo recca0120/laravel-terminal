@@ -6,16 +6,16 @@
     <title>Terminal</title>
     <link href="{{ asset('vendor/terminal/css/terminal.css') }}" rel="stylesheet"/>
     <style>
-    html, body{
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-    #tracy-debug-bar {
-        display: none;
-    }
+        html, body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #tracy-debug-bar {
+            display: none;
+        }
     </style>
 </head>
 <body>

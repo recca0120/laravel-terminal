@@ -37,44 +37,7 @@ return [
     'route' => [
         'prefix' => 'terminal',
         'as' => 'terminal.',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Interpreters
-    |--------------------------------------------------------------------------
-    |
-    | This value contains a list of commands that will trigger a new 'shell'
-    | prompt to be shown before command execution.
-    |
-    */
-
-    'interpreters' => [
-        'mysql' => 'mysql',
-        'artisan tinker' => 'tinker',
-        'tinker' => 'tinker',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Requires Confirmation
-    |--------------------------------------------------------------------------
-    |
-    | This value contains a list of commands that require confirmation if
-    | the app is in a production environment.
-    |
-    */
-
-    'confirmToProceed' => [
-        'artisan' => [
-            'migrate',
-            'migrate:fresh',
-            'migrate:install',
-            'migrate:refresh',
-            'migrate:reset',
-            'migrate:rollback',
-            'db:seed',
-        ],
+        'middleware' => ['web']
     ],
 
     /*

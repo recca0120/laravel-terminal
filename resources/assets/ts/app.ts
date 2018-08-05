@@ -6,6 +6,7 @@ import { HttpClient } from './httpclient';
 import { Artisan, Composer, MySQL, Tinker, Vim, Help } from './commands';
 import { OutputFormatter } from './output-formatter';
 import { Command } from './command';
+import { Spinner } from './spinners';
 
 const win: any = <any>window;
 $.terminal.defaults.unixFormattingEscapeBrackets = true;
@@ -14,22 +15,22 @@ $.terminal['ansi_colors']['normal'] = $.terminal['ansi_colors']['bold'];
 export class Terminal {
     private element: HTMLDivElement;
     private outputFormatter = new OutputFormatter();
+    private spinner = new Spinner();
     private commands: any[] = [];
     private term;
 
     constructor(elementId, private options: any) {
-        console.log(this.options);
         const client = new HttpClient(this.options.endpoint, {
             'X-CSRF-TOKEN': this.options.csrfToken,
         });
 
         this.commands = [
-            new Artisan(client, this.options),
-            new Composer(client, this.options),
-            new Help(client, this.options),
-            new MySQL(client, this.options),
-            new Tinker(client, this.options),
-            new Vim(client, this.options),
+            new Artisan(client, this.outputFormatter, this.options),
+            new Composer(client, this.outputFormatter, this.options),
+            new Help(client, this.outputFormatter, this.options),
+            new MySQL(client, this.outputFormatter, this.options),
+            new Tinker(client, this.outputFormatter, this.options),
+            new Vim(client, this.outputFormatter, this.options),
         ];
 
         this.element = document.querySelector(elementId);
@@ -44,44 +45,106 @@ export class Terminal {
         window.addEventListener('resize', this.fit.bind(this));
     }
 
-    async run(cmd: string) {
+    run(cmd: string) {
         cmd = cmd.trim();
-        for (const index in this.commands) {
-            const command = this.commands[index];
-            try {
-                if (this.interpreter(command, cmd) === true) {
-                    break;
+
+        this.commands.some((command: Command) => {
+            if (command.is(cmd) === true) {
+                if (command.interpreterable(cmd) === true) {
+                    this.term.push((cmd: string, term: any) => {
+                        if (cmd === 'exit') {
+                            term.pop();
+
+                            return;
+                        }
+
+                        this.run(`${term.name()} ${cmd}`);
+                    }, command.getInterpreter());
+
+                    return true;
                 }
 
-                if (command.is(cmd) === true) {
-                    this.term.pause();
-                    this.term.echo(await command.run(cmd)).resume();
+                if (command.comfirmable(cmd) === true) {
+                    const { message, title, cancel } = command.getComfirm(cmd);
 
-                    break;
+                    this.confirm(message, title, cancel).then(async result => {
+                        if (result === true) {
+                            this.executeCommand(command, command.getComfirmCommand(cmd));
+                        }
+                    });
+
+                    return true;
                 }
-            } catch (e) {
-                this.term.error(e);
+
+                this.executeCommand(command, cmd);
+
+                return true;
             }
-        }
+        });
     }
 
-    private interpreter(command: Command, cmd: string): boolean {
-        if (command.isInterpreter(cmd) === false) {
-            return false;
+    private executeCommand(command: Command, cmd: string): void {
+        this.term.pause(true);
+
+        this.spinner.start((frame: string) => {
+            this.term.set_prompt(`${this.prompt()}${frame}`);
+        });
+
+        command
+            .run(cmd)
+            .catch(error => {
+                this.spinner.stop();
+                this.term.resume();
+                this.term.focus();
+                this.term.set_prompt(this.prompt());
+                if (this.outputFormatter.is(error)) {
+                    this.term.echo(error);
+                } else {
+                    this.term.error(error);
+                }
+            })
+            .then((result: string) => {
+                if (result === undefined) {
+                    return;
+                }
+                this.spinner.stop();
+                this.term.resume();
+                this.term.focus();
+                this.term.set_prompt(this.prompt());
+                this.term.echo(result);
+            });
+    }
+
+    private async confirm(message: string, title: string = '', cancel: string = ''): Promise<any> {
+        this.term.history().disable();
+
+        if (!!title) {
+            this.term.echo(title);
         }
 
-        const interpreter = command.getInterpreter();
-        this.term.push((cmd: string, term: any) => {
-            if (cmd === 'exit') {
-                term.pop();
+        this.term.echo(message);
+        this.term.scroll_to_bottom();
 
-                return;
-            }
-
-            this.run(`${term.name()} ${cmd}`);
-        }, interpreter);
-
-        return true;
+        return new Promise(resolve => {
+            this.term.push(
+                (result, term) => {
+                    term.pop();
+                    this.term.scroll_to_bottom();
+                    this.term.history().enable();
+                    if (['y', 'yes', 'true'].indexOf(result.trim().toLowerCase()) !== -1) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                        if (!!cancel) {
+                            this.term.echo(cancel);
+                        }
+                    }
+                },
+                {
+                    prompt: '> ',
+                }
+            );
+        });
     }
 
     private prompt() {
@@ -98,7 +161,7 @@ export class Terminal {
             (prev, next) => prev + this.outputFormatter.info(next),
             ''
         );
-        const path = this.outputFormatter.comment('~');
+        const path = this.outputFormatter.question('~');
 
         return `${host}:${path} $ `;
     }

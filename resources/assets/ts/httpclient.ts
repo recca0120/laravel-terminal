@@ -1,34 +1,29 @@
-import * as $ from 'jquery';
+import axios from 'axios';
 
 export class HttpClient {
     private requestId = 0;
 
-    constructor(private endpoint: string = '', private headers: any = {}) {}
+    constructor(private endpoint: string = '', private headers: any = {}) {
+        this.headers['content-type'] = 'application/json';
+        this.headers['X-Requested-With'] = 'XMLHttpRequest';
+    }
 
     async jsonrpc(command: string, parameters: string[] = []): Promise<any> {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: this.endpoint,
-                dataType: 'json',
-                type: 'post',
-                data: {
-                    jsonrpc: '2.0',
-                    id: ++this.requestId,
-                    command,
-                    parameters,
-                },
-                beforeSend: (jqXHR: JQueryXHR) => {
-                    for (let index in this.headers) {
-                        jqXHR.setRequestHeader(index, this.headers[index]);
-                    }
-                },
-                success: (response: any) => {
-                    resolve(response.result ? response.result : response.error);
-                },
-                error: (jqXHR: JQueryXHR, status: string, errorThrown: string) => {
-                    reject(errorThrown);
-                },
-            });
-        });
+        const params = {
+            url: this.endpoint,
+            method: 'post',
+            data: {
+                jsonrpc: '2.0',
+                id: ++this.requestId,
+                command,
+                parameters,
+            },
+            headers: this.headers,
+        };
+
+        return axios(params)
+            .catch(error => Promise.reject(error))
+            .then(response => response.data || {})
+            .then(response => (response.error ? Promise.reject(response.error) : Promise.resolve(response.result)));
     }
 }

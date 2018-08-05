@@ -5,11 +5,13 @@ export declare class Terminal {
     private options;
     private element;
     private outputFormatter;
+    private spinner;
     private commands;
     private term;
     constructor(elementId: any, options: any);
-    run(cmd: string): Promise<void>;
-    private interpreter;
+    run(cmd: string): void;
+    private executeCommand;
+    private confirm;
     private prompt;
     private greetings;
     private fit;
