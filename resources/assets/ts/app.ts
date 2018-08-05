@@ -48,7 +48,7 @@ export class Terminal {
     run(cmd: string): void {
         cmd = cmd.trim();
 
-        this.commands.some((command: Command) => {
+        const executed: boolean = this.commands.some((command: Command) => {
             if (command.is(cmd) === true) {
                 if (command.interpreterable(cmd) === true) {
                     this.term.push((cmd: string, term: any) => {
@@ -81,6 +81,10 @@ export class Terminal {
                 return true;
             }
         });
+
+        if (executed === false) {
+            this.term.echo(`bash: ${cmd.trim().split(/\s+/)[0]}: command not found`);
+        }
     }
 
     private executeCommand(command: Command, cmd: string): void {
