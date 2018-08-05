@@ -156,15 +156,7 @@ export class Terminal {
         });
     }
 
-    private prompt(withOS = true): string {
-        // const host = [this.options.username, '@', this.options.hostname].reduce(
-        //     (prev, next) => prev + this.outputFormatter.info(next),
-        //     ''
-        // );
-        // const path = this.outputFormatter.comment('~');
-
-        // return `${host} ${os} ${path} $ \n`;
-
+    private prompt(withOS = false): string {
         const host = [this.options.username, '@', this.options.hostname].reduce(
             (prev, next) => prev + this.outputFormatter.info(next),
             ''

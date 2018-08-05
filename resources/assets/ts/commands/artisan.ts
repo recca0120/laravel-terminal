@@ -2,14 +2,11 @@ import { Command } from '../command';
 
 export class Artisan extends Command {
     is(command: string): boolean {
-        console.log(this.removePHP(command))
         return /^(\.\/)?artisan/.test(this.removePHP(command));
     }
 
     async run(command: string): Promise<any> {
-        const cmd: any = this.parseSentence(this.removePHP(command));
-
-        return await this.client.jsonrpc(cmd.cmd, [`--command="${cmd.parameters.join(' ')}"`]);
+        return super.run(this.removePHP(command));
     }
 
     comfirmable(command: string): boolean {
