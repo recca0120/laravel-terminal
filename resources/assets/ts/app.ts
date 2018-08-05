@@ -150,7 +150,7 @@ export class Terminal {
                     }
                 },
                 {
-                    prompt: '> ',
+                    prompt: ' > ',
                 }
             );
         });
