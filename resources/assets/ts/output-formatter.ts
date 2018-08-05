@@ -37,16 +37,16 @@ export class OutputFormatterStyle {
     private foreground: string = '';
     private background: string = '';
 
-    constructor(foreground = 'white', background = 'black') {
+    constructor(foreground: string = 'white', background: string = 'black') {
         this.foreground = this.getColor(foreground);
         this.background = this.getColor(background);
     }
 
-    apply(text) {
+    apply(text: string): string {
         return `[[;${this.foreground};${this.background}]${$.terminal.escape_brackets(text)}]`;
     }
 
-    private getColor(color) {
+    private getColor(color: string): string {
         return this.colors[color] ? this.colors[color] : color;
     }
 }
@@ -67,55 +67,55 @@ export class OutputFormatter {
         question: new OutputFormatterStyle('magenta'),
     };
 
-    is(text) {
+    is(text: string): boolean {
         return /\[\d+;(\d+)?/.test(text);
     }
 
-    error(text) {
+    error(text: string): string {
         return this.formatters.error.apply(text);
     }
 
-    info(text) {
+    info(text: string): string {
         return this.formatters.info.apply(text);
     }
 
-    comment(text) {
+    comment(text: string): string {
         return this.formatters.comment.apply(text);
     }
 
-    question(text) {
+    question(text: string): string {
         return this.formatters.question.apply(text);
     }
 
-    black(text) {
+    black(text: string): string {
         return this.formatters.black.apply(text);
     }
 
-    red(text) {
+    red(text: string): string {
         return this.formatters.red.apply(text);
     }
 
-    green(text) {
+    green(text: string): string {
         return this.formatters.green.apply(text);
     }
 
-    yellow(text) {
+    yellow(text: string): string {
         return this.formatters.yellow.apply(text);
     }
 
-    blue(text) {
+    blue(text: string): string {
         return this.formatters.blue.apply(text);
     }
 
-    magenta(text) {
+    magenta(text: string): string {
         return this.formatters.magenta.apply(text);
     }
 
-    cyan(text) {
+    cyan(text: string): string {
         return this.formatters.cyan.apply(text);
     }
 
-    white(text) {
+    white(text: string): string {
         return this.formatters.white.apply(text);
     }
 }

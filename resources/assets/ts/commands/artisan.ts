@@ -1,7 +1,7 @@
 import { Command } from '../command';
 
 export class Artisan extends Command {
-    is(command): boolean {
+    is(command: string): boolean {
         return /^(\.\/)?artisan/.test(command);
     }
 

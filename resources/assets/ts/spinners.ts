@@ -9,27 +9,33 @@ export class Spinner {
         this.setStyle(style);
     }
 
-    setStyle(style: string) {
+    setStyle(style: string): Spinner {
         this.spinner = cliSpinners[style];
+
+        return this;
     }
 
-    start(cb: Function) {
+    start(cb: Function): Spinner {
         this.interval = setInterval(() => {
             cb(this.frame());
         }, this.wait());
+
+        return this;
     }
 
-    stop() {
+    stop(): Spinner {
         if (this.interval) {
             clearInterval(this.interval);
         }
+
+        return this;
     }
 
-    private wait() {
+    private wait(): number {
         return this.spinner.interval;
     }
 
-    private frame() {
+    private frame(): string {
         const frames = this.spinner.frames;
         let frame = frames[this.frameIndex];
 

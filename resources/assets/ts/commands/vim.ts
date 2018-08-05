@@ -52,13 +52,13 @@ export class Editor {
         });
     }
 
-    on(type: string, cb: any) {
+    on(type: string, cb: any): Editor {
         this.textarea.addEventListener(type, cb);
 
         return this;
     }
 
-    show() {
+    show(): Editor {
         this.editor.getWrapperElement().style.display = 'block';
         setTimeout(() => {
             this.editor.focus();
@@ -67,13 +67,13 @@ export class Editor {
         return this;
     }
 
-    hide() {
+    hide(): Editor {
         this.wapperElement.style.display = 'none';
 
         return this;
     }
 
-    setText(text): Editor {
+    setText(text: string): Editor {
         this.doc.setValue(text);
 
         return this;
@@ -83,32 +83,32 @@ export class Editor {
         return this.doc.getValue();
     }
 
-    setOption(key, value) {
+    setOption(key: string, value: any): Editor {
         this.editor.setOption(key, value);
 
         return this;
     }
 
-    setCursor(pos) {
+    setCursor(pos: any): Editor {
         this.doc.setCursor(pos);
 
         return this;
     }
 
-    setModeByFile(file: string) {
+    setModeByFile(file: string): Editor {
         this.setOption('mode', this.getModeByFile(file).mode);
 
         return this;
     }
 
-    private quit() {
+    private quit(): Editor {
         this.setText('');
         this.hide();
 
         return this;
     }
 
-    private getModeByFile(file: string) {
+    private getModeByFile(file: string): any {
         const matches = file.match(/.+\.([^.]+)$/);
 
         if (matches.length > 0) {
@@ -160,7 +160,11 @@ export class Vim extends Command {
         });
     }
 
-    private async write() {
+    is(command: string): boolean {
+        return /^(\.\/)?vi(m)?/.test(command);
+    }
+
+    private async write(): Promise<void> {
         try {
             const text = JSON.stringify(this.editor.getText().replace(/\n$/, ''));
             await this.client.jsonrpc('vi', [this.file, `--text=${text}`]);
@@ -169,11 +173,7 @@ export class Vim extends Command {
         }
     }
 
-    is(command): boolean {
-        return /^(\.\/)?vi(m)?/.test(command);
-    }
-
-    async run(command): Promise<any> {
+    async run(command: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;

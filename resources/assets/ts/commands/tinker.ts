@@ -1,7 +1,7 @@
 import { Command, Interpreterable } from '../command';
 
 export class Tinker extends Command implements Interpreterable {
-    is(command): boolean {
+    is(command: string): boolean {
         return /^(\.\/)?tinker/.test(command);
     }
 

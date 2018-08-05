@@ -19,14 +19,14 @@ export declare class Editor {
     private wapperElement;
     private doc;
     constructor();
-    on(type: string, cb: any): this;
-    show(): this;
-    hide(): this;
-    setText(text: any): Editor;
+    on(type: string, cb: any): Editor;
+    show(): Editor;
+    hide(): Editor;
+    setText(text: string): Editor;
     getText(): string;
-    setOption(key: any, value: any): this;
-    setCursor(pos: any): this;
-    setModeByFile(file: string): this;
+    setOption(key: string, value: any): Editor;
+    setCursor(pos: any): Editor;
+    setModeByFile(file: string): Editor;
     private quit;
     private getModeByFile;
 }
@@ -36,7 +36,7 @@ export declare class Vim extends Command {
     private resolve;
     private reject;
     constructor(client: HttpClient, outputFormatter: OutputFormatter, options: any);
+    is(command: string): boolean;
     private write;
-    is(command: any): boolean;
-    run(command: any): Promise<any>;
+    run(command: string): Promise<any>;
 }

@@ -3,7 +3,7 @@ import { Command } from '../command';
 export class MySQL extends Command {
     private connection = null;
 
-    is(command): boolean {
+    is(command: string): boolean {
         return /^(\.\/)?mysql/.test(command);
     }
 

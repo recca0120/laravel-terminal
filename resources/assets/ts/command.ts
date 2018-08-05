@@ -49,11 +49,11 @@ export abstract class Command implements Interpreterable, Comfirmable {
         return command;
     }
 
-    protected environment() {
+    protected environment(): string {
         return this.options.environment;
     }
 
-    protected isProduction() {
+    protected isProduction(): boolean {
         return this.environment() === 'production';
     }
 

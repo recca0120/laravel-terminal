@@ -21,7 +21,7 @@ export declare abstract class Command implements Interpreterable, Comfirmable {
     comfirmable(command: string): boolean;
     getComfirm(command: string): any;
     getComfirmCommand(command: string): string;
-    protected environment(): any;
+    protected environment(): string;
     protected isProduction(): boolean;
     protected parseSentence(command: any): any;
 }

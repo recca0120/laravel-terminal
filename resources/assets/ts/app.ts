@@ -16,7 +16,7 @@ export class Terminal {
     private element: HTMLDivElement;
     private outputFormatter = new OutputFormatter();
     private spinner = new Spinner();
-    private commands: any[] = [];
+    private commands: Command[] = [];
     private term;
 
     constructor(elementId, private options: any) {
@@ -38,14 +38,14 @@ export class Terminal {
             greetings: this.greetings(),
             prompt: this.prompt(),
         } as any);
+        this.fit();
 
         this.run('help');
 
-        this.fit();
         window.addEventListener('resize', this.fit.bind(this));
     }
 
-    run(cmd: string) {
+    run(cmd: string): void {
         cmd = cmd.trim();
 
         this.commands.some((command: Command) => {
@@ -102,6 +102,7 @@ export class Terminal {
                 } else {
                     this.term.error(error);
                 }
+                this.term.scroll_to_bottom();
             })
             .then((result: string) => {
                 if (result === undefined) {
@@ -112,6 +113,7 @@ export class Terminal {
                 this.term.focus();
                 this.term.set_prompt(this.prompt());
                 this.term.echo(result);
+                this.term.scroll_to_bottom();
             });
     }
 
@@ -147,7 +149,7 @@ export class Terminal {
         });
     }
 
-    private prompt() {
+    private prompt(): string {
         // const host = [this.options.username, '@', this.options.hostname].reduce(
         //     (prev, next) => prev + this.outputFormatter.info(next),
         //     ''
@@ -166,7 +168,7 @@ export class Terminal {
         return `${host}:${path} $ `;
     }
 
-    private greetings() {
+    private greetings(): string {
         return `
  __                        _    _____              _         _
 |  |   ___ ___ ___ _ _ ___| |  |_   ____ ___ _____|_|___ ___| |
@@ -182,6 +184,7 @@ Type a command, or type \`${this.outputFormatter.info('help')}\`, for a list of 
 
     private fit(): void {
         const parent: HTMLDivElement = this.element.parentNode as HTMLDivElement;
+
         if (parent.tagName === 'BODY') {
             this.element.style.width = `${win.innerWidth}px`;
             this.element.style.height = `${win.innerHeight}px`;

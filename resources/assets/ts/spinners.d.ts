@@ -3,9 +3,9 @@ export declare class Spinner {
     private frameIndex;
     private interval;
     constructor(style?: string);
-    setStyle(style: string): void;
-    start(cb: Function): void;
-    stop(): void;
+    setStyle(style: string): Spinner;
+    start(cb: Function): Spinner;
+    stop(): Spinner;
     private wait;
     private frame;
 }
