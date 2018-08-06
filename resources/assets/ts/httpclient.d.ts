@@ -3,5 +3,5 @@ export declare class HttpClient {
     private headers;
     private requestId;
     constructor(endpoint?: string, headers?: any);
-    jsonrpc(name: string, params?: string[]): Promise<any>;
+    jsonrpc(method: string, params?: string[]): Promise<any>;
 }

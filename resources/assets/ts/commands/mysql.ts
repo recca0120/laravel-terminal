@@ -20,7 +20,7 @@ export class MySQL extends Command {
             cmd.params.push(`--connection=${this.connection}`);
         }
 
-        return await this.client.jsonrpc(cmd.name, [`--command="${cmd.params.join(' ')}"`]);
+        return await this.client.jsonrpc(cmd.method, [`--command="${cmd.params.join(' ')}"`]);
     }
 
     interpreterable(command: string): boolean {

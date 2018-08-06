@@ -44,7 +44,7 @@ class TerminalControllerTest extends TestCase
             $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
         );
 
-        $request->shouldReceive('get')->once()->with('name')->andReturn($command = 'foo');
+        $request->shouldReceive('get')->once()->with('method')->andReturn($command = 'foo');
         $request->shouldReceive('get')->once()->with('params', [])->andReturn($parameters = ['foo' => 'bar']);
 
         $kernel = m::mock('Recca0120\Terminal\Kernel');
@@ -53,12 +53,38 @@ class TerminalControllerTest extends TestCase
         $request->shouldReceive('get')->once()->with('id')->andReturn($id = 'foo');
         $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
 
-        $key = $error === 0 ? 'result' : 'error';
-
         $responseFactory->shouldReceive('json')->once()->with([
             'jsonrpc' => $jsonrpc,
             'id' => $id,
-            $key => $output,
+            'result' => $output,
+        ])->andReturn($result = 'foo');
+
+        $this->assertSame($result, $controller->endpoint($kernel));
+    }
+
+    public function testEndpointError()
+    {
+        $controller = new TerminalController(
+            $request = m::mock('Illuminate\Http\Request'),
+            $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
+        );
+
+        $request->shouldReceive('get')->once()->with('method')->andReturn($command = 'foo');
+        $request->shouldReceive('get')->once()->with('params', [])->andReturn($parameters = ['foo' => 'bar']);
+
+        $kernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel->shouldReceive('call')->once()->with($command, $parameters)->andReturn($error = 1);
+        $request->shouldReceive('get')->once()->with('jsonrpc')->andReturn($jsonrpc = 'foo');
+        $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
+
+        $responseFactory->shouldReceive('json')->once()->with([
+            'jsonrpc' => $jsonrpc,
+            'id' => null,
+            'error' => [
+                'code' => -32600,
+                'message' => 'Invalid Request',
+                'data' => $output,
+            ],
         ])->andReturn($result = 'foo');
 
         $this->assertSame($result, $controller->endpoint($kernel));

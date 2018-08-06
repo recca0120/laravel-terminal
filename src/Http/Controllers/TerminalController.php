@@ -69,17 +69,27 @@ class TerminalController extends Controller
      */
     public function endpoint(Kernel $kernel)
     {
-        $error = $kernel->call(
-            $this->request->get('name'),
+        $code = $kernel->call(
+            $this->request->get('method'),
             $this->request->get('params', [])
         );
 
-        $key = $error === 0 ? 'result' : 'error';
+        if ($code !== 0) {
+            return $this->responseFactory->json([
+                'jsonrpc' => $this->request->get('jsonrpc'),
+                'id' => null,
+                'error' => [
+                    'code' => -32600,
+                    'message' => 'Invalid Request',
+                    'data' => $kernel->output(),
+                ],
+            ]);
+        }
 
         return $this->responseFactory->json([
             'jsonrpc' => $this->request->get('jsonrpc'),
             'id' => $this->request->get('id'),
-            $key => $kernel->output(),
+            'result' => $kernel->output(),
         ]);
     }
 

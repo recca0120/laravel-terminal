@@ -186,7 +186,7 @@ export class Vim extends Command {
             }
 
             try {
-                const text: string = await this.client.jsonrpc(cmd.name, [this.file]);
+                const text: string = await this.client.jsonrpc(cmd.method, [this.file]);
 
                 this.editor
                     .setModeByFile(this.file)
