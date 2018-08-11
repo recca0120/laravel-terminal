@@ -5,7 +5,7 @@
         "rootDir": ".",
         "sourceMap": false,
         "removeComments": true,
-        "declaration": true,
+        "declaration": false,
         "preserveWatchOutput": true,
         "lib": ["dom", "es6"]
 	},
