@@ -22,6 +22,11 @@ export class HttpClient {
         })
             .catch(error => Promise.reject(error))
             .then(response => response.data || {})
-            .then(response => (response.error ? Promise.reject(response.error.data || response.error.message) : Promise.resolve(response.result)));
+            .then(
+                response =>
+                    response.error
+                        ? Promise.reject(response.error.data || response.error.message)
+                        : Promise.resolve(response.result)
+            );
     }
 }

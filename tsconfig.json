@@ -2,7 +2,6 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "rootDir": ".",
         "sourceMap": false,
         "removeComments": true,
         "declaration": false,
@@ -11,5 +10,8 @@
 	},
     "include": [
         "resources/assets/ts/**/*"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

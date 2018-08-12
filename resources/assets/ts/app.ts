@@ -1,6 +1,9 @@
 import * as $ from 'jquery';
 import 'jquery-mousewheel';
 import 'jquery.terminal';
+import 'core-js/es6/promise';
+import 'core-js/modules/es6.object.assign';
+import 'core-js/modules/es6.regexp.flags';
 import './unix_formatting';
 import { HttpClient } from './httpclient';
 import { Artisan, Composer, MySQL, Tinker, Vim, Help } from './commands';
