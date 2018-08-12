@@ -132,6 +132,8 @@ export interface Interpreterable {
 }
 
 export abstract class Command implements Interpreterable, Comfirmable {
+    protected commandLine: boolean = false;
+
     private parser: Parser;
 
     constructor(protected client: HttpClient, protected outputFormatter: OutputFormatter, protected options: any = []) {
@@ -142,6 +144,10 @@ export abstract class Command implements Interpreterable, Comfirmable {
 
     async run(command: string): Promise<any> {
         const cmd: any = this.parseSentence(command);
+
+        if (this.commandLine === true) {
+            return await this.client.jsonrpc(cmd.method, [`--command="${cmd.params.join(' ')}"`]);
+        }
 
         return await this.client.jsonrpc(cmd.method, cmd.params);
     }

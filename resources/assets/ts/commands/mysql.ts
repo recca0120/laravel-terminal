@@ -13,7 +13,7 @@ export class MySQL extends Command {
         if (cmd.params[0] === 'use') {
             this.connection = cmd.params[1].replace(/;/g, '').trim();
 
-            return `current: ${this.connection}`;
+            return Promise.resolve(`current: ${this.connection}`);
         }
 
         if (this.connection !== null) {

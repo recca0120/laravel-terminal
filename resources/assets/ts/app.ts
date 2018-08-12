@@ -59,7 +59,7 @@ export class Terminal {
             if (command.is(cmd) === true) {
                 if (command.interpreterable(cmd) === true) {
                     this.term.push((cmd: string, term: any) => {
-                        if (cmd === 'exit') {
+                        if (['exit', 'quit'].indexOf(cmd) !== -1) {
                             term.pop();
 
                             return;
