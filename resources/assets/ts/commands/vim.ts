@@ -37,16 +37,16 @@ export class Editor {
 
         this.doc = this.editor.getDoc();
 
-        CodeMirror['Vim']['defineEx']('q', 'q', () => {
+        (<any>CodeMirror)['Vim']['defineEx']('q', 'q', () => {
             this.textarea.dispatchEvent(new Event('q'));
             this.quit();
         });
 
-        CodeMirror['Vim']['defineEx']('w', 'w', () => {
+        (<any>CodeMirror)['Vim']['defineEx']('w', 'w', () => {
             this.textarea.dispatchEvent(new Event('w'));
         });
 
-        CodeMirror['Vim']['defineEx']('wq', 'wq', () => {
+        (<any>CodeMirror)['Vim']['defineEx']('wq', 'wq', () => {
             this.textarea.dispatchEvent(new Event('wq'));
             this.quit();
         });
@@ -111,12 +111,12 @@ export class Editor {
     private getModeByFile(file: string): any {
         const matches = file.match(/.+\.([^.]+)$/);
 
-        if (matches.length > 0) {
-            return CodeMirror['findModeByExtension'](matches[1]);
+        if (matches && matches.length > 0) {
+            return (<any>CodeMirror)['findModeByExtension'](matches[1]);
         }
 
         if (/\//.test(file)) {
-            return CodeMirror['findModeByMIME'](file);
+            return (<any>CodeMirror)['findModeByMIME'](file);
         }
 
         return {

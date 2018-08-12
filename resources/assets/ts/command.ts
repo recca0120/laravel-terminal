@@ -8,15 +8,16 @@ class Parser {
     private float_re = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
     private re_re = /^\/((?:\\\/|[^/]|\[[^\]]*\/[^\]]*\])+)\/([gimsuy]*)$/;
 
-    parse(string) {
+    parse(string: string): any {
         return this.process_command(string, this.parse_argument.bind(this));
     }
 
-    private process_command(string, fn) {
+    private process_command(string: string, fn: Function): any {
         const array = string.match(this.command_re) || [];
 
-        if (array.length) {
-            const name = array.shift();
+        if (array.length > 0) {
+            const name = array.shift() || '';
+
             const args = $.map(array, arg => {
                 if (arg.match(/^["']/)) {
                     arg = arg.replace(/\n/g, '\\u0000\\u0000\\u0000\\u0000');
@@ -52,11 +53,11 @@ class Parser {
         };
     }
 
-    private parse_string(string) {
+    private parse_string(string: string): string {
         // split string to string literals and non-strings
         return string
             .split(this.string_re)
-            .map(string => {
+            .map((string: string) => {
                 // remove quotes if before are even number of slashes
                 // we don't remove slases becuase they are handled by JSON.parse
                 if (string.match(/^['"]/)) {
@@ -76,7 +77,7 @@ class Parser {
             .join('');
     }
 
-    private parse_argument(arg, strict) {
+    private parse_argument(arg: any, strict: boolean = true) {
         if (strict === false) {
             if (arg[0] === "'" && arg[arg.length - 1] === "'") {
                 return arg.replace(/^'|'$/g, '');
@@ -120,8 +121,8 @@ class Parser {
 }
 
 export interface Comfirmable {
-    comfirmable(command): boolean;
-    getComfirm(command): string;
+    comfirmable(command: string): boolean;
+    getComfirm(command: string): string;
     getComfirmCommand(command: string): string;
 }
 
@@ -180,7 +181,7 @@ export abstract class Command implements Interpreterable, Comfirmable {
         return this.environment() === 'production';
     }
 
-    protected parseSentence(command): any {
+    protected parseSentence(command: string): any {
         const result = this.parser.parse(command);
 
         return {

@@ -13,17 +13,17 @@ import { Spinner } from './spinners';
 
 const win: any = <any>window;
 $.terminal.defaults.unixFormattingEscapeBrackets = true;
-$.terminal['ansi_colors']['normal'] = $.terminal['ansi_colors']['bold'];
+(<any>$.terminal)['ansi_colors']['normal'] = (<any>$.terminal)['ansi_colors']['bold'];
 
 export class Terminal {
-    private element: HTMLDivElement;
+    private element: HTMLElement;
     private outputFormatter = new OutputFormatter();
     private spinner = new Spinner();
     private commands: Command[] = [];
-    private term;
+    private term: any;
 
-    constructor(elementId, private options: any) {
-        this.element = document.querySelector(elementId);
+    constructor(elementId: string, private options: any) {
+        this.element = <HTMLElement>document.querySelector(elementId);
 
         const client = new HttpClient(this.options.endpoint, {
             'X-CSRF-TOKEN': this.options.csrfToken,
@@ -55,39 +55,43 @@ export class Terminal {
     run(cmd: string): void {
         cmd = cmd.trim();
 
-        const executed: boolean = this.commands.some((command: Command) => {
-            if (command.is(cmd) === true) {
-                if (command.interpreterable(cmd) === true) {
-                    this.term.push((cmd: string, term: any) => {
-                        if (['exit', 'quit'].indexOf(cmd) !== -1) {
-                            term.pop();
+        const executed: boolean = this.commands.some(
+            (command: Command): boolean => {
+                if (command.is(cmd) === true) {
+                    if (command.interpreterable(cmd) === true) {
+                        this.term.push((cmd: string, term: any) => {
+                            if (['exit', 'quit'].indexOf(cmd) !== -1) {
+                                term.pop();
 
-                            return;
-                        }
+                                return;
+                            }
 
-                        this.run(`${term.name()} ${cmd}`);
-                    }, command.getInterpreter());
+                            this.run(`${term.name()} ${cmd}`);
+                        }, command.getInterpreter());
+
+                        return true;
+                    }
+
+                    if (command.comfirmable(cmd) === true) {
+                        const { message, title, cancel } = command.getComfirm(cmd);
+
+                        this.confirm(message, title, cancel).then(async result => {
+                            if (result === true) {
+                                this.executeCommand(command, command.getComfirmCommand(cmd));
+                            }
+                        });
+
+                        return true;
+                    }
+
+                    this.executeCommand(command, cmd);
 
                     return true;
                 }
 
-                if (command.comfirmable(cmd) === true) {
-                    const { message, title, cancel } = command.getComfirm(cmd);
-
-                    this.confirm(message, title, cancel).then(async result => {
-                        if (result === true) {
-                            this.executeCommand(command, command.getComfirmCommand(cmd));
-                        }
-                    });
-
-                    return true;
-                }
-
-                this.executeCommand(command, cmd);
-
-                return true;
+                return false;
             }
-        });
+        );
 
         if (executed === false) {
             this.term.echo(`bash: ${cmd.trim().split(/\s+/)[0]}: command not found`);
@@ -140,7 +144,7 @@ export class Terminal {
 
         return new Promise(resolve => {
             this.term.push(
-                (result, term) => {
+                (result: any, term: any) => {
                     term.pop();
                     this.term.scroll_to_bottom();
                     this.term.history().enable();

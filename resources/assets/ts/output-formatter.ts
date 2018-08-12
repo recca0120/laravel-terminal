@@ -29,9 +29,9 @@ export class OutputFormatterStyle {
     //     49: 'black',
     // }
 
-    private colors: any = Object.assign($.terminal['ansi_colors']['bold'], {
-        white: $.terminal['ansi_colors']['normal']['white'],
-        red: $.terminal['ansi_colors']['normal']['red'],
+    private colors: any = Object.assign((<any>$.terminal)['ansi_colors']['bold'], {
+        white: (<any>$.terminal)['ansi_colors']['normal']['white'],
+        red: (<any>$.terminal)['ansi_colors']['normal']['red'],
     });
 
     private foreground: string = '';

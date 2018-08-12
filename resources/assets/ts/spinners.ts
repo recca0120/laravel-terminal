@@ -3,7 +3,7 @@ const cliSpinners = require('cli-spinners');
 export class Spinner {
     private spinner: any = cliSpinners.dots;
     private frameIndex = 0;
-    private interval;
+    private interval: any = null;
 
     constructor(style: string = 'dots') {
         this.setStyle(style);

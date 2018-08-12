@@ -2,10 +2,13 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "sourceMap": false,
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
         "removeComments": true,
-        "declaration": false,
-        "preserveWatchOutput": true,
+        "sourceMap": false,
         "lib": ["dom", "es6"]
 	},
     "include": [
