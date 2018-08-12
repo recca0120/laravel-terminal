@@ -6,7 +6,9 @@ export class Artisan extends Command {
     }
 
     async run(command: string): Promise<any> {
-        return super.run(this.removePHP(command));
+        const cmd: any = this.parseSentence(this.removePHP(command));
+
+        return await this.client.jsonrpc(cmd.method, [`--command="${cmd.params.join(' ')}"`]);
     }
 
     comfirmable(command: string): boolean {

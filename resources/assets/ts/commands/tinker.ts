@@ -5,6 +5,12 @@ export class Tinker extends Command implements Interpreterable {
         return /^(\.\/)?tinker/.test(command);
     }
 
+    async run(command: string): Promise<any> {
+        const cmd: any = this.parseSentence(command);
+
+        return await this.client.jsonrpc(cmd.method, [`--command="${cmd.params.join(' ')}"`]);
+    }
+
     interpreterable(command: string): boolean {
         return ['artisan tinker', 'tinker'].indexOf(command.trim()) !== -1;
     }

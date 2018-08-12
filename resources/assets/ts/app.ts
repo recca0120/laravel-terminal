@@ -6,7 +6,7 @@ import 'core-js/modules/es6.object.assign';
 import 'core-js/modules/es6.regexp.flags';
 import './unix_formatting';
 import { HttpClient } from './httpclient';
-import { Artisan, Composer, MySQL, Tinker, Vim, Help } from './commands';
+import { Artisan, Common, Composer, MySQL, Tinker, Vim, Help } from './commands';
 import { OutputFormatter } from './output-formatter';
 import { Command } from './command';
 import { Spinner } from './spinners';
@@ -36,6 +36,7 @@ export class Terminal {
             new MySQL(client, this.outputFormatter, this.options),
             new Tinker(client, this.outputFormatter, this.options),
             new Vim(client, this.outputFormatter, this.options),
+            new Common(client, this.outputFormatter, this.options),
         ];
 
         this.fit();

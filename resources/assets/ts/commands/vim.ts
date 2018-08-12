@@ -164,15 +164,6 @@ export class Vim extends Command {
         return /^(\.\/)?vi(m)?/.test(command);
     }
 
-    private async write(): Promise<void> {
-        try {
-            const text = JSON.stringify(this.editor.getText().replace(/\n$/, ''));
-            await this.client.jsonrpc('vi', [this.file, `--text=${text}`]);
-        } catch (error) {
-            this.reject(error);
-        }
-    }
-
     async run(command: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             this.resolve = resolve;
@@ -197,5 +188,14 @@ export class Vim extends Command {
                 reject(e);
             }
         });
+    }
+
+    private async write(): Promise<void> {
+        try {
+            const text = JSON.stringify(this.editor.getText().replace(/\n$/, ''));
+            await this.client.jsonrpc('vi', [this.file, `--text=${text}`]);
+        } catch (error) {
+            this.reject(error);
+        }
     }
 }
