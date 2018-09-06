@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 import 'jquery.terminal';
-import './unix_formatting';
+import 'jquery.terminal/js/unix_formatting';
 
 export class OutputFormatterStyle {
     // private colorList:any = {

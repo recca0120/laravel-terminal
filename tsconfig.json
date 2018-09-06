@@ -12,7 +12,7 @@
         "lib": ["dom", "es6"]
 	},
     "include": [
-        "resources/assets/ts/**/*"
+        "resources/ts/**/*"
     ],
     "exclude": [
         "node_modules"

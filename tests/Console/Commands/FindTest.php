@@ -281,6 +281,11 @@ class FindTest extends TestCase
         $command->setLaravel(
             $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
         );
+
+        $laravel->shouldReceive('make')->andReturnUsing(function ($className, $parameters) {
+            return $parameters['output'];
+        });
+
         $laravel->shouldReceive('call')->once();
 
         $command->run(new StringInput('./ -name * -type d -maxdepth 0 -delete'), new BufferedOutput);

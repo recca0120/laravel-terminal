@@ -24,10 +24,7 @@ mix.options({
     files: [`${publicPath}/js/app.js`, `${publicPath}/css/app.css`],
 });
 
-mix.ts('resources/assets/ts/app.ts', 'public/js/terminal.js').sass(
-    'resources/assets/sass/app.scss',
-    'public/css/terminal.css'
-);
+mix.ts('resources/ts/app.ts', 'public/js/terminal.js').sass('resources/sass/app.scss', 'public/css/terminal.css');
 
 mix.then(() => {
     try {
