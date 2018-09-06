@@ -93,7 +93,7 @@ class Find extends Command
 
         $this->finder->in($path);
 
-        if ($name !== null) {
+        if (is_null($name) === false) {
             $this->finder->name($name);
         }
 
