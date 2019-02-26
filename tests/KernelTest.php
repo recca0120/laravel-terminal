@@ -75,4 +75,16 @@ class KernelTest extends TestCase
         );
         $this->assertSame($output, $kernel->output());
     }
+
+    public function testTerminate()
+    {
+        $kernel = new Kernel(
+            $artisan = m::spy('Recca0120\Terminal\Application')
+        );
+        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
+
+        $kernel->terminate($input, 0);
+
+        $artisan->shouldHaveReceived('terminate');
+    }
 }

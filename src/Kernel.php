@@ -13,7 +13,7 @@ class Kernel implements KernelContract
      *
      * @var \Illuminate\Console\Application
      */
-    protected $artisan;
+    protected $app;
 
     /**
      * $config.
@@ -32,11 +32,11 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param \Recca0120\Terminal\Application $artisan
+     * @param \Recca0120\Terminal\Application $app
      */
-    public function __construct(Artisan $artisan, $config = [])
+    public function __construct(Artisan $app, $config = [])
     {
-        $this->artisan = $artisan;
+        $this->app = $app;
         $this->config = Arr::except(array_merge([
             'username' => 'LARAVEL',
             'hostname' => php_uname('n'),
@@ -68,7 +68,7 @@ class Kernel implements KernelContract
      */
     public function handle($input, $output = null)
     {
-        return $this->artisan->run($input, $output);
+        return $this->app->run($input, $output);
     }
 
     /**
@@ -81,7 +81,7 @@ class Kernel implements KernelContract
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
-        return $this->artisan->call($command, $parameters, $outputBuffer);
+        return $this->app->call($command, $parameters, $outputBuffer);
     }
 
     /**
@@ -93,7 +93,7 @@ class Kernel implements KernelContract
      */
     public function queue($command, array $parameters = [])
     {
-        $app = $this->artisan->getLaravel();
+        $app = $this->app->getLaravel();
         $app['Illuminate\Contracts\Queue\Queue']->push(
             'Illuminate\Foundation\Console\QueuedJob', func_get_args()
         );
@@ -106,7 +106,7 @@ class Kernel implements KernelContract
      */
     public function all()
     {
-        return $this->artisan->all();
+        return $this->app->all();
     }
 
     /**
@@ -116,6 +116,18 @@ class Kernel implements KernelContract
      */
     public function output()
     {
-        return $this->artisan->output();
+        return $this->app->output();
+    }
+
+    /**
+     * Terminate the application.
+     *
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  int  $status
+     * @return void
+     */
+    public function terminate($input, $status)
+    {
+        $this->app->terminate();
     }
 }

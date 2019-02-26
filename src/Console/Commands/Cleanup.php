@@ -78,25 +78,26 @@ class Cleanup extends Command
 
         (new Collection(
             Glob::glob($root.'{'.(new Collection(Glob::glob($root.'vendor/*/*')))
-            ->map(function ($item) {
-                return substr($item, strpos($item, 'vendor'));
-            })
-            ->implode(',').'}/**/{'.(implode(',', array_merge($vcs, $common, $others, $tests, $docs))).'}')
-        ))
-        ->merge(Glob::glob($root.'{'.(implode(',', array_merge($vcs, $common))).'}'))
-        ->merge([
-            $root.'vendor/phpunit',
-        ])
-        ->filter()
-        ->each(function ($item) {
-            if ($this->files->isDirectory($item) === true) {
-                $this->files->deleteDirectory($item);
-                $this->info('delete directory: '.$item);
-            } elseif ($this->files->isFile($item)) {
-                $this->files->delete($item);
-                $this->info('delete file: '.$item);
-            }
-        });
+                ->map(function ($item) {
+                    return substr($item, strpos($item, 'vendor'));
+                })
+                ->implode(',').'}/**/{'.(implode(',', array_merge($vcs, $common, $others, $tests, $docs))).'}')
+            ))
+            ->merge(Glob::glob($root.'{'.(implode(',', array_merge($vcs, $common))).'}'))
+            ->merge([
+                $root.'vendor/phpunit',
+            ])
+            ->filter()
+            ->each(function ($item) {
+                if ($this->files->isDirectory($item) === true) {
+                    $this->files->deleteDirectory($item);
+                    $this->info('delete directory: '.$item);
+                } elseif ($this->files->isFile($item)) {
+                    $this->files->delete($item);
+                    $this->info('delete file: '.$item);
+                }
+            });
+
         $this->line('');
     }
 }

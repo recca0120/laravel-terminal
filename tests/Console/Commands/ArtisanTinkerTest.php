@@ -48,7 +48,11 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'new stdClass;');
         $command->handle();
 
-        $this->assertSame("=> stdClass::__set_state(array(\n))\n", $this->lf($output->fetch()));
+        if (version_compare(phpversion(), '7.3.0', '>=')) {
+            $this->assertSame("=> (object) array(\n)\n", $this->lf($output->fetch()));
+        } else {
+            $this->assertSame("=> stdClass::__set_state(array(\n))\n", $this->lf($output->fetch()));
+        }
     }
 
     public function testHandleArray()
