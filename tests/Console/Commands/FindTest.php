@@ -12,10 +12,13 @@ use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Find;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class FindTest extends TestCase
 {
-    protected function setUp()
+    use MockeryPHPUnitIntegration;
+
+    protected function setUp(): void
     {
         parent::setUp();
         $structure = [
@@ -30,17 +33,11 @@ class FindTest extends TestCase
         Container::setInstance($container);
     }
 
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
     public function testHandleFindName()
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
+            m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -53,7 +50,7 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $basePath = $this->root->url();
 
@@ -74,7 +71,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
+            m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -87,7 +84,7 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $basePath = $this->root->url();
 
@@ -109,7 +106,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
+            m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -122,7 +119,7 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $basePath = $this->root->url();
 
@@ -144,7 +141,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
+            m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -157,7 +154,7 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $basePath = $this->root->url();
 
@@ -171,7 +168,7 @@ class FindTest extends TestCase
     {
         $command = new Find(
             $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
+            m::mock(new Filesystem)
         );
 
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
@@ -184,7 +181,7 @@ class FindTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $basePath = $this->root->url();
 

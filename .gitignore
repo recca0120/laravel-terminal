@@ -5,6 +5,7 @@
 composer.phar
 composer.lock
 .php_cs.cache
+.phpunit.result.cache
 .DS_Store
 .mix-manifest.json
 Thumbs.db

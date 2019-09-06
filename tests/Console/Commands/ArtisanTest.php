@@ -3,6 +3,7 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Mockery as m;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\ProcessUtils;
 use Recca0120\Terminal\Console\Commands\Artisan;
@@ -67,13 +68,12 @@ class ArtisanTest extends TestCase
         $command->handle();
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testHandleNotSupportCommand()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $command = new Artisan(
-            $kernel = m::mock('Illuminate\Contracts\Console\Kernel')
+            m::mock('Illuminate\Contracts\Console\Kernel')
         );
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);

@@ -14,7 +14,7 @@ class TerminalServiceProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         $container = m::mock(new Container);
@@ -35,6 +35,8 @@ class TerminalServiceProviderTest extends TestCase
         );
         $config->shouldReceive('get')->once()->with('terminal', [])->andReturn([]);
         $config->shouldReceive('set')->once()->with('terminal', m::type('array'));
+
+        $app->shouldReceive('configurationIsCached')->andReturn(false);
 
         $app->shouldReceive('singleton')->once()->with(
             'Recca0120\Terminal\Application', m::on(function ($closure) use ($app) {

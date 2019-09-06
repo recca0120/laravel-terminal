@@ -10,10 +10,13 @@ use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Tail;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class TailTest extends TestCase
 {
-    protected function setUp()
+    use MockeryPHPUnitIntegration;
+
+    protected function setUp(): void
     {
         parent::setUp();
         $structure = [
@@ -95,12 +98,6 @@ class TailTest extends TestCase
         Container::setInstance($container);
     }
 
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
     public function testHandle()
     {
         $command = new Tail(
@@ -112,7 +109,7 @@ class TailTest extends TestCase
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
         $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $storagePath = $this->root->url();
         $files->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
@@ -121,19 +118,19 @@ class TailTest extends TestCase
 
         $command->handle();
 
-        $this->assertContains('5.log', $output->fetch());
+        $this->assertStringContainsString('5.log', $output->fetch());
     }
 
     public function testHandlePath()
     {
         $command = new Tail(
-            $files = m::mock('Illuminate\Filesystem\Filesystem')
+            m::mock('Illuminate\Filesystem\Filesystem')
         );
         $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
         $this->mockProperty($command, 'output', $output = new BufferedOutput);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
 
         $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/1.log');
@@ -141,7 +138,7 @@ class TailTest extends TestCase
 
         $command->handle();
 
-        $this->assertContains('1.log', $output->fetch());
+        $this->assertStringContainsString('1.log', $output->fetch());
     }
 
     protected function mockProperty($object, $propertyName, $value)

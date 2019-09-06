@@ -10,14 +10,11 @@ use Illuminate\Filesystem\Filesystem;
 use Recca0120\Terminal\Console\Commands\Cleanup;
 use Symfony\Component\Console\Output\BufferedOutput;
 use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class CleanupTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function testHandle()
     {
@@ -130,14 +127,14 @@ class CleanupTest extends TestCase
         Container::setInstance($container);
 
         $command = new Cleanup(
-            $files = m::mock(new Filesystem)
+            m::mock(new Filesystem)
         );
 
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
+        $this->mockProperty($command, 'input', m::mock('Symfony\Component\Console\Input\InputInterface'));
+        $this->mockProperty($command, 'output', new BufferedOutput);
 
         $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
+            m::mock('Illuminate\Contracts\Foundation\Application')
         );
         $command->handle();
 

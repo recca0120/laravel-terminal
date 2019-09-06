@@ -7,21 +7,18 @@ use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Recca0120\Terminal\Console\Commands\Vi;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class ViTest extends TestCase
 {
-    protected function setUp()
+    use MockeryPHPUnitIntegration;
+
+    protected function setUp():void
     {
         parent::setUp();
         $container = m::mock(new Container);
         $container->shouldReceive('basePath')->andReturn('foo/');
         Container::setInstance($container);
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
     }
 
     public function testHandleRead()
@@ -44,7 +41,7 @@ class ViTest extends TestCase
 
         $command->handle();
 
-        $this->assertContains($text, $output->fetch());
+        $this->assertStringContainsString($text, $output->fetch());
     }
 
     public function testHandleWrite()

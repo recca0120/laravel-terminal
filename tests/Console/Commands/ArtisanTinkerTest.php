@@ -5,15 +5,12 @@ namespace Recca0120\Terminal\Tests\Console\Commands;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
 
 class ArtisanTinkerTest extends TestCase
 {
-    protected function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function testHandleEcho()
     {
@@ -24,7 +21,7 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'echo 123');
         $command->handle();
 
-        $this->assertContains('123', $this->lf($output->fetch()));
+        $this->assertStringContainsString('123', $this->lf($output->fetch()));
     }
 
     public function testHandleVarDump()
@@ -36,7 +33,7 @@ class ArtisanTinkerTest extends TestCase
         $input->shouldReceive('getOption')->once()->with('command')->andReturn($cmd = 'var_dump(123)');
         $this->assertNull($command->handle());
 
-        $this->assertContains('int(123)', $this->lf($output->fetch()));
+        $this->assertStringContainsString('int(123)', $this->lf($output->fetch()));
     }
 
     public function testHandleObject()
