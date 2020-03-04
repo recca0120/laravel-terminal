@@ -2,12 +2,12 @@
 
 namespace Recca0120\Terminal;
 
-use Illuminate\Http\Request;
-use Symfony\Component\Console\Input\StringInput;
-use Recca0120\Terminal\Contracts\TerminalCommand;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 use Illuminate\Console\Application as ConsoleApplication;
+use Illuminate\Http\Request;
+use Recca0120\Terminal\Contracts\TerminalCommand;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class Application extends ConsoleApplication
 {

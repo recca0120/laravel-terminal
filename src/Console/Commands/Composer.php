@@ -2,8 +2,8 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Phar;
 use Illuminate\Filesystem\Filesystem;
+use Phar;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 

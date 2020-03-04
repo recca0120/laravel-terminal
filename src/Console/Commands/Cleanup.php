@@ -2,9 +2,9 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Webmozart\Glob\Glob;
-use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
+use Webmozart\Glob\Glob;
 
 class Cleanup extends Command
 {

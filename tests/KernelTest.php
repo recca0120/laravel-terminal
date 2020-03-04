@@ -2,10 +2,10 @@
 
 namespace Recca0120\Terminal\Tests;
 
-use Mockery as m;
-use Recca0120\Terminal\Kernel;
-use PHPUnit\Framework\TestCase;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Kernel;
 
 class KernelTest extends TestCase
 {

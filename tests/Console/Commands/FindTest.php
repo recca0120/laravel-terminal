@@ -3,16 +3,16 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Exception;
-use Mockery as m;
-use Webmozart\Glob\Glob;
-use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Find;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Webmozart\Glob\Glob;
 
 class FindTest extends TestCase
 {

@@ -2,18 +2,18 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
+use Illuminate\Container\Container;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Container\Container;
 use Recca0120\Terminal\Console\Commands\Vi;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class ViTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
         $container = m::mock(new Container);

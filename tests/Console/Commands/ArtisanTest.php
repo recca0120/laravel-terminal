@@ -2,13 +2,13 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
-use Mockery as m;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use Recca0120\Terminal\ProcessUtils;
-use Recca0120\Terminal\Console\Commands\Artisan;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Console\Commands\Artisan;
+use Recca0120\Terminal\ProcessUtils;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class ArtisanTest extends TestCase
 {

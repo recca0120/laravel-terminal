@@ -2,12 +2,12 @@
 
 namespace Recca0120\Terminal\Http\Controllers;
 
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Recca0120\Terminal\Kernel;
-use Illuminate\Routing\Controller;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
+use Recca0120\Terminal\Kernel;
 
 class TerminalController extends Controller
 {

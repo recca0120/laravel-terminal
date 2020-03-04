@@ -2,9 +2,9 @@
 
 namespace Recca0120\Terminal;
 
+use Illuminate\Contracts\Console\Kernel as KernelContract;
 use Illuminate\Support\Arr;
 use Recca0120\Terminal\Application as Artisan;
-use Illuminate\Contracts\Console\Kernel as KernelContract;
 
 class Kernel implements KernelContract
 {

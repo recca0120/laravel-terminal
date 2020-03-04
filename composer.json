@@ -32,7 +32,7 @@
         "mikey179/vfsstream": "^1.6",
         "mockery/mockery": "^0.9.4|^1.0",
         "nesbot/carbon": "^1.20|^2.0",
-        "phpunit/phpunit": "^4.8|^5.4|^6.1|^7.0|^8.0",
+        "phpunit/phpunit": "^6.1|^7.0|^8.0",
         "vlucas/phpdotenv": "^4.0"
     },
     "autoload": {

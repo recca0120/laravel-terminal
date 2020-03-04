@@ -2,11 +2,11 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class ArtisanTinkerTest extends TestCase
 {

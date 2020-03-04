@@ -2,10 +2,10 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
-use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Support\Collection;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class Tail extends Command
 {

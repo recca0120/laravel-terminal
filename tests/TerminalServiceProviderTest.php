@@ -38,10 +38,16 @@ class TerminalServiceProviderTest extends TestCase
         $app['url'] = $url;
 
         $app['config'] = new Config([
-            'terminal' => array_merge(require __DIR__.'/../config/terminal.php', [
+            'terminal' => [
+                'enabled' => true,
                 'whitelists' => ['127.0.0.1'],
+                'route' => [
+                    'prefix' => 'terminal',
+                    'as' => 'terminal.',
+                    'middleware' => ['web'],
+                ],
                 'commands' => [],
-            ]),
+            ],
         ]);
 
         $app->shouldReceive('runningInConsole')->andReturn(true);
