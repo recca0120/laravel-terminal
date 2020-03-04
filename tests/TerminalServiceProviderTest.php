@@ -2,125 +2,62 @@
 
 namespace Recca0120\Terminal\Tests;
 
-use Mockery as m;
-use Recca0120\Terminal\Kernel;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Config\Repository as Config;
 use Illuminate\Container\Container;
-use Recca0120\Terminal\Application;
-use Recca0120\Terminal\TerminalServiceProvider;
+use Illuminate\Events\Dispatcher;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Application;
+use Recca0120\Terminal\Kernel;
+use Recca0120\Terminal\TerminalServiceProvider;
 
 class TerminalServiceProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp():void
-    {
-        parent::setUp();
-        $container = m::mock(new Container);
-        $container->instance('path.public', __DIR__);
-        $container->instance('path.config', __DIR__);
-        $container->shouldReceive('basePath')->andReturn(__DIR__);
-        $container->shouldReceive('resourcePath')->andReturn(__DIR__);
-        Container::setInstance($container);
-    }
-
-    public function testRegister()
-    {
-        $serviceProvider = new TerminalServiceProvider(
-            $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess')
-        );
-        $app->shouldReceive('offsetGet')->twice()->with('config')->andReturn(
-            $config = m::mock('Illuminate\Contracts\Config\Repository, ArrayAccess')
-        );
-        $config->shouldReceive('get')->once()->with('terminal', [])->andReturn([]);
-        $config->shouldReceive('set')->once()->with('terminal', m::type('array'));
-
-        $app->shouldReceive('configurationIsCached')->andReturn(false);
-
-        $app->shouldReceive('singleton')->once()->with(
-            'Recca0120\Terminal\Application', m::on(function ($closure) use ($app) {
-                $app->shouldReceive('offsetGet')->once()->with('config')->andReturn(
-                    $config = ['terminal' => ['commands' => []]]
-                );
-                $app->shouldReceive('offsetGet')->once()->with('events')->andReturn(
-                    $events = m::mock('Illuminate\Contracts\Events\Dispatcher')
-                );
-                $app->shouldReceive('version')->once()->andReturn('testing');
-                $events->shouldReceive('fire');
-                $events->shouldReceive('dispatch');
-
-                return $closure($app) instanceof Application;
-            })
-        );
-
-        $app->shouldReceive('singleton')->once()->with(
-            'Recca0120\Terminal\Kernel', m::on(function ($closure) use ($app) {
-                $app->shouldReceive('offsetGet')->once()->with('config')->andReturn(
-                    $config = ['terminal' => ['route' => ['as' => 'foo.']]]
-                );
-                $app->shouldReceive('offsetGet')->once()->with('Recca0120\Terminal\Application')->andReturn(
-                    $artisan = m::mock('Recca0120\Terminal\Application')
-                );
-                $app->shouldReceive('offsetGet')->once()->with('url')->andReturn(
-                    $url = m::mock('Illuminate\Contracts\Routing\UrlGenerator')
-                );
-                $app->shouldReceive('basePath')->andReturn($basePath = 'foo');
-                $app->shouldReceive('environment')->once()->andReturn($environment = 'foo');
-                $app->shouldReceive('version')->once()->andReturn($version = 'foo');
-                $url->shouldReceive('route')->once()->with('foo.endpoint')->andReturn('foo');
-
-                return $closure($app) instanceof Kernel;
-            })
-        );
-
-        $serviceProvider->register();
-    }
-
     public function testBoot()
     {
-        $serviceProvider = new TerminalServiceProvider(
-            $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess')
-        );
-        $app->shouldReceive('offsetGet')->with('config')->andReturn(
-            $config = [
-                'view' => [
-                    'paths' => [],
-                ],
-                'terminal' => [
-                    'route' => [
-                        'prefix' => 'terminal',
-                        'as' => 'terminal.',
-                    ],
-                    'whitelists' => [
-                        $ip = '127.0.0.1',
-                    ],
-                ],
-            ]
-        );
-        $app->config = $config;
-        $request = m::mock('Illuminate\Http\Request');
-        $router = m::mock('Illuminate\Routing\Router');
+        $app = m::mock(implode(',', [
+            Container::class,
+            \Illuminate\Contracts\Foundation\Application::class,
+        ]))->makePartial();
+        Container::setInstance($app);
 
-        $request->shouldReceive('getClientIp')->once()->andReturn($ip);
-        $app->shouldReceive('offsetGet')->once()->with('view')->andReturn(
-            $view = m::mock('Illuminate\Contracts\View\Factory')
-        );
-        $view->shouldReceive('addNamespace')->once();
+        $events = new Dispatcher($app);
+        $url = m::mock(UrlGenerator::class);
+        $url->shouldReceive('route');
 
+        $app->instance('path.public', __DIR__);
+        $app->instance('path.config', __DIR__);
+        $app->shouldReceive('basePath')->andReturn(__DIR__);
+        $app->shouldReceive('resourcePath')->andReturn(__DIR__);
+        $app->shouldReceive('version')->andReturn('7.0');
+        $app->shouldReceive('environment')->andReturn('local');
+        $app['events'] = $events;
+        $app['url'] = $url;
+
+        $app['config'] = new Config([
+            'terminal' => array_merge(require __DIR__.'/../config/terminal.php', [
+                'whitelists' => ['127.0.0.1'],
+                'commands' => [],
+            ]),
+        ]);
+
+        $app->shouldReceive('runningInConsole')->andReturn(true);
         $app->shouldReceive('routesAreCached')->once()->andReturn(false);
-        $router->shouldReceive('group')->once()->with([
-            'namespace' => 'Recca0120\Terminal\Http\Controllers',
-            'prefix' => 'terminal',
-            'as' => 'terminal.',
-        ], m::on(function ($closure) use ($router) {
-            return true;
-        }));
 
-        $app->shouldReceive('runningInConsole')->once()->andReturn(true);
-        $app->shouldReceive('basePath');
-        $app->shouldReceive('resourcePath');
+        $request = m::mock('Illuminate\Http\Request');
+        $request->shouldReceive('getClientIp')->andReturn('127.0.0.1');
 
-        $this->assertNull($serviceProvider->boot($request, $router));
+        $router = m::mock('Illuminate\Routing\Router');
+        $router->shouldReceive('group');
+
+        $serviceProvider = new TerminalServiceProvider($app);
+        $serviceProvider->register();
+        $serviceProvider->boot($request, $router);
+
+        $this->assertInstanceOf(Application::class, $app->make(Application::class));
+        $this->assertInstanceOf(Kernel::class, $app->make(Kernel::class));
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Recca0120\Terminal;
 
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class TerminalServiceProvider extends ServiceProvider
@@ -45,9 +45,8 @@ class TerminalServiceProvider extends ServiceProvider
         $this->app->singleton(Application::class, function ($app) {
             $config = $app['config']['terminal'];
             $artisan = new Application($app, $app['events'], $app->version());
-            $artisan->resolveCommands($config['commands']);
 
-            return $artisan;
+            return $artisan->resolveCommands($config['commands']);
         });
 
         $this->app->singleton(Kernel::class, function ($app) {
@@ -73,7 +72,7 @@ class TerminalServiceProvider extends ServiceProvider
         if ($this->app->routesAreCached() === false) {
             $router->group(array_merge([
                 'namespace' => $this->namespace,
-            ], Arr::get($config, 'route', [])), function (Router $router) {
+            ], Arr::get($config, 'route', [])), function () {
                 require __DIR__.'/../routes/web.php';
             });
         }
