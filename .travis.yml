@@ -1,27 +1,15 @@
 language: php
 
 php:
-  - 7.0
-  - 7.1
   - 7.2
   - 7.3
-  - hhvm
+  - 7.4
 
 env:
   global:
     - setup=basic
 
 sudo: false
-
-matrix:
-  allow_failures:
-    - php: hhvm
-  fast_finish: true
-  include:
-    - php: 7.0
-      env: setup=lowest
-    - php: hhvm
-      dist: trusty
 
 cache:
   directories:
