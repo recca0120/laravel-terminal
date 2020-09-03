@@ -85,14 +85,8 @@ class TerminalServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/terminal.php' => config_path('terminal.php'),
-        ], 'config');
-
-        $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),
-        ], 'views');
-
-        $this->publishes([
             __DIR__.'/../public' => public_path('vendor/terminal'),
-        ], 'public');
+        ], 'terminal');
     }
 }

@@ -60,6 +60,15 @@ class Kernel implements KernelContract
     }
 
     /**
+     * Bootstrap the application for artisan commands.
+     *
+     * @return void
+     */
+    public function bootstrap()
+    {
+    }
+
+    /**
      * Handle an incoming console command.
      *
      * @param \Symfony\Component\Console\Input\InputInterface $input
@@ -68,6 +77,8 @@ class Kernel implements KernelContract
      */
     public function handle($input, $output = null)
     {
+        $this->bootstrap();
+
         return $this->app->run($input, $output);
     }
 
@@ -81,6 +92,8 @@ class Kernel implements KernelContract
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
+        $this->bootstrap();
+
         return $this->app->call($command, $parameters, $outputBuffer);
     }
 
@@ -93,6 +106,7 @@ class Kernel implements KernelContract
      */
     public function queue($command, array $parameters = [])
     {
+        $this->bootstrap();
         $app = $this->app->getLaravel();
         $app['Illuminate\Contracts\Queue\Queue']->push(
             'Illuminate\Foundation\Console\QueuedJob', func_get_args()
@@ -106,6 +120,8 @@ class Kernel implements KernelContract
      */
     public function all()
     {
+        $this->bootstrap();
+
         return $this->app->all();
     }
 
@@ -116,6 +132,8 @@ class Kernel implements KernelContract
      */
     public function output()
     {
+        $this->bootstrap();
+
         return $this->app->output();
     }
 
@@ -128,6 +146,7 @@ class Kernel implements KernelContract
      */
     public function terminate($input, $status)
     {
+        $this->bootstrap();
         $this->app->terminate();
     }
 }
