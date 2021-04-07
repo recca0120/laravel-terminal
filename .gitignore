@@ -9,3 +9,4 @@ composer.lock
 .DS_Store
 .mix-manifest.json
 Thumbs.db
+.idea
