@@ -2,86 +2,101 @@
 
 namespace Recca0120\Terminal\Tests;
 
+use Exception;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Application;
 use Recca0120\Terminal\Kernel;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class KernelTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testHandle()
+    /**
+     * @throws Exception
+     */
+    public function test_handle_method()
     {
-        $kernel = new Kernel(
-            $artisan = m::mock('Recca0120\Terminal\Application')
-        );
-        $artisan->shouldReceive('run')->once()->with(
-            $input = m::mock('Symfony\Component\Console\Input\InputInterface'),
-            $output = m::mock('Symfony\Component\Console\Output\OutputInterface')
-        )->andReturn($code = 'foo');
-        $this->assertSame($code, $kernel->handle($input, $output));
+        $container = new Container();
+        $request = Request::capture();
+        $container->instance('request', $request);
+        $artisan = new Application($container, new Dispatcher(), 'testing');
+        $input = new ArrayInput([]);
+        $output = new BufferedOutput();
+
+        $kernel = new Kernel($artisan);
+
+        self::assertSame(0, $kernel->handle($input, $output));
     }
 
-    public function testCall()
+    public function test_call_method()
     {
-        $kernel = new Kernel(
-            $artisan = m::mock('Recca0120\Terminal\Application')
-        );
-        $artisan->shouldReceive('call')->once()->with(
-            $command = 'foo',
-            $parameters = ['foo' => 'bar'],
-            $outputBuffer = null
-        )->andReturn($code = 'foo');
-        $this->assertSame($code, $kernel->call($command, $parameters, $outputBuffer));
+        $container = new Container();
+        $request = Request::capture();
+        $container->instance('request', $request);
+        $artisan = new Application($container, new Dispatcher(), 'testing');
+        $output = new BufferedOutput();
+
+        $kernel = new Kernel($artisan);
+
+        self::assertSame(0, $kernel->call('help', ['list'], $output));
+
+        return [$kernel];
     }
 
-    public function testQueue()
+    /**
+     * @depends test_call_method
+     * @param array $parameters
+     */
+    public function test_output_method(array $parameters)
     {
-        $kernel = new Kernel(
-            $artisan = m::mock('Recca0120\Terminal\Application')
-        );
-        $artisan->shouldReceive('getLaravel')->once()->andReturn(
-            $app = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess')
-        );
-        $app->shouldReceive('offsetGet')->once()->with('Illuminate\Contracts\Queue\Queue')->andReturn(
-            $queue = m::mock('Illuminate\Contracts\Queue\Queue')
-        );
-        $queue->shouldReceive('push')->once()->with('Illuminate\Foundation\Console\QueuedJob', [
-            $command = 'foo',
-            $parameters = ['foo' => 'bar'],
-        ]);
-        $this->assertNull($kernel->queue($command, $parameters));
+        $kernel = $parameters[0];
+
+        self::assertStringContainsString('--raw', $kernel->output());
     }
 
-    public function testAll()
+    public function test_queue_method_and_laravel_version_less_then_54()
     {
-        $kernel = new Kernel(
-            $artisan = m::mock('Recca0120\Terminal\Application')
-        );
-        $artisan->shouldReceive('all')->once()->andReturn(
-            $commands = ['foo']
-        );
-        $this->assertSame($commands, $kernel->all());
+        $container = new Container();
+        $request = Request::capture();
+        $container->instance('request', $request);
+        $queue = m::spy(Queue::class);
+        $container->instance(Queue::class, $queue);
+        $artisan = new Application($container, new Dispatcher(), '5.3.9');
+
+        $kernel = new Kernel($artisan);
+        $command = 'help';
+        $parameters = ['list'];
+
+        $kernel->queue($command, $parameters);
+
+        $queue->shouldHaveReceived('push')
+            ->with('Illuminate\Foundation\Console\QueuedJob', m::on(function ($args) use ($command, $parameters) {
+                return [$command, $parameters] === $args;
+            }));
     }
 
-    public function testOutput()
+    public function test_all_method()
     {
-        $kernel = new Kernel(
-            $artisan = m::mock('Recca0120\Terminal\Application')
-        );
-        $artisan->shouldReceive('output')->once()->andReturn(
-            $output = 'foo'
-        );
-        $this->assertSame($output, $kernel->output());
+        $artisan = new Application(new Container(), new Dispatcher(), 'testing');
+
+        $kernel = new Kernel($artisan);
+
+        self::assertArrayHasKey('help', $kernel->all());
     }
 
-    public function testTerminate()
+    public function test_terminate_method()
     {
-        $kernel = new Kernel(
-            $artisan = m::spy('Recca0120\Terminal\Application')
-        );
-        $input = m::mock('Symfony\Component\Console\Input\InputInterface');
+        $artisan = m::spy(new Application(new Container(), new Dispatcher(), 'testing'));
+        $kernel = new Kernel($artisan);
+        $input = new ArrayInput([]);
 
         $kernel->terminate($input, 0);
 

@@ -9,145 +9,137 @@ use Mockery as m;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Tail;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Tester\CommandTester;
 use Webmozart\Glob\Glob;
 
 class TailTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp(): void
+    private $structure = [
+        'logs' => [
+            '1.log' => '
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                    1.log
+                ',
+            '2.log' => '
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                    2.log
+                ',
+            '3.log' => '
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                    3.log
+                ',
+            '4.log' => '
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                    4.log
+                ',
+            '5.log' => '
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                    5.log
+                ',
+        ],
+    ];
+
+    public function test_tail_default_file()
     {
-        parent::setUp();
-        $structure = [
-            'logs' => [
-                '1.log' => '
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                    1.log
-                ',
-                '2.log' => '
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                    2.log
-                ',
-                '3.log' => '
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                    3.log
-                ',
-                '4.log' => '
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                    4.log
-                ',
-                '5.log' => '
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                    5.log
-                ',
-            ],
-        ];
-        $this->root = vfsStream::setup('root', null, $structure);
+        $commandTester = new CommandTester($this->getCommand());
+
+        $commandTester->execute([]);
+
+        self::assertStringContainsString('5.log', $commandTester->getDisplay());
+    }
+
+    public function test_tail_file()
+    {
+        $commandTester = new CommandTester($this->getCommand());
+
+        $commandTester->execute(['path' => 'logs/1.log']);
+
+        self::assertStringContainsString('1.log', $commandTester->getDisplay());
+    }
+
+    protected function giveRoot()
+    {
+        $root = vfsStream::setup('root', null, $this->structure);
         $i = 0;
-        foreach ($structure as $directory => $files) {
+        foreach ($this->structure as $directory => $files) {
             foreach ($files as $file => $content) {
-                $this->root->getChild($directory.'/'.$file)->lastAttributeModified(time() + $i);
+                $root->getChild($directory.'/'.$file)->lastAttributeModified(time() + $i);
                 $i++;
             }
         }
 
-        $container = m::mock(new Container);
-        $container->shouldReceive('basePath')->andReturn($this->root->url());
-        $container->instance('path.storage', $this->root->url());
-        Container::setInstance($container);
+        return $root;
     }
 
-    public function testHandle()
+    /**
+     * @return Tail
+     */
+    private function getCommand()
     {
-        $command = new Tail(
-            $files = m::mock(new Filesystem)
-        );
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
+        $root = $this->giveRoot();
+        $container = m::mock(new Container);
+        $container->shouldReceive('basePath')->andReturn($root->url());
+        $container->instance('path.storage', $root->url());
+        Container::setInstance($container);
 
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $storagePath = $this->root->url();
-        $files->shouldReceive('glob')->once()->with($storagePath.'/logs/*.log')->andReturnUsing(function ($path) {
+        $command = new Tail($this->getFile());
+        $command->setLaravel($container);
+
+        return $command;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    private function getFile()
+    {
+        $files = m::mock(new Filesystem());
+        $files->shouldReceive('glob')->andReturnUsing(function ($path) {
             return Glob::glob($path);
         });
 
-        $command->handle();
-
-        $this->assertStringContainsString('5.log', $output->fetch());
-    }
-
-    public function testHandlePath()
-    {
-        $command = new Tail(
-            m::mock('Illuminate\Filesystem\Filesystem')
-        );
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'logs/1.log');
-        $input->shouldReceive('getOption')->once()->with('lines')->andReturn($lines = 5);
-
-        $command->handle();
-
-        $this->assertStringContainsString('1.log', $output->fetch());
-    }
-
-    protected function mockProperty($object, $propertyName, $value)
-    {
-        $reflectionClass = new \ReflectionClass($object);
-
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
+        return $files;
     }
 }

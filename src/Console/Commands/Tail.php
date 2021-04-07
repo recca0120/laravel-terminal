@@ -26,14 +26,14 @@ class Tail extends Command
     /**
      * $files.
      *
-     * @var \Illuminate\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $files
+     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -75,7 +75,6 @@ class Tail extends Command
      *
      * @param string $file
      * @param int $lines
-     * @return string
      */
     protected function readLine($file, $lines = 50)
     {
@@ -85,7 +84,7 @@ class Tail extends Command
             return;
         }
 
-        $fp = fopen($file, 'r');
+        $fp = fopen($file, 'rb');
         $i = 1;
         $result = [];
         while (! feof($fp)) {

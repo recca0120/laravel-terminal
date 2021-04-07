@@ -2,77 +2,97 @@
 
 namespace Recca0120\Terminal\Tests\Http\Controllers;
 
+use Exception;
+use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
+use Illuminate\Session\SessionManager;
+use Illuminate\Session\Store;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Recca0120\Terminal\Application;
 use Recca0120\Terminal\Http\Controllers\TerminalController;
+use Recca0120\Terminal\Kernel;
 
 class TerminalControllerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testIndex()
+    /**
+     * @throws BindingResolutionException
+     * @throws Exception
+     */
+    public function test_index()
     {
-        $controller = new TerminalController(
-            $request = m::mock('Illuminate\Http\Request'),
-            $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
-        );
+        $container = new Container();
+        $request = Request::capture();
+        $container->instance('request', $request);
+        $container->instance('config', new Repository());
 
-        $request->shouldReceive('hasSession')->once()->andReturn(true);
-        $request->shouldReceive('session->token')->once()->andReturn($token = 'foo');
+        /** @var Store $session */
+        $session = (new SessionManager($container))->driver('array');
+        $session->regenerateToken();
+        $request->setLaravelSession($session);
+        $artisan = new Application($container, new Dispatcher(), 'testing');
+        $kernel = new Kernel($artisan);
+        $responseFactory = m::mock(ResponseFactory::class);
+        $responseFactory->shouldReceive('view')
+            ->once()
+            ->with('terminal::index', m::on(function ($viewData) use ($session) {
+                $data = json_decode($viewData['options'], true);
 
-        $kernel = m::mock('Recca0120\Terminal\Kernel');
-        $kernel->shouldReceive('call')->once()->with('list --ansi');
-        $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
-        $kernel->shouldReceive('getConfig')->once()->andReturn($config = ['foo' => 'bar']);
-        $responseFactory->shouldReceive('view')->once()->with('terminal::index', [
-            'options' => json_encode(array_merge($config, [
-                'csrfToken' => $token,
-                'helpInfo' => $output,
-            ])),
-            'id' => null,
-        ])->andReturn(
-            $view = m::mock('Illuminate\Contracts\View\View')
-        );
-        $this->assertSame($view, $controller->index($kernel, 'index'));
+                return $data['csrfToken'] === $session->token();
+            }))
+            ->andReturn($view = m::mock(View::class));
+
+        $controller = $container->make(TerminalController::class);
+
+        self::assertSame($view, $controller->index($kernel, $request, $responseFactory));
     }
 
-    public function testEndpoint()
+    /**
+     * @throws Exception
+     */
+    public function test_endpoint()
     {
-        $controller = new TerminalController(
-            $request = m::mock('Illuminate\Http\Request'),
-            $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
-        );
+        $controller = new TerminalController();
+        $request = m::mock(Request::class);
+        $responseFactory = m::mock(ResponseFactory::class);
 
         $request->shouldReceive('get')->once()->with('method')->andReturn($command = 'foo');
         $request->shouldReceive('get')->once()->with('params', [])->andReturn($parameters = ['foo' => 'bar']);
 
-        $kernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel = m::mock(Kernel::class);
         $kernel->shouldReceive('call')->once()->with($command, $parameters)->andReturn($error = 0);
         $request->shouldReceive('get')->once()->with('jsonrpc')->andReturn($jsonrpc = 'foo');
         $request->shouldReceive('get')->once()->with('id')->andReturn($id = 'foo');
         $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
 
         $responseFactory->shouldReceive('json')->once()->with([
-            'jsonrpc' => $jsonrpc,
-            'id' => $id,
-            'result' => $output,
+            'jsonrpc' => $jsonrpc, 'id' => $id, 'result' => $output,
         ])->andReturn($result = 'foo');
 
-        $this->assertSame($result, $controller->endpoint($kernel));
+        self::assertSame($result, $controller->endpoint($kernel, $request, $responseFactory));
     }
 
-    public function testEndpointError()
+    /**
+     * @throws Exception
+     */
+    public function test_endpoint_error()
     {
-        $controller = new TerminalController(
-            $request = m::mock('Illuminate\Http\Request'),
-            $responseFactory = m::mock('Illuminate\Contracts\Routing\ResponseFactory')
-        );
+        $controller = new TerminalController();
+        $request = m::mock(Request::class);
+        $responseFactory = m::mock(ResponseFactory::class);
 
         $request->shouldReceive('get')->once()->with('method')->andReturn($command = 'foo');
         $request->shouldReceive('get')->once()->with('params', [])->andReturn($parameters = ['foo' => 'bar']);
 
-        $kernel = m::mock('Recca0120\Terminal\Kernel');
+        $kernel = m::mock(Kernel::class);
         $kernel->shouldReceive('call')->once()->with($command, $parameters)->andReturn($error = 1);
         $request->shouldReceive('get')->once()->with('jsonrpc')->andReturn($jsonrpc = 'foo');
         $kernel->shouldReceive('output')->once()->andReturn($output = 'foo');
@@ -80,13 +100,9 @@ class TerminalControllerTest extends TestCase
         $responseFactory->shouldReceive('json')->once()->with([
             'jsonrpc' => $jsonrpc,
             'id' => null,
-            'error' => [
-                'code' => -32600,
-                'message' => 'Invalid Request',
-                'data' => $output,
-            ],
+            'error' => ['code' => -32600, 'message' => 'Invalid Request', 'data' => $output],
         ])->andReturn($result = 'foo');
 
-        $this->assertSame($result, $controller->endpoint($kernel));
+        self::assertSame($result, $controller->endpoint($kernel, $request, $responseFactory));
     }
 }

@@ -14,6 +14,7 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Carbon\Carbon;
+use Illuminate\Container\Container;
 
 if (class_exists('PHPUnit\Framework\TestCase') === false) {
     class_alias('PHPUnit_Framework_TestCase', 'PHPUnit\Framework\TestCase');
@@ -50,33 +51,35 @@ if (function_exists('env') === false) {
 }
 
 if (function_exists('public_path') === false) {
-    function public_path()
+    function public_path($path = '')
     {
+        return ''.$path;
     }
 }
 
 if (function_exists('config_path') === false) {
-    function config_path()
+    function config_path($path = '')
     {
+        return __DIR__.'/../config/'.$path;
     }
 }
 
 if (function_exists('base_path') === false) {
-    function base_path()
+    function base_path($path = '')
     {
-        return \Illuminate\Container\Container::getInstance()->basePath();
+        return Container::getInstance()->basePath($path);
     }
 }
 
 if (function_exists('storage_path') === false) {
     function storage_path()
     {
-        return \Illuminate\Container\Container::getInstance()->make('path.storage');
+        return Container::getInstance()->make('path.storage');
     }
 }
 
 if (class_exists('Route') === false) {
-    class Route
+    class bootstrap
     {
         public static function __callStatic($method, $arguments)
         {

@@ -2,11 +2,14 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
+use Illuminate\Container\Container;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\DatabaseManager;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Mysql;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class MysqlTest extends TestCase
 {
@@ -14,32 +17,22 @@ class MysqlTest extends TestCase
 
     public function testHandle()
     {
-        $command = new Mysql(
-            $databaseManager = m::mock('Illuminate\Database\DatabaseManager')
-        );
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getOption')->once()->with('command')->andReturn($sql = 'SELECT * FROM users;');
-        $input->shouldReceive('getOption')->once()->with('connection')->andReturn($connection = 'mysql');
-        $databaseManager->shouldReceive('connection')->once()->with($connection)->andReturn(
-            $connection = m::mock('Illuminate\Database\ConnectionInterface')
-        );
+        $container = m::mock(new Container);
+        Container::setInstance($container);
+        $sql = 'SELECT * FROM users;';
+        $databaseManager = m::mock(DatabaseManager::class);
+        $connection = m::mock(ConnectionInterface::class);
+        $databaseManager->shouldReceive('connection')->once()->with('mysql')->andReturn($connection);
         $connection->shouldReceive('select')->once()->with($sql, [], true)->andReturn($rows = [
-            ['name' => 'name', 'email' => 'email'],
+            ['name' => 'recca0120', 'email' => 'recca0120@gmail.com'],
         ]);
 
-        $command->handle();
-        $this->assertStringContainsString('email', $output->fetch());
-    }
+        $command = new Mysql($databaseManager);
+        $command->setLaravel($container);
 
-    protected function mockProperty($object, $propertyName, $value)
-    {
-        $reflectionClass = new \ReflectionClass($object);
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['--command' => $sql, '--connection' => 'mysql']);
 
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
+        self::assertStringContainsString('recca0120@gmail.com', $commandTester->getDisplay());
     }
 }

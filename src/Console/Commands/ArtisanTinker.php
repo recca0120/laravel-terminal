@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
 class ArtisanTinker extends Command
@@ -23,7 +24,7 @@ class ArtisanTinker extends Command
     /**
      * Handle the command.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handle()
     {
@@ -71,12 +72,12 @@ class ArtisanTinker extends Command
             $code = 'return '.$code;
         }
 
-        $tmpfname = tempnam(sys_get_temp_dir(), 'artisan-thinker');
-        $handle = fopen($tmpfname, 'w+');
+        $tmpName = tempnam(sys_get_temp_dir(), 'artisan-thinker');
+        $handle = fopen($tmpName, 'w+');
         fwrite($handle, "<?php\n".$code);
         fclose($handle);
-        $result = require $tmpfname;
-        unlink($tmpfname);
+        $result = require $tmpName;
+        unlink($tmpName);
 
         return $result;
     }

@@ -2,12 +2,14 @@
 
 namespace Recca0120\Terminal;
 
+use Exception;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Http\Request;
 use Recca0120\Terminal\Contracts\TerminalCommand;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends ConsoleApplication
 {
@@ -16,8 +18,9 @@ class Application extends ConsoleApplication
      *
      * @param string $command
      * @param array $parameters
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $outputBuffer
+     * @param OutputInterface $outputBuffer
      * @return int
+     * @throws Exception
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
@@ -29,12 +32,10 @@ class Application extends ConsoleApplication
             $this->setCatchExceptions(false);
         }
 
-        $command = $command.' '.implode(' ', $parameters);
+        $command .= ' '.implode(' ', $parameters);
         $input = new StringInput($command);
         $input->setInteractive(false);
-
         $result = $this->run($input, $this->lastOutput);
-
         $this->setCatchExceptions(true);
 
         return $result;
@@ -48,7 +49,7 @@ class Application extends ConsoleApplication
      */
     public function resolveCommands($commands)
     {
-        return parent::resolveCommands(array_filter($commands, function ($command) {
+        return parent::resolveCommands(array_filter($commands, static function ($command) {
             return is_subclass_of($command, TerminalCommand::class);
         }));
     }

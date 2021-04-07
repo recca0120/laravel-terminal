@@ -4,6 +4,7 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Arr;
+use stdClass;
 use Symfony\Component\Console\Input\InputOption;
 
 class Mysql extends Command
@@ -25,14 +26,14 @@ class Mysql extends Command
     /**
      * $connection.
      *
-     * @var \Illuminate\Database\DatabaseManager
+     * @var DatabaseManager
      */
     protected $databaseManager;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Database\DatabaseManager $databaseManager
+     * @param DatabaseManager $databaseManager
      */
     public function __construct(DatabaseManager $databaseManager)
     {
@@ -59,11 +60,11 @@ class Mysql extends Command
      * castArray.
      *
      * @param stdClass[] $rows
-     * @return void
+     * @return array[]
      */
     protected function castArray($rows)
     {
-        return array_map(function ($row) {
+        return array_map(static function ($row) {
             return (array) $row;
         }, $rows);
     }

@@ -2,9 +2,14 @@
 
 namespace Recca0120\Terminal;
 
+use Exception;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
+use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Foundation\Console\QueuedCommand;
 use Illuminate\Support\Arr;
 use Recca0120\Terminal\Application as Artisan;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Kernel implements KernelContract
 {
@@ -13,7 +18,7 @@ class Kernel implements KernelContract
      *
      * @var \Illuminate\Console\Application
      */
-    protected $app;
+    protected $artisan;
 
     /**
      * $config.
@@ -32,21 +37,15 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param \Recca0120\Terminal\Application $app
+     * @param Application $artisan
+     * @param array $config
      */
-    public function __construct(Artisan $app, $config = [])
+    public function __construct(Artisan $artisan, $config = [])
     {
-        $this->app = $app;
+        $this->artisan = $artisan;
         $this->config = Arr::except(array_merge([
-            'username' => 'LARAVEL',
-            'hostname' => php_uname('n'),
-            'os' => PHP_OS,
-        ], $config), [
-            'enabled',
-            'whitelists',
-            'route',
-            'commands',
-        ]);
+            'username' => 'LARAVEL', 'hostname' => php_uname('n'), 'os' => PHP_OS,
+        ], $config), ['enabled', 'whitelists', 'route', 'commands']);
     }
 
     /**
@@ -71,30 +70,32 @@ class Kernel implements KernelContract
     /**
      * Handle an incoming console command.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      * @return int
+     * @throws Exception
      */
     public function handle($input, $output = null)
     {
         $this->bootstrap();
 
-        return $this->app->run($input, $output);
+        return $this->artisan->run($input, $output);
     }
 
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $outputBuffer
+     * @param string $command
+     * @param array $parameters
+     * @param OutputInterface $outputBuffer
      * @return int
+     * @throws Exception
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
         $this->bootstrap();
 
-        return $this->app->call($command, $parameters, $outputBuffer);
+        return $this->artisan->call($command, $parameters, $outputBuffer);
     }
 
     /**
@@ -107,8 +108,13 @@ class Kernel implements KernelContract
     public function queue($command, array $parameters = [])
     {
         $this->bootstrap();
-        $app = $this->app->getLaravel();
-        $app['Illuminate\Contracts\Queue\Queue']->push(
+
+        if (class_exists(QueuedCommand::class)) {
+            return QueuedCommand::dispatch(func_get_args());
+        }
+
+        $app = $this->artisan->getLaravel();
+        $app[Queue::class]->push(
             'Illuminate\Foundation\Console\QueuedJob', func_get_args()
         );
     }
@@ -122,7 +128,7 @@ class Kernel implements KernelContract
     {
         $this->bootstrap();
 
-        return $this->app->all();
+        return $this->artisan->all();
     }
 
     /**
@@ -134,19 +140,19 @@ class Kernel implements KernelContract
     {
         $this->bootstrap();
 
-        return $this->app->output();
+        return $this->artisan->output();
     }
 
     /**
      * Terminate the application.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  int  $status
+     * @param InputInterface $input
+     * @param int $status
      * @return void
      */
     public function terminate($input, $status)
     {
         $this->bootstrap();
-        $this->app->terminate();
+        $this->artisan->terminate();
     }
 }

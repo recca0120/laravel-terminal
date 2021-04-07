@@ -3,77 +3,54 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Illuminate\Container\Container;
+use Illuminate\Filesystem\Filesystem;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Vi;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class ViTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp(): void
+    public function test_read()
     {
-        parent::setUp();
-        $container = m::mock(new Container);
-        $container->shouldReceive('basePath')->andReturn('foo/');
-        Container::setInstance($container);
-    }
+        $files = m::mock(Filesystem::class);
+        $files->shouldReceive('get')->with('foo/foo')->andReturn($text = 'foo');
 
-    public function testHandleRead()
-    {
-        $command = new Vi(
-            $files = m::mock('Illuminate\Filesystem\Filesystem')
-        );
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
+        $command = new Vi($files);
+        $command->setLaravel($this->getContainer());
 
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('text')->andReturn($text = null);
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['path' => 'foo']);
 
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = 'foo/';
-
-        $files->shouldReceive('get')->with($basePath.$path)->andReturn($text = 'foo');
-
-        $command->handle();
-
-        $this->assertStringContainsString($text, $output->fetch());
+        self::assertStringContainsString($text, $commandTester->getDisplay());
     }
 
     public function testHandleWrite()
     {
-        $command = new Vi(
-            $files = m::mock('Illuminate\Filesystem\Filesystem')
-        );
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
+        $text = 'foo';
+        $files = m::spy(Filesystem::class);
 
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('text')->andReturn($text = 'foo');
+        $command = new Vi($files);
+        $command->setLaravel($this->getContainer());
 
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = 'foo/';
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['path' => 'foo', '--text' => $text]);
 
-        $files->shouldReceive('put')->with($basePath.$path, $text);
-
-        $command->handle();
-
-        $this->assertEmpty($output->fetch());
+        $files->shouldHaveReceived('put')->with('foo/foo', $text)->once();
     }
 
-    protected function mockProperty($object, $propertyName, $value)
+    /**
+     * @return Container
+     */
+    private function getContainer()
     {
-        $reflectionClass = new \ReflectionClass($object);
+        $container = m::mock(new Container());
+        $container->shouldReceive('basePath')->andReturn('foo/');
+        Container::setInstance($container);
 
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
+        return $container;
     }
 }

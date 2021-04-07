@@ -29,22 +29,19 @@ class Artisan extends Command
      *
      * @var array
      */
-    protected $notSupport = [
-        'down' => '',
-        'tinker' => '',
-    ];
+    protected $notSupported = ['down' => '', 'tinker' => ''];
 
     /**
      * $artisan.
      *
-     * @var \Illuminate\Contracts\Console\Kernel
+     * @var ArtisanContract
      */
     protected $artisan;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Contracts\Console\Kernel $artisan
+     * @param ArtisanContract $artisan
      */
     public function __construct(ArtisanContract $artisan)
     {
@@ -56,17 +53,15 @@ class Artisan extends Command
     /**
      * Handle the command.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handle()
     {
-        $command = $this->forceCommand(
-            trim($this->option('command'))
-        );
+        $command = $this->fixCommand(trim($this->option('command')));
 
         $input = new StringInput($command);
         $input->setInteractive(false);
-        if (isset($this->notSupport[$input->getFirstArgument()]) === true) {
+        if (isset($this->notSupported[$input->getFirstArgument()]) === true) {
             throw new InvalidArgumentException('Command "'.$command.'" is not supported');
         }
         $this->artisan->handle($input, $this->getOutput());
@@ -78,20 +73,15 @@ class Artisan extends Command
      * @param string $command
      * @return string
      */
-    protected function forceCommand($command)
+    protected function fixCommand($command)
     {
-        if ((
-            Str::startsWith($command, 'migrate') === true && Str::startsWith($command, 'migrate:status') === false ||
-            Str::startsWith($command, 'db:seed') === true
-        ) && strpos($command, '--force') === false) {
+        $isMigrateCommand = Str::startsWith($command, 'migrate') === true && Str::startsWith($command, 'migrate:status') === false;
+        if (($isMigrateCommand || Str::startsWith($command, 'db:seed') === true) && strpos($command, '--force') === false) {
             $command .= ' --force';
         }
 
-        if ((
-            is_null($this->laravel) === false &&
-            version_compare($this->laravel->version(), 5.5, '>=') &&
-            Str::startsWith($command, 'vendor:publish') === true
-        ) && strpos($command, '--all') === false) {
+        $isLaravel55 = $this->laravel !== null && version_compare($this->laravel->version(), 5.5, '>=');
+        if (($isLaravel55 && Str::startsWith($command, 'vendor:publish') === true) && strpos($command, '--all') === false) {
             $command .= ' --all';
         }
 

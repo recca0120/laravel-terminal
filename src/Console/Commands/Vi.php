@@ -2,7 +2,9 @@
 
 namespace Recca0120\Terminal\Console\Commands;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -25,14 +27,14 @@ class Vi extends Command
     /**
      * $files.
      *
-     * @var \Illuminate\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $files
+     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -44,7 +46,8 @@ class Vi extends Command
     /**
      * Handle the command.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws FileNotFoundException
      */
     public function handle()
     {
@@ -53,7 +56,7 @@ class Vi extends Command
         $root = function_exists('base_path') === true ? base_path() : getcwd();
         $path = rtrim($root, '/').'/'.$path;
 
-        if (is_null($text) === false) {
+        if ($text !== null) {
             $this->files->put($path, $text);
         } else {
             $this->line($this->files->get($path));

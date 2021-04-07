@@ -2,7 +2,6 @@
 
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
-use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -10,297 +9,77 @@ use Mockery as m;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\Find;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Glob\Glob;
+use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Finder\Finder;
 
 class FindTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $structure = [
-            'foo' => [
-                'foo' => 'foo',
-                'bar' => [],
+    private $structure = [
+        'foo' => [
+            'foo' => 'foo',
+            'foo1' => 'foo1',
+            'bar' => [
+                'bar' => 'bar',
+                'bar1' => 'bar1',
             ],
-        ];
-        $this->root = vfsStream::setup('root', null, $structure);
+        ],
+    ];
+
+    public function test_find_name_by_file()
+    {
+        $commandTester = new CommandTester($this->giveCommand());
+        $commandTester->execute(['path' => '/', '-type' => 'f', '-name' => 'foo1']);
+
+        self::assertStringContainsString('foo1', $commandTester->getDisplay());
+    }
+
+    public function test_find_name_by_directory()
+    {
+        $commandTester = new CommandTester($this->giveCommand());
+        $commandTester->execute(['path' => '/', '-type' => 'd']);
+
+        self::assertStringContainsString('bar', $commandTester->getDisplay());
+    }
+
+    public function test_max_depth_is_zero()
+    {
+        $commandTester = new CommandTester($this->giveCommand());
+        $commandTester->execute(['path' => '/', '-name' => 'foo1', '-maxdepth' => '0']);
+
+        self::assertStringContainsString('vfs://root//', $commandTester->getDisplay());
+    }
+
+    public function test_max_depth_bigger_then_zero()
+    {
+        $commandTester = new CommandTester($this->giveCommand());
+        $commandTester->execute(['path' => '/', '-name' => 'foo1', '-maxdepth' => '1']);
+
+        self::assertEmpty('', $commandTester->getDisplay());
+    }
+
+    public function test_delete()
+    {
+        $commandTester = new CommandTester($this->giveCommand());
+        $commandTester->execute(['path' => 'foo', '-name' => 'foo', '-delete' => '']);
+
+        self::assertStringContainsString('removed vfs://root/foo/foo', $commandTester->getDisplay());
+    }
+
+    /**
+     * @return Find
+     */
+    protected function giveCommand()
+    {
+        $root = vfsStream::setup('root', null, $this->structure);
         $container = m::mock(new Container);
-        $container->shouldReceive('basePath')->andReturn($this->root->url());
+        $container->shouldReceive('basePath')->andReturn($root->url());
         Container::setInstance($container);
-    }
 
-    public function testHandleFindName()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            m::mock(new Filesystem)
-        );
+        $command = new Find(new Finder, new Filesystem);
+        $command->setLaravel($container);
 
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
-
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
-            return array_map(function ($file) {
-                $fileinfo = m::mock('SplFileInfo');
-                $fileinfo->shouldReceive('getRealPath')->andReturn($file);
-
-                return $fileinfo;
-            }, Glob::glob($basePath.'/*'));
-        });
-        $this->assertNull($command->handle());
-    }
-
-    public function testHandleFindNameByDirectory()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            m::mock(new Filesystem)
-        );
-
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn($type = 'd');
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
-
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('directories')->once();
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
-            return array_map(function ($file) {
-                $fileinfo = m::mock('SplFileInfo');
-                $fileinfo->shouldReceive('getRealPath')->andReturn($file);
-
-                return $fileinfo;
-            }, Glob::glob($basePath.'/*'));
-        });
-        $this->assertNull($command->handle());
-    }
-
-    public function testHandleFindNameByFile()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            m::mock(new Filesystem)
-        );
-
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn($type = 'f');
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
-
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('files')->once();
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
-            return array_map(function ($file) {
-                $fileinfo = m::mock('SplFileInfo');
-                $fileinfo->shouldReceive('getRealPath')->andReturn($file);
-
-                return $fileinfo;
-            }, Glob::glob($basePath.'/*'));
-        });
-        $this->assertNull($command->handle());
-    }
-
-    public function testHandleFindMaxDepthIsZero()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            m::mock(new Filesystem)
-        );
-
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn('0');
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
-
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-
-        $this->assertNull($command->handle());
-    }
-
-    public function testHandleFindMaxDepthBiggerZero()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            m::mock(new Filesystem)
-        );
-
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn('1');
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn(null);
-
-        $command->setLaravel(
-            m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('depth')->once()->with('<1');
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath) {
-            return array_map(function ($file) {
-                $fileinfo = m::mock('SplFileInfo');
-                $fileinfo->shouldReceive('getRealPath')->andReturn($file);
-
-                return $fileinfo;
-            }, Glob::glob($basePath.'/*'));
-        });
-        $this->assertNull($command->handle());
-    }
-
-    public function testHandleDelete()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
-        );
-
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn($delete = 'true');
-
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath, $path) {
-            return array_map(function ($file) {
-                $fileinfo = m::mock('SplFileInfo');
-                $fileinfo->shouldReceive('getRealPath')->andReturn($file);
-
-                return $fileinfo;
-            }, Glob::glob($basePath.'/'.$path.'/'));
-        });
-        $this->assertNull($command->handle());
-    }
-
-    public function testHandleDeleteAndThrowException()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock(new Filesystem)
-        );
-
-        $this->mockProperty($command, 'input', $input = m::mock('Symfony\Component\Console\Input\InputInterface'));
-        $this->mockProperty($command, 'output', $output = new BufferedOutput);
-
-        $input->shouldReceive('getArgument')->once()->with('path')->andReturn($path = 'foo');
-        $input->shouldReceive('getOption')->once()->with('name')->andReturn($name = 'foo');
-        $input->shouldReceive('getOption')->once()->with('type')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('maxdepth')->andReturn(null);
-        $input->shouldReceive('getOption')->once()->with('delete')->andReturn($delete = 'true');
-
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-        $basePath = $this->root->url();
-
-        $finder->shouldReceive('in')->once()->with($basePath.'/'.$path);
-        $finder->shouldReceive('name')->once()->with($name);
-        $finder->shouldReceive('getIterator')->once()->andReturnUsing(function () use ($basePath, $path) {
-            return array_map(function ($file) {
-                $fileinfo = m::mock('SplFileInfo');
-                $fileinfo->shouldReceive('getRealPath')->andReturn($file);
-
-                return $fileinfo;
-            }, Glob::glob($basePath.'/'.$path.'/'));
-        });
-        $files->shouldReceive('isDirectory')->andThrow(new Exception());
-        $this->assertNull($command->handle());
-    }
-
-    public function testRun()
-    {
-        $command = new Find(
-            $finder = m::mock('Symfony\Component\Finder\Finder'),
-            $files = m::mock('Illuminate\Filesystem\Filesystem')
-        );
-
-        $command->setLaravel(
-            $laravel = m::mock('Illuminate\Contracts\Foundation\Application')
-        );
-
-        $laravel->shouldReceive('make')->andReturnUsing(function ($className, $parameters) {
-            return $parameters['output'];
-        });
-
-        $laravel->shouldReceive('call')->once();
-
-        $command->run(new StringInput('./ -name * -type d -maxdepth 0 -delete'), new BufferedOutput);
-
-        $reflectionClass = new \ReflectionClass($command);
-
-        $property = $reflectionClass->getProperty('input');
-        $property->setAccessible(true);
-        $this->assertSame("'./' -N '*' -T d -M 0 -d true", str_replace('"', "'", (string) $property->getValue($command)));
-    }
-
-    protected function mockProperty($object, $propertyName, $value)
-    {
-        $reflectionClass = new \ReflectionClass($object);
-
-        $property = $reflectionClass->getProperty($propertyName);
-        $property->setAccessible(true);
-        $property->setValue($object, $value);
-        $property->setAccessible(false);
+        return $command;
     }
 }

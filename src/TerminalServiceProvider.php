@@ -19,13 +19,13 @@ class TerminalServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Illuminate\Routing\Router $router
+     * @param Request $request
+     * @param Router $router
      */
     public function boot(Request $request, Router $router)
     {
         $config = $this->app['config']['terminal'];
-        if (in_array($request->getClientIp(), Arr::get($config, 'whitelists', [])) === true || Arr::get($config, 'enabled') === true) {
+        if ($this->allowWhiteList($request, $config)) {
             $this->loadViewsFrom(__DIR__.'/../resources/views', 'terminal');
             $this->handleRoutes($router, $config);
         }
@@ -42,14 +42,14 @@ class TerminalServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/terminal.php', 'terminal');
 
-        $this->app->singleton(Application::class, function ($app) {
+        $this->app->bind(Application::class, function ($app) {
             $config = $app['config']['terminal'];
             $artisan = new Application($app, $app['events'], $app->version());
 
             return $artisan->resolveCommands($config['commands']);
         });
 
-        $this->app->singleton(Kernel::class, function ($app) {
+        $this->app->bind(Kernel::class, function ($app) {
             $config = $app['config']['terminal'];
 
             return new Kernel($app[Application::class], array_merge($config, [
@@ -64,7 +64,7 @@ class TerminalServiceProvider extends ServiceProvider
     /**
      * register routes.
      *
-     * @param \Illuminate\Routing\Router $router
+     * @param Router $router
      * @param array $config
      */
     protected function handleRoutes(Router $router, $config = [])
@@ -88,5 +88,19 @@ class TerminalServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/terminal'),
             __DIR__.'/../public' => public_path('vendor/terminal'),
         ], 'terminal');
+    }
+
+    /**
+     * @param Request $request
+     * @param $config
+     * @return bool
+     */
+    private function allowWhiteList(Request $request, $config)
+    {
+        return in_array(
+                $request->getClientIp(),
+                Arr::get($config, 'whitelists', []),
+                true
+            ) || Arr::get($config, 'enabled');
     }
 }

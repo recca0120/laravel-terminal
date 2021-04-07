@@ -2,10 +2,15 @@
 
 namespace Recca0120\Terminal\Tests;
 
+use Exception;
+use Illuminate\Container\Container;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Application;
+use Recca0120\Terminal\Console\Commands\Artisan;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -14,84 +19,63 @@ class ApplicationTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testCall()
+    /**
+     * @throws Exception
+     */
+    public function test_call_method()
     {
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $laravel->shouldReceive('offsetGet')->once()->with('request')->andReturn(
-            $request = m::mock('Illuminate\Http\Request')
-        );
-        $request->shouldReceive('ajax')->once()->andReturn(false);
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('fire');
-        $events->shouldReceive('dispatch');
+        $laravel = new Container();
+        $request = Request::capture();
+        $events = new Dispatcher();
+        $laravel->instance('request', $request);
 
-        $application = new Application(
-            $laravel,
-            $events,
-            $version = 'testing'
-        );
-        $command = 'help';
-        $parameters = ['--foo'];
-        $this->assertSame(0, $application->call($command, $parameters));
+        $application = new Application($laravel, $events, $version = 'testing');
+
+        self::assertSame(0, $application->call('help', ['list']));
     }
 
-    public function testCallAndRequestIsAjax()
+    /**
+     * @throws Exception
+     */
+    public function test_call_method_when_request_is_ajax()
     {
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $laravel->shouldReceive('offsetGet')->once()->with('request')->andReturn(
-            $request = m::mock('Illuminate\Http\Request')
-        );
-        $request->shouldReceive('ajax')->once()->andReturn(true);
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('fire');
-        $events->shouldReceive('dispatch');
+        $laravel = new Container();
+        $request = m::mock(Request::capture());
+        $request->shouldReceive('ajax')->andReturn(true);
+        $events = new Dispatcher();
+        $laravel->instance('request', $request);
 
-        $application = new Application(
-            $laravel,
-            $events,
-            $version = 'testing'
-        );
-        $command = 'help';
-        $parameters = ['--foo'];
-        $this->assertSame(0, $application->call($command, $parameters));
+        $application = new Application($laravel, $events, $version = 'testing');
+
+        self::assertSame(0, $application->call('help', ['list']));
     }
 
-    public function testResolveCommands()
+    public function test_resolve_commands()
     {
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('fire');
-        $events->shouldReceive('dispatch');
+        $laravel = m::mock(new Container());
+        $request = Request::capture();
+        $events = new Dispatcher();
+        $laravel->instance('request', $request);
 
-        $application = new Application(
-            $laravel,
-            $events,
-            $version = 'testing'
-        );
+        $application = new Application($laravel, $events, $version = 'testing');
 
-        $laravel->shouldReceive('make')->once()->with(
-            $command = 'Recca0120\Terminal\Console\Commands\Artisan'
-        )->andReturn(new HelpCommand);
-        $this->assertSame($application, $application->resolveCommands([$command]));
+        $command = Artisan::class;
+        $laravel->shouldReceive('make')->once()->with($command)->andReturn(new HelpCommand);
+        self::assertSame($application, $application->resolveCommands([$command]));
     }
 
-    public function testRun()
+    /**
+     * @throws Exception
+     */
+    public function test_run_method()
     {
-        $laravel = m::mock('Illuminate\Contracts\Foundation\Application, ArrayAccess');
+        $laravel = new Container();
+        $request = Request::capture();
+        $events = new Dispatcher();
+        $laravel->instance('request', $request);
 
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('fire');
-        $events->shouldReceive('dispatch');
+        $application = new Application($laravel, $events, $version = 'testing');
 
-        $application = new Application(
-            $laravel,
-            $events,
-            $version = 'testing'
-        );
-
-        $this->assertSame(0, $application->run(
-            new StringInput('help'),
-            new BufferedOutput()
-        ));
+        self::assertSame(0, $application->run(new StringInput('help'), new BufferedOutput()));
     }
 }

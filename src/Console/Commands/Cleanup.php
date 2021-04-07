@@ -4,6 +4,7 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use Webmozart\Glob\Glob;
 
 class Cleanup extends Command
@@ -25,14 +26,14 @@ class Cleanup extends Command
     /**
      * $files.
      *
-     * @var \Illuminate\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $files;
 
     /**
      * __construct.
      *
-     * @param \Illuminate\Filesystem\Filesystem $files
+     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -44,7 +45,7 @@ class Cleanup extends Command
     /**
      * Handle the command.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handle()
     {

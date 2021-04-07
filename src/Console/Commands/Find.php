@@ -4,6 +4,7 @@ namespace Recca0120\Terminal\Console\Commands;
 
 use Exception;
 use Illuminate\Filesystem\Filesystem;
+use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -30,22 +31,22 @@ class Find extends Command
     /**
      * $finder.
      *
-     * @var \Symfony\Component\Finder\Finder
+     * @var Finder
      */
     protected $finder;
 
     /**
      * $files.
      *
-     * @var \Illuminate\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $files;
 
     /**
      * __construct.
      *
-     * @param \Symfony\Component\Finder\Finder  $finder
-     * @param \Illuminate\Filesystem\Filesystem $files
+     * @param Finder $finder
+     * @param Filesystem $files
      */
     public function __construct(Finder $finder, Filesystem $files)
     {
@@ -58,8 +59,8 @@ class Find extends Command
     /**
      * run.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      * @return int
      */
     public function run(InputInterface $input, OutputInterface $output)
@@ -78,7 +79,7 @@ class Find extends Command
     /**
      * Handle the command.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handle()
     {
@@ -93,7 +94,7 @@ class Find extends Command
 
         $this->finder->in($path);
 
-        if (is_null($name) === false) {
+        if ($name !== null) {
             $this->finder->name($name);
         }
 
@@ -106,8 +107,8 @@ class Find extends Command
                 break;
         }
 
-        if (is_null($maxDepth) === false) {
-            if ($maxDepth == '0') {
+        if (($maxDepth) !== null) {
+            if ((int) $maxDepth === 0) {
                 $this->line($path);
 
                 return;
@@ -116,21 +117,20 @@ class Find extends Command
         }
 
         foreach ($this->finder->getIterator() as $file) {
-            $realPath = $file->getRealpath();
-            if ($delete === true && $this->files->exists($realPath) === true) {
-                $removed = false;
+            $pathname = $file->getPathname();
+            if ($delete === true && $this->files->exists($pathname) === true) {
                 try {
-                    if ($this->files->isDirectory($realPath) === true) {
-                        $removed = $this->files->deleteDirectory($realPath);
+                    if ($this->files->isDirectory($pathname) === true) {
+                        $removed = $this->files->deleteDirectory($pathname);
                     } else {
-                        $removed = $this->files->delete($realPath);
+                        $removed = $this->files->delete($pathname);
                     }
                 } catch (Exception $e) {
                     $removed = false;
                 }
-                $removed === true ? $this->info('removed '.$realPath) : $this->error('removed '.$realPath.' fail');
+                $removed === true ? $this->info('removed '.$pathname) : $this->error('removed '.$pathname.' fail');
             } else {
-                $this->line($realPath);
+                $this->line($pathname);
             }
         }
     }
