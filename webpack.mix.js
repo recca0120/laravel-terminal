@@ -26,18 +26,18 @@ mix.options({
 
 mix.ts('resources/ts/app.ts', 'public/js/terminal.js').sass('resources/sass/app.scss', 'public/css/terminal.css');
 
-mix.then(() => {
-    try {
-        fse.copyFileSync(
-            path.resolve(__dirname, 'public/css/terminal.css'),
-            path.resolve(publicPath, 'css/terminal.css')
-        );
-        fse.copyFileSync(path.resolve(__dirname, 'public/js/terminal.js'), path.resolve(publicPath, 'js/terminal.js'));
-        fse.copyFileSync(
-            path.resolve(__dirname, 'resources/views/index.blade.php'),
-            path.resolve(publicPath, '../../laravel/resources/views/vendor/terminal/index.blade.php')
-        );
-    } catch (e) {
-        console.error(e);
-    }
-});
+// mix.then(() => {
+//     try {
+//         fse.copyFileSync(
+//             path.resolve(__dirname, 'public/css/terminal.css'),
+//             path.resolve(publicPath, 'css/terminal.css')
+//         );
+//         fse.copyFileSync(path.resolve(__dirname, 'public/js/terminal.js'), path.resolve(publicPath, 'js/terminal.js'));
+//         fse.copyFileSync(
+//             path.resolve(__dirname, 'resources/views/index.blade.php'),
+//             path.resolve(publicPath, '../../laravel/resources/views/vendor/terminal/index.blade.php')
+//         );
+//     } catch (e) {
+//         console.error(e);
+//     }
+// });

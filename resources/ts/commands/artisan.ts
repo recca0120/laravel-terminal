@@ -1,4 +1,4 @@
-import { Command } from '../command';
+import {Command} from '../command';
 
 export class Artisan extends Command {
     protected commandLine: boolean = true;
@@ -49,7 +49,7 @@ export class Artisan extends Command {
 
         const cancel = ['', this.outputFormatter.comment('Command Cancelled!'), ''].join('\n');
 
-        return { title, message, cancel };
+        return {title, message, cancel};
     }
 
     getComfirmCommand(command: string): string {

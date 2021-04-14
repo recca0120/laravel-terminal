@@ -1,4 +1,4 @@
-import { Command } from '../command';
+import {Command} from '../command';
 import 'codemirror/keymap/vim';
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';
@@ -12,8 +12,8 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/xml/xml';
 import * as CodeMirror from 'codemirror';
-import { HttpClient } from '../httpclient';
-import { OutputFormatter } from '../output-formatter';
+import {HttpClient} from '../httpclient';
+import {OutputFormatter} from '../output-formatter';
 
 export class Editor {
     private textarea: HTMLTextAreaElement;
@@ -83,12 +83,6 @@ export class Editor {
         return this.doc.getValue();
     }
 
-    setOption(key: string, value: any): Editor {
-        this.editor.setOption(key, value);
-
-        return this;
-    }
-
     setCursor(pos: any): Editor {
         this.doc.setCursor(pos);
 
@@ -96,7 +90,7 @@ export class Editor {
     }
 
     setModeByFile(file: string): Editor {
-        this.setOption('mode', this.getModeByFile(file).mode);
+        this.editor.setOption('mode', this.getModeByFile(file).mode);
 
         return this;
     }

@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
-import { HttpClient } from './httpclient';
-import { OutputFormatter } from './output-formatter';
+import {HttpClient} from './httpclient';
+import {OutputFormatter} from './output-formatter';
 
 class Parser {
     private command_re = /((?:"[^"\\]*(?:\\[\S\s][^"\\]*)*"|'[^'\\]*(?:\\[\S\s][^'\\]*)*'|\/[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimsuy]*(?=\s|$)|(?:\\\s|\S))+)(?=\s|$)/gi;
@@ -122,7 +122,9 @@ class Parser {
 
 export interface Comfirmable {
     comfirmable(command: string): boolean;
+
     getComfirm(command: string): string;
+
     getComfirmCommand(command: string): string;
 }
 
