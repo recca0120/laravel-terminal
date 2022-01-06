@@ -21,7 +21,7 @@
         "cli-spinners": "^2.6.0",
         "codemirror": "^5.60.0",
         "jquery-mousewheel": "^3.1.13",
-        "jquery.terminal": "^2.22.0"
+        "jquery.terminal": "^2.31.1"
     },
     "devDependencies": {
         "@babel/plugin-transform-runtime": "^7.13.15",
