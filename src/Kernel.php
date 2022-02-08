@@ -115,7 +115,8 @@ class Kernel implements KernelContract
 
         $app = $this->artisan->getLaravel();
         $app[Queue::class]->push(
-            'Illuminate\Foundation\Console\QueuedJob', func_get_args()
+            'Illuminate\Foundation\Console\QueuedJob',
+            func_get_args()
         );
     }
 

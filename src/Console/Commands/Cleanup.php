@@ -83,7 +83,7 @@ class Cleanup extends Command
                     return substr($item, strpos($item, 'vendor'));
                 })
                 ->implode(',').'}/**/{'.(implode(',', array_merge($vcs, $common, $others, $tests, $docs))).'}')
-            ))
+        ))
             ->merge(Glob::glob($root.'{'.(implode(',', array_merge($vcs, $common))).'}'))
             ->merge([
                 $root.'vendor/phpunit',

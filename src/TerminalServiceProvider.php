@@ -98,9 +98,9 @@ class TerminalServiceProvider extends ServiceProvider
     private function allowWhiteList(Request $request, $config)
     {
         return in_array(
-                $request->getClientIp(),
-                Arr::get($config, 'whitelists', []),
-                true
-            ) || Arr::get($config, 'enabled');
+            $request->getClientIp(),
+            Arr::get($config, 'whitelists', []),
+            true
+        ) || Arr::get($config, 'enabled');
     }
 }

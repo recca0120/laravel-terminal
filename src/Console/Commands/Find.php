@@ -63,7 +63,7 @@ class Find extends Command
      * @param OutputInterface $output
      * @return int
      */
-    public function run(InputInterface $input, OutputInterface $output)
+    public function run(InputInterface $input, OutputInterface $output): int
     {
         $command = (string) $input;
         $command = strtr($command, [
