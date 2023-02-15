@@ -62,7 +62,7 @@ class ArtisanTinker extends Command
     /**
      * executeCode.
      *
-     * @param string $code
+     * @param  string  $code
      * @return string
      */
     protected function executeCode($code)

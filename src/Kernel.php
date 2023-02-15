@@ -37,8 +37,8 @@ class Kernel implements KernelContract
     /**
      * Create a new console kernel instance.
      *
-     * @param Application $artisan
-     * @param array $config
+     * @param  Application  $artisan
+     * @param  array  $config
      */
     public function __construct(Artisan $artisan, $config = [])
     {
@@ -70,9 +70,10 @@ class Kernel implements KernelContract
     /**
      * Handle an incoming console command.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param  InputInterface  $input
+     * @param  OutputInterface  $output
      * @return int
+     *
      * @throws Exception
      */
     public function handle($input, $output = null)
@@ -85,10 +86,11 @@ class Kernel implements KernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param string $command
-     * @param array $parameters
-     * @param OutputInterface $outputBuffer
+     * @param  string  $command
+     * @param  array  $parameters
+     * @param  OutputInterface  $outputBuffer
      * @return int
+     *
      * @throws Exception
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
@@ -101,8 +103,8 @@ class Kernel implements KernelContract
     /**
      * Queue an Artisan console command by name.
      *
-     * @param string $command
-     * @param array $parameters
+     * @param  string  $command
+     * @param  array  $parameters
      * @return void
      */
     public function queue($command, array $parameters = [])
@@ -147,8 +149,8 @@ class Kernel implements KernelContract
     /**
      * Terminate the application.
      *
-     * @param InputInterface $input
-     * @param int $status
+     * @param  InputInterface  $input
+     * @param  int  $status
      * @return void
      */
     public function terminate($input, $status)

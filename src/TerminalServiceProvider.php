@@ -19,8 +19,8 @@ class TerminalServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @param Request $request
-     * @param Router $router
+     * @param  Request  $request
+     * @param  Router  $router
      */
     public function boot(Request $request, Router $router)
     {
@@ -64,8 +64,8 @@ class TerminalServiceProvider extends ServiceProvider
     /**
      * register routes.
      *
-     * @param Router $router
-     * @param array $config
+     * @param  Router  $router
+     * @param  array  $config
      */
     protected function handleRoutes(Router $router, $config = [])
     {
@@ -91,7 +91,7 @@ class TerminalServiceProvider extends ServiceProvider
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @param $config
      * @return bool
      */

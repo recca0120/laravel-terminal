@@ -33,7 +33,7 @@ class Tail extends Command
     /**
      * __construct.
      *
-     * @param Filesystem $files
+     * @param  Filesystem  $files
      */
     public function __construct(Filesystem $files)
     {
@@ -73,8 +73,8 @@ class Tail extends Command
     /**
      * readLine.
      *
-     * @param string $file
-     * @param int $lines
+     * @param  string  $file
+     * @param  int  $lines
      */
     protected function readLine($file, $lines = 50)
     {

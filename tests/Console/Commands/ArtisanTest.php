@@ -77,7 +77,7 @@ class ArtisanTest extends TestCase
     }
 
     /**
-     * @param Container $laravel
+     * @param  Container  $laravel
      * @return Kernel
      */
     private function getKernel(Container $laravel)
@@ -86,7 +86,7 @@ class ArtisanTest extends TestCase
     }
 
     /**
-     * @param string $version
+     * @param  string  $version
      * @return Container|m\LegacyMockInterface|m\MockInterface
      */
     private function getLaravel($version = 'testing')

@@ -33,7 +33,7 @@ class Mysql extends Command
     /**
      * __construct.
      *
-     * @param DatabaseManager $databaseManager
+     * @param  DatabaseManager  $databaseManager
      */
     public function __construct(DatabaseManager $databaseManager)
     {
@@ -59,7 +59,7 @@ class Mysql extends Command
     /**
      * castArray.
      *
-     * @param stdClass[] $rows
+     * @param  stdClass[]  $rows
      * @return array[]
      */
     protected function castArray($rows)

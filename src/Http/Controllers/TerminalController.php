@@ -17,11 +17,12 @@ class TerminalController extends Controller
     /**
      * index.
      *
-     * @param Kernel $kernel
-     * @param Request $request
-     * @param ResponseFactory $responseFactory
-     * @param string $view
+     * @param  Kernel  $kernel
+     * @param  Request  $request
+     * @param  ResponseFactory  $responseFactory
+     * @param  string  $view
      * @return Response
+     *
      * @throws Exception
      */
     public function index(Kernel $kernel, Request $request, ResponseFactory $responseFactory, $view = 'index')
@@ -38,10 +39,11 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param Kernel $kernel
-     * @param Request $request
-     * @param ResponseFactory $responseFactory
+     * @param  Kernel  $kernel
+     * @param  Request  $request
+     * @param  ResponseFactory  $responseFactory
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function endpoint(Kernel $kernel, Request $request, ResponseFactory $responseFactory)
@@ -58,10 +60,10 @@ class TerminalController extends Controller
     /**
      * media.
      *
-     * @param Request $request
-     * @param ResponseFactory $responseFactory
-     * @param Filesystem $files
-     * @param string $file
+     * @param  Request  $request
+     * @param  ResponseFactory  $responseFactory
+     * @param  Filesystem  $files
+     * @param  string  $file
      * @return Response
      */
     public function media(Request $request, ResponseFactory $responseFactory, Filesystem $files, $file)

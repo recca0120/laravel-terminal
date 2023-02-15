@@ -16,10 +16,11 @@ class Application extends ConsoleApplication
     /**
      * Run an Artisan console command by name.
      *
-     * @param string $command
-     * @param array $parameters
-     * @param OutputInterface $outputBuffer
+     * @param  string  $command
+     * @param  array  $parameters
+     * @param  OutputInterface  $outputBuffer
      * @return int
+     *
      * @throws Exception
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
@@ -44,7 +45,7 @@ class Application extends ConsoleApplication
     /**
      * Resolve an array of commands through the application.
      *
-     * @param array|mixed $commands
+     * @param  array|mixed  $commands
      * @return $this
      */
     public function resolveCommands($commands)

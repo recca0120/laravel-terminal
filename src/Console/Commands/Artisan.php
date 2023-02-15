@@ -41,7 +41,7 @@ class Artisan extends Command
     /**
      * __construct.
      *
-     * @param ArtisanContract $artisan
+     * @param  ArtisanContract  $artisan
      */
     public function __construct(ArtisanContract $artisan)
     {
@@ -70,7 +70,7 @@ class Artisan extends Command
     /**
      * need focre option.
      *
-     * @param string $command
+     * @param  string  $command
      * @return string
      */
     protected function fixCommand($command)

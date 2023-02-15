@@ -64,7 +64,7 @@ class ArtisanTinkerTest extends TestCase
     }
 
     /**
-     * @param string $cmd
+     * @param  string  $cmd
      * @return CommandTester
      */
     private function executeCommand($cmd)
