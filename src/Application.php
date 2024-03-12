@@ -17,7 +17,6 @@ class Application extends ConsoleApplication
      * Run an Artisan console command by name.
      *
      * @param  string  $command
-     * @param  array  $parameters
      * @param  OutputInterface  $outputBuffer
      * @return int
      *

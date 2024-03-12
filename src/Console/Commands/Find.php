@@ -44,9 +44,6 @@ class Find extends Command
 
     /**
      * __construct.
-     *
-     * @param  Finder  $finder
-     * @param  Filesystem  $files
      */
     public function __construct(Finder $finder, Filesystem $files)
     {
@@ -58,10 +55,6 @@ class Find extends Command
 
     /**
      * run.
-     *
-     * @param  InputInterface  $input
-     * @param  OutputInterface  $output
-     * @return int
      */
     public function run(InputInterface $input, OutputInterface $output): int
     {

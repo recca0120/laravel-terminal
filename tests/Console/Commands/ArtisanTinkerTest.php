@@ -3,6 +3,7 @@
 namespace Recca0120\Terminal\Tests\Console\Commands;
 
 use Illuminate\Container\Container;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Recca0120\Terminal\Console\Commands\ArtisanTinker;
@@ -69,7 +70,8 @@ class ArtisanTinkerTest extends TestCase
      */
     private function executeCommand($cmd)
     {
-        $container = new Container;
+        $container = Mockery::mock(new Container);
+        $container->shouldReceive('runningUnitTests')->andReturn(false);
         $command = new ArtisanTinker();
         $command->setLaravel($container);
 

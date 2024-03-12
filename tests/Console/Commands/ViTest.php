@@ -49,6 +49,7 @@ class ViTest extends TestCase
     {
         $container = m::mock(new Container());
         $container->shouldReceive('basePath')->andReturn('foo/');
+        $container->shouldReceive('runningUnitTests')->andReturn(false);
         Container::setInstance($container);
 
         return $container;

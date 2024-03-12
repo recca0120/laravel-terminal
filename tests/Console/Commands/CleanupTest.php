@@ -125,6 +125,7 @@ class CleanupTest extends TestCase
         $root = vfsStream::setup('root', null, $this->structure);
         $container = m::mock(new Container);
         $container->shouldReceive('basePath')->andReturn($basePath = $root->url());
+        $container->shouldReceive('runningUnitTests')->andReturn(false);
         Container::setInstance($container);
 
         $command = new Cleanup(new Filesystem);

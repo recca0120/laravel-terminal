@@ -32,8 +32,6 @@ class Composer extends Command
 
     /**
      * __construct.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
      */
     public function __construct(Filesystem $files)
     {

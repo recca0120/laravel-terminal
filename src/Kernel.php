@@ -28,16 +28,8 @@ class Kernel implements KernelContract
     protected $config;
 
     /**
-     * The Artisan commands provided by the application.
-     *
-     * @var array
-     */
-    protected $commands = [];
-
-    /**
      * Create a new console kernel instance.
      *
-     * @param  Application  $artisan
      * @param  array  $config
      */
     public function __construct(Artisan $artisan, $config = [])
@@ -87,7 +79,6 @@ class Kernel implements KernelContract
      * Run an Artisan console command by name.
      *
      * @param  string  $command
-     * @param  array  $parameters
      * @param  OutputInterface  $outputBuffer
      * @return int
      *
@@ -104,7 +95,6 @@ class Kernel implements KernelContract
      * Queue an Artisan console command by name.
      *
      * @param  string  $command
-     * @param  array  $parameters
      * @return void
      */
     public function queue($command, array $parameters = [])
@@ -157,5 +147,37 @@ class Kernel implements KernelContract
     {
         $this->bootstrap();
         $this->artisan->terminate();
+    }
+
+    /**
+     * Set the Artisan commands provided by the application.
+     *
+     * @return $this
+     */
+    public function addCommands(array $commands)
+    {
+        $this->artisan->addCommands($commands);
+
+        return $this;
+    }
+
+    /**
+     * Set the paths that should have their Artisan commands automatically discovered.
+     *
+     * @return $this
+     */
+    public function addCommandPaths(array $paths)
+    {
+        return $this;
+    }
+
+    /**
+     * Set the paths that should have their Artisan "routes" automatically discovered.
+     *
+     * @return $this
+     */
+    public function addCommandRoutePaths(array $paths)
+    {
+        return $this;
     }
 }

@@ -75,6 +75,7 @@ class FindTest extends TestCase
         $root = vfsStream::setup('root', null, $this->structure);
         $container = m::mock(new Container);
         $container->shouldReceive('basePath')->andReturn($root->url());
+        $container->shouldReceive('runningUnitTests')->andReturn(false);
         Container::setInstance($container);
 
         $command = new Find(new Finder, new Filesystem);

@@ -53,8 +53,6 @@ class KernelTest extends TestCase
 
     /**
      * @depends test_call_method
-     *
-     * @param  array  $parameters
      */
     public function test_output_method(array $parameters)
     {

@@ -44,6 +44,7 @@ class ArtisanTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute(['--command' => 'migrate:fresh'], []);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     public function test_artisan_vendor_publish_command()
@@ -59,6 +60,7 @@ class ArtisanTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute(['--command' => 'vendor:publish'], []);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     public function test_not_supported_command()
@@ -74,10 +76,10 @@ class ArtisanTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute(['--command' => 'down'], []);
+        $commandTester->assertCommandIsSuccessful();
     }
 
     /**
-     * @param  Container  $laravel
      * @return Kernel
      */
     private function getKernel(Container $laravel)
@@ -93,6 +95,7 @@ class ArtisanTest extends TestCase
     {
         $laravel = m::mock(new Container());
         $laravel->shouldReceive('version')->andReturn($version);
+        $laravel->shouldReceive('runningUnitTests')->andReturn(false);
 
         return $laravel;
     }

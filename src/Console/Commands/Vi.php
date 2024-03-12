@@ -33,8 +33,6 @@ class Vi extends Command
 
     /**
      * __construct.
-     *
-     * @param  Filesystem  $files
      */
     public function __construct(Filesystem $files)
     {

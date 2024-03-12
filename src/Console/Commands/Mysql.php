@@ -32,8 +32,6 @@ class Mysql extends Command
 
     /**
      * __construct.
-     *
-     * @param  DatabaseManager  $databaseManager
      */
     public function __construct(DatabaseManager $databaseManager)
     {

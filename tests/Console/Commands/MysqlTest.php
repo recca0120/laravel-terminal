@@ -18,6 +18,7 @@ class MysqlTest extends TestCase
     public function testHandle()
     {
         $container = m::mock(new Container);
+        $container->shouldReceive('runningUnitTests')->andReturn(false);
         Container::setInstance($container);
         $sql = 'SELECT * FROM users;';
         $databaseManager = m::mock(DatabaseManager::class);

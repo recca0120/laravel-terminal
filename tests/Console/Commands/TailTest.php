@@ -121,6 +121,7 @@ class TailTest extends TestCase
         $root = $this->giveRoot();
         $container = m::mock(new Container);
         $container->shouldReceive('basePath')->andReturn($root->url());
+        $container->shouldReceive('runningUnitTests')->andReturn(false);
         $container->instance('path.storage', $root->url());
         Container::setInstance($container);
 

@@ -40,8 +40,6 @@ class Artisan extends Command
 
     /**
      * __construct.
-     *
-     * @param  ArtisanContract  $artisan
      */
     public function __construct(ArtisanContract $artisan)
     {

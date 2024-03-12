@@ -17,9 +17,6 @@ class TerminalController extends Controller
     /**
      * index.
      *
-     * @param  Kernel  $kernel
-     * @param  Request  $request
-     * @param  ResponseFactory  $responseFactory
      * @param  string  $view
      * @return Response
      *
@@ -39,9 +36,6 @@ class TerminalController extends Controller
     /**
      * rpc response.
      *
-     * @param  Kernel  $kernel
-     * @param  Request  $request
-     * @param  ResponseFactory  $responseFactory
      * @return JsonResponse
      *
      * @throws Exception
@@ -60,9 +54,6 @@ class TerminalController extends Controller
     /**
      * media.
      *
-     * @param  Request  $request
-     * @param  ResponseFactory  $responseFactory
-     * @param  Filesystem  $files
      * @param  string  $file
      * @return Response
      */
