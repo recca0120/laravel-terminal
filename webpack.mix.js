@@ -1,7 +1,7 @@
 const fse = require('fs-extra');
 const mix = require('laravel-mix');
 const path = require('path');
-const publicPath = path.resolve(__dirname, '../../../../vendor/terminal');
+const publicPath = path.resolve(__dirname, '../laravel/public/vendor/terminal');
 
 /*
  |--------------------------------------------------------------------------
@@ -16,7 +16,7 @@ const publicPath = path.resolve(__dirname, '../../../../vendor/terminal');
 
 mix.options({
     autoload: {
-        jquery: ['$', 'window.jQuery', 'jQuery', 'CodeMirror'],
+        jquery: ['$', 'window.jQuery', 'jQuery'],
     },
     processCssUrls: false,
     publicPath: './',
@@ -24,7 +24,8 @@ mix.options({
     files: [`${publicPath}/js/app.js`, `${publicPath}/css/app.css`],
 });
 
-mix.ts('resources/ts/app.ts', 'public/js/terminal.js').sass('resources/sass/app.scss', 'public/css/terminal.css');
+mix.ts('resources/ts/app.ts', 'public/js/terminal.js')
+    .sass('resources/sass/app.scss', 'public/css/terminal.css');
 
 // mix.then(() => {
 //     try {
@@ -32,7 +33,10 @@ mix.ts('resources/ts/app.ts', 'public/js/terminal.js').sass('resources/sass/app.
 //             path.resolve(__dirname, 'public/css/terminal.css'),
 //             path.resolve(publicPath, 'css/terminal.css')
 //         );
-//         fse.copyFileSync(path.resolve(__dirname, 'public/js/terminal.js'), path.resolve(publicPath, 'js/terminal.js'));
+//         fse.copyFileSync(
+//             path.resolve(__dirname, 'public/js/terminal.js'),
+//             path.resolve(publicPath, 'js/terminal.js')
+//         );
 //         fse.copyFileSync(
 //             path.resolve(__dirname, 'resources/views/index.blade.php'),
 //             path.resolve(publicPath, '../../laravel/resources/views/vendor/terminal/index.blade.php')

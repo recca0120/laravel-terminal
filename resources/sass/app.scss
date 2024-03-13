@@ -1,8 +1,8 @@
 @import 'node_modules/jquery.terminal/css/jquery.terminal';
-@import 'node_modules/codemirror/lib/codemirror';
-@import 'node_modules/codemirror/addon/dialog/dialog';
-@import 'node_modules/codemirror/addon/display/fullscreen';
-@import 'node_modules/codemirror/theme/monokai';
+// @import 'node_modules/codemirror/lib/codemirror';
+// @import 'node_modules/codemirror/addon/dialog/dialog';
+// @import 'node_modules/codemirror/addon/display/fullscreen';
+// @import 'node_modules/codemirror/theme/monokai';
 
 #terminal-shell {
     padding: 10px 10px !important;
@@ -18,8 +18,10 @@
     font-weight: normal !important;
     font-size: 12px;
     overflow: hidden;
+
     a {
         color: #0f60ff !important;
+
         &:hover {
             color: red !important;
             text-decoration: underline !important;
@@ -60,5 +62,18 @@
 // }
 
 .CodeMirror-fullscreen {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 50000 !important;
+
+    .cm-editor {
+        height: 100%;
+    }
+
+    .cm-panels-bottom {
+        overflow: hidden;
+    }
 }

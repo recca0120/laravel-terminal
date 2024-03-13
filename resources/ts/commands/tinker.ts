@@ -1,4 +1,4 @@
-import {Command, Interpreterable} from '../command';
+import { Command, Interpreterable } from '../command';
 
 export class Tinker extends Command implements Interpreterable {
     protected commandLine: boolean = true;

@@ -37,7 +37,7 @@ export class OutputFormatterStyle {
     private foreground: string = '';
     private background: string = '';
 
-    constructor(foreground: string = 'white', background: string = 'black') {
+    constructor(foreground: string = 'white', background: string = 'transparent') {
         this.foreground = this.getColor(foreground);
         this.background = this.getColor(background);
     }

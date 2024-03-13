@@ -1,96 +1,98 @@
-import {Command} from '../command';
-import 'codemirror/keymap/vim';
-import 'codemirror/addon/dialog/dialog';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/addon/display/fullscreen';
-import 'codemirror/mode/clike/clike';
-import 'codemirror/mode/meta';
-import 'codemirror/mode/php/php';
-import 'codemirror/mode/css/css';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-import 'codemirror/mode/xml/xml';
-import * as CodeMirror from 'codemirror';
-import {HttpClient} from '../httpclient';
-import {OutputFormatter} from '../output-formatter';
+import { Command } from '../command';
+import { HttpClient } from '../httpclient';
+import { OutputFormatter } from '../output-formatter';
+import { basicSetup, EditorView } from 'codemirror';
+import { vim, Vim as _Vim } from '@replit/codemirror-vim'
+import { javascript } from '@codemirror/lang-javascript';
+import { css } from '@codemirror/lang-css';
+import { php } from '@codemirror/lang-php';
+import { json } from '@codemirror/lang-json';
+import { vue } from '@codemirror/lang-vue';
+import { html } from '@codemirror/lang-html';
+import { markdown } from '@codemirror/lang-markdown';
+import { xml } from '@codemirror/lang-xml';
+import { materialDark } from 'cm6-theme-material-dark'
+import { EditorState, Compartment } from '@codemirror/state';
+
+const languageConf = new Compartment
 
 export class Editor {
-    private textarea: HTMLTextAreaElement;
-    private editor: CodeMirror.EditorFromTextArea;
-    private wapperElement: HTMLElement;
-    private doc: CodeMirror.Doc;
+    private section: HTMLElement;
+    private cm: EditorView;
 
     constructor() {
-        this.textarea = document.createElement('textarea');
-        document.body.appendChild(this.textarea);
+        this.section = document.createElement('div');
+        this.section.classList.add('CodeMirror-fullscreen');
+        this.section.style.display = 'none';
 
-        this.editor = CodeMirror.fromTextArea(this.textarea, {
-            lineNumbers: true,
-            keyMap: 'vim',
-            showCursorWhenSelecting: true,
-            theme: 'monokai',
+        document.body.appendChild(this.section);
+
+        this.cm = new EditorView({
+            state: this.createState(),
+            parent: this.section,
         });
 
-        this.wapperElement = this.editor.getWrapperElement();
-        this.wapperElement.className += ' CodeMirror-fullscreen';
-
-        this.doc = this.editor.getDoc();
-
-        (<any>CodeMirror)['Vim']['defineEx']('q', 'q', () => {
-            this.textarea.dispatchEvent(new Event('q'));
+        _Vim.defineEx('q', 'q', () => {
+            this.cm.dom.dispatchEvent(new Event('q'));
             this.quit();
         });
 
-        (<any>CodeMirror)['Vim']['defineEx']('w', 'w', () => {
-            this.textarea.dispatchEvent(new Event('w'));
+        _Vim.defineEx('w', 'w', () => {
+            this.cm.dom.dispatchEvent(new Event('w'));
         });
 
-        (<any>CodeMirror)['Vim']['defineEx']('wq', 'wq', () => {
-            this.textarea.dispatchEvent(new Event('wq'));
+        _Vim.defineEx('wq', 'wq', () => {
+            this.cm.dom.dispatchEvent(new Event('wq'));
             this.quit();
         });
     }
 
     on(type: string, cb: any): Editor {
-        this.textarea.addEventListener(type, cb);
+        this.cm.dom.addEventListener(type, cb);
 
         return this;
     }
 
     show(): Editor {
-        this.editor.getWrapperElement().style.display = 'block';
-        setTimeout(() => {
-            this.editor.focus();
-        }, 200);
+        this.section.style.display = 'block';
+
+        // setTimeout(() => {
+        //     this.cm.focus();
+        // }, 200);
 
         return this;
     }
 
     hide(): Editor {
-        this.wapperElement.style.display = 'none';
+        this.section.style.display = 'none';
 
         return this;
     }
 
     setText(text: string): Editor {
-        this.doc.setValue(text);
+        // this.cm.dispatch({
+        //     changes: { from: 0, to: this.cm.state.doc.length, insert: text },
+        //     sequential: true
+        // });
+        this.cm.setState(this.createState({ doc: text }));
 
         return this;
     }
 
     getText(): string {
-        return this.doc.getValue();
+        return this.cm.state.doc.toString();
     }
 
     setCursor(pos: any): Editor {
-        this.doc.setCursor(pos);
+        this.cm.dispatch({ selection: { anchor: pos } })
 
         return this;
     }
 
     setModeByFile(file: string): Editor {
-        this.editor.setOption('mode', this.getModeByFile(file).mode);
+        this.cm.dispatch({
+            effects: languageConf.reconfigure(this.getLanguageByFile(file)),
+        })
 
         return this;
     }
@@ -102,21 +104,28 @@ export class Editor {
         return this;
     }
 
-    private getModeByFile(file: string): any {
-        const matches = file.match(/.+\.([^.]+)$/);
-
-        if (matches && matches.length > 0) {
-            return (<any>CodeMirror)['findModeByExtension'](matches[1]);
-        }
-
-        if (/\//.test(file)) {
-            return (<any>CodeMirror)['findModeByMIME'](file);
-        }
-
-        return {
-            mode: 'php',
-            mime: 'application/x-httpd-php',
+    private getLanguageByFile(file: string): any {
+        const lookup: any = {
+            'html': html(),
+            'htm': html(),
+            'js': javascript(),
+            'css': css(),
+            'json': json(),
+            'vue': vue(),
+            'md': markdown(),
+            'xml': xml(),
+            'php': php(),
         };
+        const matches: any = file.match(/.+\.([^.]+)$/);
+
+        return lookup[(matches[1] ?? 'php').toLowerCase()];
+    }
+
+    private createState(params = {}) {
+        return EditorState.create({
+            extensions: [vim(), languageConf.of(php()), basicSetup, materialDark],
+            ...params
+        });
     }
 }
 
@@ -174,10 +183,10 @@ export class Vim extends Command {
                 const text: string = await this.client.jsonrpc(cmd.method, [this.file]);
 
                 this.editor
-                    .setModeByFile(this.file)
-                    .show()
+                    .setCursor(0)
                     .setText(text)
-                    .setCursor(0);
+                    .setModeByFile(this.file)
+                    .show();
             } catch (e) {
                 reject(e);
             }

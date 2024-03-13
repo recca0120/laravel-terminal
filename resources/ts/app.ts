@@ -5,11 +5,11 @@ import 'jquery.terminal/js/unix_formatting';
 import 'core-js/es/promise';
 import 'core-js/es/object/assign';
 import 'core-js/es/regexp/flags';
-import {HttpClient} from './httpclient';
-import {Artisan, Common, Composer, MySQL, Tinker, Vim, Help} from './commands';
-import {OutputFormatter} from './output-formatter';
-import {Command} from './command';
-import {Spinner} from './spinners';
+import { HttpClient } from './httpclient';
+import { Artisan, Common, Composer, MySQL, Tinker, Vim, Help } from './commands';
+import { OutputFormatter } from './output-formatter';
+import { Command } from './command';
+import { Spinner } from './spinners';
 
 const win: any = <any>window;
 $.terminal.defaults.unixFormattingEscapeBrackets = true;
@@ -73,7 +73,7 @@ export class Terminal {
                     }
 
                     if (command.comfirmable(cmd) === true) {
-                        const {message, title, cancel} = command.getComfirm(cmd);
+                        const { message, title, cancel } = command.getComfirm(cmd);
 
                         this.confirm(message, title, cancel).then(async result => {
                             if (result === true) {
