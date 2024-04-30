@@ -49,7 +49,7 @@ Include the service provider within `app/config/app.php`. The service povider is
 publish
 
 ```php
-artisan vendor:publish --provider="Recca0120\Terminal\TerminalServiceProvider"
+php artisan vendor:publish --provider="Recca0120\Terminal\TerminalServiceProvider"
 ```
 
 
