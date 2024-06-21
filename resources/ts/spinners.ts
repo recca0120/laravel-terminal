@@ -1,15 +1,15 @@
-import * as cliSpinners from 'cli-spinners';
+import cliSpinners, { Spinner as CliSpinner, SpinnerName } from 'cli-spinners';
 
 export class Spinner {
-    private spinner: cliSpinners.Spinner = cliSpinners.dots;
+    private spinner: CliSpinner = cliSpinners.dots;
     private frameIndex = 0;
     private interval: any = null;
 
-    constructor(style: cliSpinners.SpinnerName = 'dots') {
+    constructor(style: SpinnerName = 'dots') {
         this.setStyle(style);
     }
 
-    setStyle(style: cliSpinners.SpinnerName): Spinner {
+    setStyle(style: SpinnerName): Spinner {
         this.spinner = cliSpinners[style];
 
         return this;
