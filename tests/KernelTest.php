@@ -2,6 +2,7 @@
 
 namespace Recca0120\Terminal\Tests;
 
+use Carbon\CarbonInterval;
 use Exception;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Queue;
@@ -36,6 +37,9 @@ class KernelTest extends TestCase
         self::assertSame(0, $kernel->handle($input, $output));
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_call_method()
     {
         $container = new Container();
@@ -52,11 +56,16 @@ class KernelTest extends TestCase
     }
 
     /**
-     * @depends test_call_method
+     * @throws Exception
      */
-    public function test_output_method(array $parameters)
+    public function test_output_method()
     {
-        $kernel = $parameters[0];
+        $container = new Container();
+        $request = Request::capture();
+        $container->instance('request', $request);
+        $artisan = new Application($container, new Dispatcher(), 'testing');
+        $kernel = new Kernel($artisan);
+        $kernel->call('help', ['list'], new BufferedOutput());
 
         self::assertStringContainsString('--raw', $kernel->output());
     }
@@ -100,5 +109,20 @@ class KernelTest extends TestCase
         $kernel->terminate($input, 0);
 
         $artisan->shouldHaveReceived('terminate');
+    }
+
+    public function test_call_when_command_lifecycle_is_longer_than()
+    {
+        $artisan = m::spy(new Application(new Container(), new Dispatcher(), 'testing'));
+        $kernel = new Kernel($artisan);
+
+        $carbonInterval = CarbonInterval::seconds(1);
+        $closure = function () {
+        };
+        $kernel->whenCommandLifecycleIsLongerThan($carbonInterval, $closure);
+
+        $artisan->shouldHaveReceived('whenCommandLifecycleIsLongerThan')
+            ->with($carbonInterval, $closure)
+            ->once();
     }
 }

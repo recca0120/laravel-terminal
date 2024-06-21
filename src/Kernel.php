@@ -180,4 +180,11 @@ class Kernel implements KernelContract
     {
         return $this;
     }
+
+    public function __call($name, $arguments)
+    {
+        $this->bootstrap();
+
+        return call_user_func_array([$this->artisan, $name], $arguments);
+    }
 }
