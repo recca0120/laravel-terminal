@@ -42,7 +42,7 @@
         "@types/jquery": "^3.5.30",
         "@types/jquery-mousewheel": "^3.1.12",
         "@types/node": "^20.14.7",
-        "browser-sync": "^2.27.11",
+        "browser-sync": "^3.0.2",
         "browser-sync-webpack-plugin": "^2.3.0",
         "core-js": "^3.37.1",
         "eslint": "^9.5.0",
